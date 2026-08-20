@@ -1,1 +1,1422 @@
 <!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI English Teacher</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f4f7fb, #eef2f7);
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      color: #172554;
+      font-size: 32px;
+    }
+
+    .header p {
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    .lesson-card,
+    .chat-card,
+    .voice-card,
+    .score-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
+    }
+
+    .lesson-card {
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .lesson-label {
+      font-size: 13px;
+      font-weight: bold;
+      color: #64748b;
+    }
+
+    #lessonTopic {
+      margin-top: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .chat-card {
+      min-height: 420px;
+      max-height: 560px;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .message {
+      display: flex;
+      margin-bottom: 18px;
+      width: 100%;
+    }
+
+    .teacher {
+      justify-content: flex-start;
+    }
+
+    .student {
+      justify-content: flex-end;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 21px;
+    }
+
+    .teacher .avatar {
+      background: #dbeafe;
+      margin-right: 10px;
+    }
+
+    .student .avatar {
+      background: #dcfce7;
+      margin-left: 10px;
+      order: 2;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .teacher .bubble {
+      background: #f1f5f9;
+    }
+
+    .student .bubble {
+      background: #2563eb;
+      color: white;
+    }
+
+    .bubble-name {
+      font-size: 11px;
+      font-weight: bold;
+      opacity: 0.65;
+      margin-bottom: 5px;
+    }
+
+    .voice-card {
+      margin-top: 16px;
+      padding: 22px;
+      text-align: center;
+    }
+
+    .mic-button {
+      width: 145px;
+      height: 145px;
+      border: none;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      font-size: 21px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
+    }
+
+    .mic-button.listening {
+      background: #dc2626;
+      animation: pulse 1.2s infinite;
+    }
+
+    .mic-button.processing {
+      background: #f59e0b;
+      cursor: wait;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.45);
+      }
+
+      70% {
+        box-shadow: 0 0 0 22px rgba(220, 38, 38, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+      }
+    }
+
+    #voiceStatus {
+      margin-top: 15px;
+      color: #64748b;
+      min-height: 24px;
+      line-height: 1.5;
+    }
+
+    .control-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .small-button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .stop-button {
+      background: #dc2626;
+      color: white;
+    }
+
+    .voice-button {
+      background: #475569;
+      color: white;
+    }
+
+    #loading {
+      display: none;
+      margin-top: 14px;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    #error {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      color: #b91c1c;
+      background: #fef2f2;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    #success {
+      display: none;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      color: #166534;
+      background: #f0fdf4;
+      text-align: left;
+    }
+
+    .score-card {
+      margin-top: 16px;
+      padding: 20px;
+      display: none;
+    }
+
+    .score-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #172554;
+    }
+
+    .main-score {
+      text-align: center;
+      font-size: 44px;
+      font-weight: bold;
+      color: #a16207;
+      margin-top: 10px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 14px;
+      background: #e5e7eb;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .score-item {
+      text-align: center;
+      padding: 14px 8px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .score-item span {
+      display: block;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .score-item strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 24px;
+    }
+
+    .feedback {
+      margin-top: 18px;
+    }
+
+    .feedback-title {
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .feedback-box {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .correction {
+      border-left: 4px solid #f97316;
+      background: #fff7ed;
+    }
+
+    .correct {
+      border-left: 4px solid #16a34a;
+      background: #f0fdf4;
+    }
+
+    .explanation {
+      border-left: 4px solid #0284c7;
+      background: #f0f9ff;
+    }
+
+    .comment {
+      border-left: 4px solid #7c3aed;
+      background: #faf5ff;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 10px;
+      }
+
+      .header h1 {
+        font-size: 25px;
+      }
+
+      .bubble {
+        max-width: 85%;
+      }
+
+      .score-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .mic-button {
+        width: 125px;
+        height: 125px;
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>🇬🇧 AI English Teacher</h1>
+    <p>Nói chuyện trực tiếp với giáo viên AI</p>
+  </div>
+
+  <div class="lesson-card">
+    <div class="lesson-label">📚 BÀI HỌC HIỆN TẠI</div>
+    <div id="lessonTopic">Đang tải bài học...</div>
+  </div>
+
+  <div id="chat" class="chat-card">
+
+    <div class="message teacher">
+
+      <div class="avatar">🤖</div>
+
+      <div class="bubble">
+
+        <div class="bubble-name">
+          TEACHER
+        </div>
+
+        <div>
+          Hello! I'm your English teacher.
+          Let's practice English together.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="voice-card">
+
+    <button
+      id="micButton"
+      class="mic-button"
+      onclick="toggleConversation()">
+
+      🎤
+      <br>
+      BẮT ĐẦU
+
+    </button>
+
+    <div id="voiceStatus">
+      Bấm nút để bắt đầu nói chuyện
+    </div>
+
+    <div class="control-buttons">
+
+      <button
+        class="small-button stop-button"
+        onclick="stopConversation()">
+
+        ⏹ DỪNG
+
+      </button>
+
+      <button
+        class="small-button voice-button"
+        onclick="speakLastTeacherMessage()">
+
+        🔊 NGHE LẠI
+
+      </button>
+
+    </div>
+
+    <div id="loading">
+      🤖 Giáo viên đang suy nghĩ...
+    </div>
+
+    <div id="error"></div>
+
+    <div id="success"></div>
+
+  </div>
+
+  <div id="scoreCard" class="score-card">
+
+    <div class="score-title">
+      🏆 Kết quả lượt nói
+    </div>
+
+    <div id="mainScore" class="main-score">
+      0/100
+    </div>
+
+    <div class="progress">
+      <div id="progressBar"></div>
+    </div>
+
+    <div class="score-grid">
+
+      <div class="score-item">
+        <span>📚 Từ vựng</span>
+        <strong id="vocabulary">0</strong>
+      </div>
+
+      <div class="score-item">
+        <span>📝 Ngữ pháp</span>
+        <strong id="grammar">0</strong>
+      </div>
+
+      <div class="score-item">
+        <span>💬 Phản xạ</span>
+        <strong id="fluency">0</strong>
+      </div>
+
+      <div class="score-item">
+        <span>🗣️ Phát âm</span>
+        <strong id="pronunciation">0</strong>
+      </div>
+
+    </div>
+
+    <div class="feedback">
+
+      <div class="feedback-title">
+        ✏️ Sửa câu
+      </div>
+
+      <div id="correction"
+           class="feedback-box correction"></div>
+
+    </div>
+
+    <div class="feedback">
+
+      <div class="feedback-title">
+        ✅ Câu đúng
+      </div>
+
+      <div id="correctSentence"
+           class="feedback-box correct"></div>
+
+    </div>
+
+    <div class="feedback">
+
+      <div class="feedback-title">
+        💡 Giải thích
+      </div>
+
+      <div id="explanation"
+           class="feedback-box explanation"></div>
+
+    </div>
+
+    <div class="feedback">
+
+      <div class="feedback-title">
+        🎯 Nhận xét
+      </div>
+
+      <div id="comment"
+           class="feedback-box comment"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+const APPS_SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycbybyMT34Odqd6jnDwHpqck_aizGYEWQjCo1jpuxD4Wc3LY_Hc-G3WHrQvUgkkYn4o_OZg/exec';
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+let recognition = null;
+let microphoneStream = null;
+let isListening = false;
+let isProcessing = false;
+let conversationActive = false;
+
+let conversationHistory = [];
+
+let lastTeacherText = '';
+
+let totalScore = 0;
+let totalQuestions = 0;
+
+window.addEventListener('load', loadLesson);
+
+function loadLesson() {
+
+  callApi('lesson', {});
+
+}
+
+function toggleConversation() {
+
+  if (isProcessing) return;
+
+  if (!conversationActive) {
+
+    requestMicrophonePermission()
+      .then(function(granted) {
+
+        if (!granted) return;
+
+        conversationActive = true;
+
+        startListening();
+
+      });
+
+    return;
+  }
+
+  if (isListening) {
+
+    stopListening();
+
+  } else {
+
+    startListening();
+
+  }
+
+}
+
+async function requestMicrophonePermission() {
+
+  try {
+
+    if (
+      location.protocol !== 'https:' &&
+      location.hostname !== 'localhost'
+    ) {
+
+      showError(
+        'Website phải chạy bằng HTTPS.'
+      );
+
+      return false;
+
+    }
+
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
+
+      showError(
+        'Trình duyệt không hỗ trợ microphone.'
+      );
+
+      return false;
+
+    }
+
+    microphoneStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+
+    setVoiceStatus(
+      '✅ Microphone đã được cấp quyền.'
+    );
+
+    return true;
+
+  } catch (error) {
+
+    showError(
+      'Không thể truy cập microphone.\n\n' +
+      'Mã lỗi: ' +
+      (error.name || 'Unknown')
+    );
+
+    return false;
+
+  }
+
+}
+
+function startListening() {
+
+  if (
+    !conversationActive ||
+    isProcessing
+  ) return;
+
+  if (!SpeechRecognition) {
+
+    showError(
+      'Chrome không hỗ trợ Speech Recognition.'
+    );
+
+    return;
+
+  }
+
+  if (isListening) return;
+
+  recognition =
+    new SpeechRecognition();
+
+  recognition.lang =
+    'en-US';
+
+  recognition.continuous =
+    false;
+
+  recognition.interimResults =
+    false;
+
+  recognition.maxAlternatives =
+    1;
+
+  recognition.onstart =
+    function() {
+
+      isListening = true;
+
+      const button =
+        document.getElementById(
+          'micButton'
+        );
+
+      button.classList.add(
+        'listening'
+      );
+
+      button.innerHTML =
+        '🔴<br>ĐANG NGHE';
+
+      setVoiceStatus(
+        '🎤 Hãy nói tiếng Anh...'
+      );
+
+    };
+
+  recognition.onresult =
+    function(event) {
+
+      const text =
+        event.results[0][0]
+          .transcript
+          .trim();
+
+      if (!text) return;
+
+      addStudentMessage(text);
+
+      sendToTeacher(text);
+
+    };
+
+  recognition.onerror =
+    function(event) {
+
+      isListening = false;
+
+      resetMicButton();
+
+      showError(
+        'Speech Recognition lỗi: ' +
+        event.error
+      );
+
+    };
+
+  recognition.onend =
+    function() {
+
+      isListening = false;
+
+      if (!isProcessing) {
+        resetMicButton();
+      }
+
+    };
+
+  try {
+
+    recognition.start();
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+}
+
+function stopListening() {
+
+  if (recognition) {
+
+    try {
+      recognition.stop();
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+  isListening = false;
+
+  resetMicButton();
+
+}
+
+function stopConversation() {
+
+  conversationActive = false;
+
+  stopListening();
+
+  if (window.speechSynthesis) {
+
+    window.speechSynthesis.cancel();
+
+  }
+
+  if (microphoneStream) {
+
+    microphoneStream
+      .getTracks()
+      .forEach(function(track) {
+
+        track.stop();
+
+      });
+
+    microphoneStream = null;
+
+  }
+
+  const button =
+    document.getElementById(
+      'micButton'
+    );
+
+  button.classList.remove(
+    'listening'
+  );
+
+  button.classList.remove(
+    'processing'
+  );
+
+  button.innerHTML =
+    '🎤<br>BẮT ĐẦU';
+
+  setVoiceStatus(
+    '⏹ Đã dừng cuộc hội thoại'
+  );
+
+}
+
+function resetMicButton() {
+
+  const button =
+    document.getElementById(
+      'micButton'
+    );
+
+  button.classList.remove(
+    'listening'
+  );
+
+  button.classList.remove(
+    'processing'
+  );
+
+  button.innerHTML =
+    '🎤<br>NÓI';
+
+}
+
+function sendToTeacher(message) {
+
+  isProcessing = true;
+
+  const button =
+    document.getElementById(
+      'micButton'
+    );
+
+  button.classList.remove(
+    'listening'
+  );
+
+  button.classList.add(
+    'processing'
+  );
+
+  button.innerHTML =
+    '🤖<br>AI';
+
+  document.getElementById(
+    'loading'
+  ).style.display =
+    'block';
+
+  setVoiceStatus(
+    '🤖 Giáo viên đang suy nghĩ...'
+  );
+
+  conversationHistory.push({
+
+    role: 'user',
+
+    text: message
+
+  });
+
+  callApi(
+    'chat',
+    {
+      message: message,
+      history:
+        conversationHistory.slice(-6)
+    }
+  );
+
+}
+
+function callApi(
+  action,
+  payload
+) {
+
+  const callbackName =
+    'apiCallback_' +
+    Date.now();
+
+  window[callbackName] =
+    function(response) {
+
+      try {
+
+        handleActionResponse(
+          action,
+          response
+        );
+
+      } finally {
+
+        delete window[
+          callbackName
+        ];
+
+      }
+
+    };
+
+  const params =
+    new URLSearchParams();
+
+  params.set(
+    'api',
+    '1'
+  );
+
+  params.set(
+    'action',
+    action
+  );
+
+  params.set(
+    'callback',
+    callbackName
+  );
+
+  if (payload) {
+
+    params.set(
+      'data',
+      JSON.stringify(payload)
+    );
+
+  }
+
+  const script =
+    document.createElement(
+      'script'
+    );
+
+  script.src =
+    APPS_SCRIPT_URL +
+    '?' +
+    params.toString();
+
+  script.onerror =
+    function() {
+
+      isProcessing = false;
+
+      document.getElementById(
+        'loading'
+      ).style.display =
+        'none';
+
+      resetMicButton();
+
+      showError(
+        'Không kết nối được Apps Script.'
+      );
+
+    };
+
+  document.body.appendChild(
+    script
+  );
+
+}
+
+function handleActionResponse(
+  action,
+  response
+) {
+
+  if (!response) {
+
+    showError(
+      'API không trả về dữ liệu.'
+    );
+
+    return;
+
+  }
+
+  if (!response.success) {
+
+    isProcessing = false;
+
+    document.getElementById(
+      'loading'
+    ).style.display =
+      'none';
+
+    resetMicButton();
+
+    showError(
+      response.error ||
+      'API xảy ra lỗi.'
+    );
+
+    return;
+
+  }
+
+  if (action === 'lesson') {
+
+    document.getElementById(
+      'lessonTopic'
+    ).innerText =
+      response.data.topic ||
+      'Bài học hiện tại';
+
+    return;
+
+  }
+
+  if (action === 'chat') {
+
+    handleTeacherResponse(
+      response.data
+    );
+
+  }
+
+}
+
+function handleTeacherResponse(data) {
+
+  isProcessing = false;
+
+  document.getElementById(
+    'loading'
+  ).style.display =
+    'none';
+
+  const teacherText =
+    data.reply ||
+    data.next ||
+    'Good!';
+
+  lastTeacherText =
+    teacherText;
+
+  addTeacherMessage(
+    teacherText
+  );
+
+  conversationHistory.push({
+
+    role: 'assistant',
+
+    text: teacherText
+
+  });
+
+  showScore(data);
+
+  document.getElementById(
+    'correction'
+  ).innerText =
+    data.correction ||
+    'Không có lỗi đáng kể.';
+
+  document.getElementById(
+    'correctSentence'
+  ).innerText =
+    data.correctSentence ||
+    '';
+
+  document.getElementById(
+    'explanation'
+  ).innerText =
+    data.explanation ||
+    '';
+
+  document.getElementById(
+    'comment'
+  ).innerText =
+    data.comment ||
+    '';
+
+  showSuccess(
+    '✅ Giáo viên đã trả lời.'
+  );
+
+  speakTeacher(
+    teacherText
+  );
+
+}
+
+function addStudentMessage(text) {
+
+  const chat =
+    document.getElementById(
+      'chat'
+    );
+
+  const message =
+    document.createElement(
+      'div'
+    );
+
+  message.className =
+    'message student';
+
+  message.innerHTML = `
+    <div class="avatar">👨‍🎓</div>
+
+    <div class="bubble">
+
+      <div class="bubble-name">
+        YOU
+      </div>
+
+      ${escapeHtml(text)}
+
+    </div>
+  `;
+
+  chat.appendChild(
+    message
+  );
+
+  scrollChat();
+
+}
+
+function addTeacherMessage(text) {
+
+  const chat =
+    document.getElementById(
+      'chat'
+    );
+
+  const message =
+    document.createElement(
+      'div'
+    );
+
+  message.className =
+    'message teacher';
+
+  message.innerHTML = `
+    <div class="avatar">🤖</div>
+
+    <div class="bubble">
+
+      <div class="bubble-name">
+        TEACHER
+      </div>
+
+      ${escapeHtml(text)}
+
+    </div>
+  `;
+
+  chat.appendChild(
+    message
+  );
+
+  scrollChat();
+
+}
+
+function showScore(data) {
+
+  document.getElementById(
+    'scoreCard'
+  ).style.display =
+    'block';
+
+  const score =
+    Number(
+      data.score || 0
+    );
+
+  document.getElementById(
+    'mainScore'
+  ).innerText =
+    score + '/100';
+
+  document.getElementById(
+    'progressBar'
+  ).style.width =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        score
+      )
+    ) + '%';
+
+  document.getElementById(
+    'vocabulary'
+  ).innerText =
+    data.vocabulary ?? 0;
+
+  document.getElementById(
+    'grammar'
+  ).innerText =
+    data.grammar ?? 0;
+
+  document.getElementById(
+    'fluency'
+  ).innerText =
+    data.fluency ?? 0;
+
+  document.getElementById(
+    'pronunciation'
+  ).innerText =
+    data.pronunciation ?? 0;
+
+  totalScore += score;
+
+  totalQuestions++;
+
+}
+
+function speakTeacher(text) {
+
+  if (
+    !text ||
+    !window.speechSynthesis
+  ) return;
+
+  window.speechSynthesis.cancel();
+
+  const speech =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+  speech.lang =
+    'en-US';
+
+  speech.rate =
+    0.85;
+
+  speech.pitch =
+    1;
+
+  speech.volume =
+    1;
+
+  speech.onstart =
+    function() {
+
+      setVoiceStatus(
+        '🔊 Giáo viên đang nói...'
+      );
+
+    };
+
+  speech.onend =
+    function() {
+
+      if (
+        conversationActive &&
+        !isProcessing
+      ) {
+
+        setVoiceStatus(
+          '🎤 Đến lượt bạn nói'
+        );
+
+        setTimeout(
+          function() {
+
+            if (
+              conversationActive &&
+              !isProcessing &&
+              !isListening
+            ) {
+
+              startListening();
+
+            }
+
+          },
+          700
+        );
+
+      }
+
+    };
+
+  window.speechSynthesis.speak(
+    speech
+  );
+
+}
+
+function speakLastTeacherMessage() {
+
+  if (!lastTeacherText) {
+
+    showError(
+      'Chưa có câu trả lời của giáo viên.'
+    );
+
+    return;
+
+  }
+
+  speakTeacher(
+    lastTeacherText
+  );
+
+}
+
+function setVoiceStatus(text) {
+
+  document.getElementById(
+    'voiceStatus'
+  ).innerText =
+    text;
+
+}
+
+function scrollChat() {
+
+  const chat =
+    document.getElementById(
+      'chat'
+    );
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+}
+
+function showError(message) {
+
+  const error =
+    document.getElementById(
+      'error'
+    );
+
+  error.style.display =
+    'block';
+
+  error.innerText =
+    '❌ ' +
+    message;
+
+}
+
+function clearError() {
+
+  const error =
+    document.getElementById(
+      'error'
+    );
+
+  error.style.display =
+    'none';
+
+  error.innerText =
+    '';
+
+}
+
+function showSuccess(message) {
+
+  const success =
+    document.getElementById(
+      'success'
+    );
+
+  success.style.display =
+    'block';
+
+  success.innerText =
+    message;
+
+  setTimeout(
+    function() {
+
+      success.style.display =
+        'none';
+
+    },
+    3000
+  );
+
+}
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement(
+      'div'
+    );
+
+  div.innerText =
+    String(text);
+
+  return div.innerHTML;
+
+}
+
+</script>
+
+</body>
+</html>
