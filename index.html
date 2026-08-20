@@ -3,840 +3,961 @@
 
 <head>
 
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-  <title>AI English Teacher</title>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #f4f7fb, #eef2f7);
-      color: #1f2937;
-    }
-
-    .container {
-      max-width: 950px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    /* ================================
-       HEADER
-    ================================= */
-
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      margin: 0;
-      color: #172554;
-      font-size: 32px;
-    }
-
-    .header p {
-      color: #64748b;
-      margin-top: 8px;
-    }
-
-    /* ================================
-       CARD
-    ================================= */
-
-    .lesson-card,
-    .chat-card,
-    .voice-card,
-    .score-card {
-      background: white;
-      border-radius: 18px;
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
-    }
-
-    /* ================================
-       LESSON
-    ================================= */
-
-    .lesson-card {
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .lesson-label {
-      font-size: 13px;
-      font-weight: bold;
-      color: #64748b;
-    }
-
-    #lessonTopic {
-      margin-top: 6px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #2563eb;
-    }
-
-    /* ================================
-       CHAT
-    ================================= */
-
-    .chat-card {
-      min-height: 420px;
-      max-height: 560px;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .message {
-      display: flex;
-      margin-bottom: 18px;
-      width: 100%;
-    }
-
-    .teacher {
-      justify-content: flex-start;
-    }
-
-    .student {
-      justify-content: flex-end;
-    }
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 21px;
-    }
-
-    .teacher .avatar {
-      background: #dbeafe;
-      margin-right: 10px;
-    }
-
-    .student .avatar {
-      background: #dcfce7;
-      margin-left: 10px;
-      order: 2;
-    }
-
-    .bubble {
-      max-width: 75%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .teacher .bubble {
-      background: #f1f5f9;
-    }
-
-    .student .bubble {
-      background: #2563eb;
-      color: white;
-    }
-
-    .bubble-name {
-      font-size: 11px;
-      font-weight: bold;
-      opacity: 0.65;
-      margin-bottom: 5px;
-    }
-
-    /* ================================
-       VOICE CARD
-    ================================= */
-
-    .voice-card {
-      margin-top: 16px;
-      padding: 22px;
-      text-align: center;
-    }
-
-    .mic-button {
-      width: 145px;
-      height: 145px;
-      border: none;
-      border-radius: 50%;
-      background: #2563eb;
-      color: white;
-      font-size: 21px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
-    }
-
-    .mic-button:hover {
-      transform: scale(1.03);
-    }
-
-    .mic-button.listening {
-      background: #dc2626;
-      animation: pulse 1.2s infinite;
-    }
-
-    .mic-button.processing {
-      background: #f59e0b;
-      cursor: wait;
-    }
-
-    .mic-button.ready {
-      background: #15803d;
-    }
-
-    @keyframes pulse {
-
-      0% {
-        box-shadow:
-          0 0 0 0 rgba(220, 38, 38, 0.45);
-      }
-
-      70% {
-        box-shadow:
-          0 0 0 22px rgba(220, 38, 38, 0);
-      }
-
-      100% {
-        box-shadow:
-          0 0 0 0 rgba(220, 38, 38, 0);
-      }
-
-    }
-
-    #voiceStatus {
-      margin-top: 15px;
-      color: #64748b;
-      min-height: 24px;
-      line-height: 1.5;
-    }
-
-    /* ================================
-       BUTTONS
-    ================================= */
-
-    .control-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    .small-button {
-      border: none;
-      border-radius: 10px;
-      padding: 11px 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .stop-button {
-      background: #dc2626;
-      color: white;
-    }
-
-    .voice-button {
-      background: #475569;
-      color: white;
-    }
-
-    .test-voice-button {
-      background: #15803d;
-      color: white;
-      margin-top: 12px;
-    }
-
-    /* ================================
-       VOICE SETTINGS
-    ================================= */
-
-    .voice-settings {
-      margin-top: 18px;
-      padding: 16px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      text-align: left;
-    }
-
-    .voice-settings-title {
-      font-weight: bold;
-      color: #334155;
-      margin-bottom: 8px;
-    }
-
-    #voiceSelect {
-      width: 100%;
-      padding: 11px 12px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      background: white;
-      color: #334155;
-      font-size: 15px;
-      outline: none;
-    }
-
-    #voiceSelect:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-    }
-
-    .speed-row {
-      margin-top: 15px;
-    }
-
-    .speed-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      color: #475569;
-      font-size: 14px;
-    }
-
-    #speedValue {
-      color: #2563eb;
-      font-weight: bold;
-    }
-
-    #voiceSpeed {
-      width: 100%;
-      accent-color: #2563eb;
-    }
-
-    /* ================================
-       STATUS
-    ================================= */
-
-    .permission-box {
-      display: none;
-      margin-top: 15px;
-      padding: 13px;
-      border-radius: 10px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      text-align: left;
-      line-height: 1.6;
-    }
-
-    #loading {
-      display: none;
-      margin-top: 14px;
-      color: #2563eb;
-      font-weight: bold;
-    }
-
-    #error {
-      display: none;
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 10px;
-      color: #b91c1c;
-      background: #fef2f2;
-      white-space: pre-wrap;
-      text-align: left;
-    }
-
-    #success {
-      display: none;
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 10px;
-      color: #166534;
-      background: #f0fdf4;
-      text-align: left;
-    }
-
-    /* ================================
-       SCORE
-    ================================= */
-
-    .score-card {
-      margin-top: 16px;
-      padding: 20px;
-      display: none;
-    }
-
-    .score-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #172554;
-    }
-
-    .main-score {
-      text-align: center;
-      font-size: 44px;
-      font-weight: bold;
-      color: #a16207;
-      margin-top: 10px;
-    }
-
-    .progress {
-      width: 100%;
-      height: 14px;
-      background: #e5e7eb;
-      border-radius: 20px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
-    #progressBar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #2563eb, #38bdf8);
-      transition: width 0.5s;
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .score-item {
-      text-align: center;
-      padding: 14px 8px;
-      background: #f8fafc;
-      border-radius: 12px;
-    }
-
-    .score-item span {
-      display: block;
-      color: #64748b;
-      font-size: 13px;
-    }
-
-    .score-item strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 24px;
-    }
-
-    /* ================================
-       FEEDBACK
-    ================================= */
-
-    .feedback {
-      margin-top: 18px;
-    }
-
-    .feedback-title {
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
-
-    .feedback-box {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 14px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
-
-    .correction {
-      border-left: 4px solid #f97316;
-      background: #fff7ed;
-    }
-
-    .correct {
-      border-left: 4px solid #16a34a;
-      background: #f0fdf4;
-    }
-
-    .explanation {
-      border-left: 4px solid #0284c7;
-      background: #f0f9ff;
-    }
-
-    .comment {
-      border-left: 4px solid #7c3aed;
-      background: #faf5ff;
-    }
-
-    /* ================================
-       MOBILE
-    ================================= */
-
-    @media (max-width: 700px) {
-
-      .container {
-        padding: 10px;
-      }
-
-      .header h1 {
-        font-size: 25px;
-      }
-
-      .bubble {
-        max-width: 85%;
-      }
-
-      .score-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .mic-button {
-        width: 125px;
-        height: 125px;
-        font-size: 18px;
-      }
-
-    }
-
-  </style>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI English Teacher</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f7fb, #eef2f7);
+  color: #1f2937;
+}
+
+.container {
+  max-width: 950px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  color: #172554;
+  font-size: 32px;
+}
+
+.header p {
+  color: #64748b;
+  margin-top: 8px;
+}
+
+/* ================================
+   CARD
+================================ */
+
+.lesson-card,
+.chat-card,
+.voice-card,
+.score-card {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+}
+
+/* ================================
+   LESSON
+================================ */
+
+.lesson-card {
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.lesson-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #64748b;
+}
+
+#lessonTopic {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+/* ================================
+   CHAT
+================================ */
+
+.chat-card {
+  min-height: 420px;
+  max-height: 560px;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.teacher {
+  justify-content: flex-start;
+}
+
+.student {
+  justify-content: flex-end;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 21px;
+}
+
+.teacher .avatar {
+  background: #dbeafe;
+  margin-right: 10px;
+}
+
+.student .avatar {
+  background: #dcfce7;
+  margin-left: 10px;
+  order: 2;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.teacher .bubble {
+  background: #f1f5f9;
+}
+
+.student .bubble {
+  background: #2563eb;
+  color: white;
+}
+
+.bubble-name {
+  font-size: 11px;
+  font-weight: bold;
+  opacity: 0.65;
+  margin-bottom: 5px;
+}
+
+/* ================================
+   AI AVATAR
+================================ */
+
+.ai-avatar-card {
+  margin-top: 16px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+}
+
+.ai-avatar {
+  width: 110px;
+  height: 110px;
+  margin: auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 55px;
+  background: #dbeafe;
+  transition: 0.3s;
+}
+
+.ai-avatar.listening {
+  background: #fee2e2;
+  animation: avatarPulse 1.2s infinite;
+}
+
+.ai-avatar.thinking {
+  background: #fef3c7;
+  animation: thinkingPulse 1s infinite;
+}
+
+.ai-avatar.speaking {
+  background: #dcfce7;
+  animation: speakingPulse 0.8s infinite;
+}
+
+.ai-avatar.ready {
+  background: #dbeafe;
+}
+
+@keyframes avatarPulse {
+
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220,38,38,0.35);
+  }
+
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(220,38,38,0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220,38,38,0);
+  }
+
+}
+
+@keyframes thinkingPulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+@keyframes speakingPulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+#avatarStatus {
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #475569;
+}
+
+#avatarMessage {
+  margin-top: 5px;
+  color: #64748b;
+}
+
+/* ================================
+   VOICE
+================================ */
+
+.voice-card {
+  margin-top: 16px;
+  padding: 22px;
+  text-align: center;
+}
+
+.mic-button {
+  width: 145px;
+  height: 145px;
+  border: none;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  font-size: 21px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 10px 30px rgba(37,99,235,0.25);
+}
+
+.mic-button:hover {
+  transform: scale(1.03);
+}
+
+.mic-button.listening {
+  background: #dc2626;
+  animation: pulse 1.2s infinite;
+}
+
+.mic-button.processing {
+  background: #f59e0b;
+  cursor: wait;
+}
+
+.mic-button.ready {
+  background: #15803d;
+}
+
+@keyframes pulse {
+
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(220,38,38,0.45);
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 22px rgba(220,38,38,0);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(220,38,38,0);
+  }
+
+}
+
+#voiceStatus {
+  margin-top: 15px;
+  color: #64748b;
+  min-height: 24px;
+  line-height: 1.5;
+}
+
+/* ================================
+   BUTTONS
+================================ */
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.small-button {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.stop-button {
+  background: #dc2626;
+  color: white;
+}
+
+.voice-button {
+  background: #475569;
+  color: white;
+}
+
+.test-voice-button {
+  background: #15803d;
+  color: white;
+  margin-top: 12px;
+}
+
+/* ================================
+   VOICE SETTINGS
+================================ */
+
+.voice-settings {
+  margin-top: 18px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  text-align: left;
+}
+
+.voice-settings-title {
+  font-weight: bold;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+#voiceSelect {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+  font-size: 15px;
+  outline: none;
+}
+
+#voiceSelect:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+.speed-row {
+  margin-top: 15px;
+}
+
+.speed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  color: #475569;
+  font-size: 14px;
+}
+
+#speedValue {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+#voiceSpeed {
+  width: 100%;
+  accent-color: #2563eb;
+}
+
+/* ================================
+   STATUS
+================================ */
+
+.permission-box {
+  display: none;
+  margin-top: 15px;
+  padding: 13px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  text-align: left;
+  line-height: 1.6;
+}
+
+#loading {
+  display: none;
+  margin-top: 14px;
+  color: #2563eb;
+  font-weight: bold;
+}
+
+#error {
+  display: none;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  color: #b91c1c;
+  background: #fef2f2;
+  white-space: pre-wrap;
+  text-align: left;
+}
+
+#success {
+  display: none;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  color: #166534;
+  background: #f0fdf4;
+  text-align: left;
+}
+
+/* ================================
+   SCORE
+================================ */
+
+.score-card {
+  margin-top: 16px;
+  padding: 20px;
+  display: none;
+}
+
+.score-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #172554;
+}
+
+.main-score {
+  text-align: center;
+  font-size: 44px;
+  font-weight: bold;
+  color: #a16207;
+  margin-top: 10px;
+}
+
+.progress {
+  width: 100%;
+  height: 14px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+#progressBar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg,#2563eb,#38bdf8);
+  transition: width 0.5s;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.score-item {
+  text-align: center;
+  padding: 14px 8px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.score-item span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.score-item strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 24px;
+}
+
+/* ================================
+   FEEDBACK
+================================ */
+
+.feedback {
+  margin-top: 18px;
+}
+
+.feedback-title {
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+.feedback-box {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.correction {
+  border-left: 4px solid #f97316;
+  background: #fff7ed;
+}
+
+.correct {
+  border-left: 4px solid #16a34a;
+  background: #f0fdf4;
+}
+
+.explanation {
+  border-left: 4px solid #0284c7;
+  background: #f0f9ff;
+}
+
+.comment {
+  border-left: 4px solid #7c3aed;
+  background: #faf5ff;
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width:700px) {
+
+  .container {
+    padding: 10px;
+  }
+
+  .header h1 {
+    font-size: 25px;
+  }
+
+  .bubble {
+    max-width: 85%;
+  }
+
+  .score-grid {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .mic-button {
+    width: 125px;
+    height: 125px;
+    font-size: 18px;
+  }
+
+}
+
+</style>
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
+<!-- HEADER -->
 
-  <!-- HEADER -->
+<div class="header">
 
-  <div class="header">
+<h1>
+🇬🇧 AI English Teacher
+</h1>
 
-    <h1>
-      🇬🇧 AI English Teacher
-    </h1>
+<p>
+Nói chuyện trực tiếp với giáo viên AI
+</p>
 
-    <p>
-      Nói chuyện trực tiếp với giáo viên AI
-    </p>
+</div>
 
-  </div>
 
+<!-- LESSON -->
 
-  <!-- LESSON -->
+<div class="lesson-card">
 
-  <div class="lesson-card">
+<div class="lesson-label">
+📚 BÀI HỌC HIỆN TẠI
+</div>
 
-    <div class="lesson-label">
-      📚 BÀI HỌC HIỆN TẠI
-    </div>
+<div id="lessonTopic">
+Đang tải bài học...
+</div>
 
-    <div id="lessonTopic">
-      Đang tải bài học...
-    </div>
+</div>
 
-  </div>
 
+<!-- CHAT -->
 
-  <!-- CHAT -->
+<div id="chat" class="chat-card">
 
-  <div
-    id="chat"
-    class="chat-card">
+<div class="message teacher">
 
-    <div class="message teacher">
+<div class="avatar">
+🤖
+</div>
 
-      <div class="avatar">
-        🤖
-      </div>
+<div class="bubble">
 
-      <div class="bubble">
+<div class="bubble-name">
+TEACHER
+</div>
 
-        <div class="bubble-name">
-          TEACHER
-        </div>
+<div>
+Hello! I'm your English teacher.
+Let's practice English together.
+</div>
 
-        <div>
-          Hello! I'm your English teacher.
-          Let's practice English together.
-        </div>
+</div>
 
-      </div>
+</div>
 
-    </div>
+</div>
 
-  </div>
 
+<!-- AI AVATAR -->
 
-  <!-- VOICE -->
+<div class="ai-avatar-card">
 
-  <div class="voice-card">
+<div
+id="aiAvatar"
+class="ai-avatar ready">
 
+🤖
 
-    <button
-      id="micButton"
-      class="mic-button"
-      onclick="toggleConversation()">
+</div>
 
-      🎤
-      <br>
-      BẮT ĐẦU
+<div
+id="avatarStatus">
 
-    </button>
+READY
 
+</div>
 
-    <div id="voiceStatus">
+<div
+id="avatarMessage">
 
-      Bấm nút để bắt đầu nói chuyện
+What would you like to say?
 
-    </div>
+</div>
 
+</div>
 
-    <div
-      id="permissionBox"
-      class="permission-box">
-    </div>
 
+<!-- VOICE -->
 
-    <div class="control-buttons">
+<div class="voice-card">
 
-      <button
-        class="small-button stop-button"
-        onclick="stopConversation()">
+<button
+id="micButton"
+class="mic-button"
+onclick="toggleConversation()">
 
-        ⏹ DỪNG
+🎤
+<br>
+BẮT ĐẦU
 
-      </button>
+</button>
 
+<div id="voiceStatus">
 
-      <button
-        class="small-button voice-button"
-        onclick="speakLastTeacherMessage()">
+Bấm nút để bắt đầu nói chuyện
 
-        🔊 NGHE LẠI
+</div>
 
-      </button>
 
-    </div>
+<div
+id="permissionBox"
+class="permission-box">
+</div>
 
 
-    <!-- VOICE SETTINGS -->
+<div class="control-buttons">
 
-    <div class="voice-settings">
+<button
+class="small-button stop-button"
+onclick="stopConversation()">
 
-      <div class="voice-settings-title">
-        🎙️ Giọng giáo viên
-      </div>
+⏹ DỪNG
 
+</button>
 
-      <select
-        id="voiceSelect"
-        onchange="changeVoice()">
 
-        <option value="">
-          Đang tải giọng...
-        </option>
+<button
+class="small-button voice-button"
+onclick="speakLastTeacherMessage()">
 
-      </select>
+🔊 NGHE LẠI
 
+</button>
 
-      <div class="speed-row">
+</div>
 
-        <div class="speed-header">
 
-          <span>
-            🐢 Tốc độ nói
-          </span>
+<!-- VOICE SETTINGS -->
 
-          <span id="speedValue">
-            0.85
-          </span>
+<div class="voice-settings">
 
-        </div>
+<div class="voice-settings-title">
+🎙️ Giọng giáo viên
+</div>
 
+<select
+id="voiceSelect"
+onchange="changeVoice()">
 
-        <input
-          id="voiceSpeed"
-          type="range"
-          min="0.60"
-          max="1.20"
-          step="0.05"
-          value="0.85"
-          oninput="changeSpeed()">
+<option value="">
+Đang tải giọng...
+</option>
 
-      </div>
+</select>
 
 
-      <button
-        class="small-button test-voice-button"
-        onclick="testTeacherVoice()">
+<div class="speed-row">
 
-        🎧 THỬ GIỌNG
+<div class="speed-header">
 
-      </button>
+<span>
+🐢 Tốc độ nói
+</span>
 
-    </div>
+<span id="speedValue">
+0.85
+</span>
 
+</div>
 
-    <div id="loading">
-      🤖 Giáo viên đang suy nghĩ...
-    </div>
+<input
+id="voiceSpeed"
+type="range"
+min="0.60"
+max="1.20"
+step="0.05"
+value="0.85"
+oninput="changeSpeed()">
 
+</div>
 
-    <div id="error"></div>
 
+<button
+class="small-button test-voice-button"
+onclick="testTeacherVoice()">
 
-    <div id="success"></div>
+🎧 THỬ GIỌNG
 
+</button>
 
-  </div>
+</div>
 
 
-  <!-- SCORE -->
+<div id="loading">
+🤖 Giáo viên đang suy nghĩ...
+</div>
 
-  <div
-    id="scoreCard"
-    class="score-card">
+<div id="error"></div>
 
-    <div class="score-title">
-      🏆 Kết quả lượt nói
-    </div>
+<div id="success"></div>
 
+</div>
 
-    <div
-      id="mainScore"
-      class="main-score">
 
-      0/100
+<!-- SCORE -->
 
-    </div>
+<div
+id="scoreCard"
+class="score-card">
 
+<div class="score-title">
+🏆 Kết quả lượt nói
+</div>
 
-    <div class="progress">
 
-      <div id="progressBar"></div>
+<div
+id="mainScore"
+class="main-score">
 
-    </div>
+0/100
 
+</div>
 
-    <div class="score-grid">
 
+<div class="progress">
 
-      <div class="score-item">
+<div id="progressBar"></div>
 
-        <span>
-          📚 Từ vựng
-        </span>
+</div>
 
-        <strong id="vocabulary">
-          0
-        </strong>
 
-      </div>
+<div class="score-grid">
 
 
-      <div class="score-item">
+<div class="score-item">
 
-        <span>
-          📝 Ngữ pháp
-        </span>
+<span>
+📚 Từ vựng
+</span>
 
-        <strong id="grammar">
-          0
-        </strong>
+<strong id="vocabulary">
+0
+</strong>
 
-      </div>
+</div>
 
 
-      <div class="score-item">
+<div class="score-item">
 
-        <span>
-          💬 Phản xạ
-        </span>
+<span>
+📝 Ngữ pháp
+</span>
 
-        <strong id="fluency">
-          0
-        </strong>
+<strong id="grammar">
+0
+</strong>
 
-      </div>
+</div>
 
 
-      <div class="score-item">
+<div class="score-item">
 
-        <span>
-          🗣️ Phát âm
-        </span>
+<span>
+💬 Phản xạ
+</span>
 
-        <strong id="pronunciation">
-          0
-        </strong>
+<strong id="fluency">
+0
+</strong>
 
-      </div>
+</div>
 
 
-    </div>
+<div class="score-item">
 
+<span>
+🗣️ Phát âm
+</span>
 
-    <div class="feedback">
+<strong id="pronunciation">
+0
+</strong>
 
-      <div class="feedback-title">
-        ✏️ Sửa câu
-      </div>
+</div>
 
-      <div
-        id="correction"
-        class="feedback-box correction">
-      </div>
 
-    </div>
+</div>
 
 
-    <div class="feedback">
+<div class="feedback">
 
-      <div class="feedback-title">
-        ✅ Câu đúng
-      </div>
+<div class="feedback-title">
+✏️ Sửa câu
+</div>
 
-      <div
-        id="correctSentence"
-        class="feedback-box correct">
-      </div>
+<div
+id="correction"
+class="feedback-box correction">
+</div>
 
-    </div>
+</div>
 
 
-    <div class="feedback">
+<div class="feedback">
 
-      <div class="feedback-title">
-        💡 Giải thích
-      </div>
+<div class="feedback-title">
+✅ Câu đúng
+</div>
 
-      <div
-        id="explanation"
-        class="feedback-box explanation">
-      </div>
+<div
+id="correctSentence"
+class="feedback-box correct">
+</div>
 
-    </div>
+</div>
 
 
-    <div class="feedback">
+<div class="feedback">
 
-      <div class="feedback-title">
-        🎯 Nhận xét
-      </div>
+<div class="feedback-title">
+💡 Giải thích
+</div>
 
-      <div
-        id="comment"
-        class="feedback-box comment">
-      </div>
+<div
+id="explanation"
+class="feedback-box explanation">
+</div>
 
-    </div>
+</div>
 
 
-  </div>
+<div class="feedback">
 
+<div class="feedback-title">
+🎯 Nhận xét
+</div>
+
+<div
+id="comment"
+class="feedback-box comment">
+</div>
+
+</div>
+
+</div>
 
 </div>
 
@@ -849,7 +970,7 @@
 // =====================================================
 
 const APPS_SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbybyMT34Odqd6jnDwHpqck_aizGYEWQjCo1jpuxD4Wc3LY_Hc-G3WHrQvUgkkYn4o_OZg/exec';
+'https://script.google.com/macros/s/AKfycbybyMT34Odqd6jnDwHpqck_aizGYEWQjCo1jpuxD4Wc3LY_Hc-G3WHrQvUgkkYn4o_OZg/exec';
 
 
 // =====================================================
@@ -857,8 +978,8 @@ const APPS_SCRIPT_URL =
 // =====================================================
 
 const SpeechRecognition =
-  window.SpeechRecognition ||
-  window.webkitSpeechRecognition;
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
 
 
 // =====================================================
@@ -927,19 +1048,24 @@ let voiceSpeed = 0.85;
 // =====================================================
 
 window.addEventListener(
-  'load',
-  function () {
+'load',
+function() {
 
-    loadLesson();
+loadLesson();
 
-    loadVoices();
+loadVoices();
 
-    setTimeout(
-      loadVoices,
-      500
-    );
+setTimeout(
+loadVoices,
+500
+);
 
-  }
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
+
+}
 );
 
 
@@ -947,14 +1073,12 @@ window.addEventListener(
 // 9. VOICES CHANGED
 // =====================================================
 
-if (
-  window.speechSynthesis
-) {
+if(window.speechSynthesis) {
 
-  window.speechSynthesis.addEventListener(
-    'voiceschanged',
-    loadVoices
-  );
+window.speechSynthesis.addEventListener(
+'voiceschanged',
+loadVoices
+);
 
 }
 
@@ -965,14 +1089,14 @@ if (
 
 function loadLesson() {
 
-  clearError();
+clearError();
 
-  clearSuccess();
+clearSuccess();
 
-  callApi(
-    'lesson',
-    {}
-  );
+callApi(
+'lesson',
+{}
+);
 
 }
 
@@ -983,182 +1107,150 @@ function loadLesson() {
 
 function loadVoices() {
 
-  if (
-    !window.speechSynthesis
-  ) {
+if(!window.speechSynthesis) {
 
-    return;
+return;
 
-  }
+}
 
+availableVoices =
+window.speechSynthesis.getVoices();
 
-  availableVoices =
-    window.speechSynthesis.getVoices();
+if(!availableVoices.length) {
 
+return;
 
-  if (
-    !availableVoices.length
-  ) {
+}
 
-    return;
+englishVoices =
+availableVoices.filter(
+function(voice) {
 
-  }
+return voice.lang &&
+voice.lang
+.toLowerCase()
+.startsWith('en');
 
+}
+);
 
-  englishVoices =
-    availableVoices.filter(
-      function (voice) {
 
-        return (
-          voice.lang &&
-          voice.lang
-            .toLowerCase()
-            .startsWith('en')
-        );
+const voicesToShow =
+englishVoices.length
+? englishVoices
+: availableVoices;
 
-      }
-    );
 
+const select =
+document.getElementById(
+'voiceSelect'
+);
 
-  const voicesToShow =
-    englishVoices.length
-      ? englishVoices
-      : availableVoices;
+if(!select) {
 
+return;
 
-  const select =
-    document.getElementById(
-      'voiceSelect'
-    );
+}
 
+select.innerHTML = '';
 
-  if (!select) {
 
-    return;
+voicesToShow.forEach(
+function(voice,index) {
 
-  }
+const option =
+document.createElement(
+'option'
+);
 
+option.value =
+String(index);
 
-  select.innerHTML = '';
+let label =
+voice.name;
 
+if(voice.lang) {
 
-  voicesToShow.forEach(
-    function (
-      voice,
-      index
-    ) {
+label +=
+' (' +
+voice.lang +
+')';
 
-      const option =
-        document.createElement(
-          'option'
-        );
+}
 
+option.textContent =
+label;
 
-      option.value =
-        String(index);
+select.appendChild(
+option
+);
 
+}
+);
 
-      let label =
-        voice.name;
 
+let defaultIndex =
+voicesToShow.findIndex(
+function(voice) {
 
-      if (
-        voice.lang
-      ) {
+return voice.lang &&
+voice.lang
+.toLowerCase() ===
+'en-us';
 
-        label +=
-          ' (' +
-          voice.lang +
-          ')';
+}
+);
 
-      }
 
+if(defaultIndex === -1) {
 
-      option.textContent =
-        label;
+defaultIndex =
+voicesToShow.findIndex(
+function(voice) {
 
+return voice.name
+.toLowerCase()
+.includes('google');
 
-      select.appendChild(
-        option
-      );
+}
+);
 
-    }
-  );
+}
 
 
-  let defaultIndex =
-    voicesToShow.findIndex(
-      function (voice) {
+if(defaultIndex === -1) {
 
-        return (
-          voice.lang &&
-          voice.lang
-            .toLowerCase() ===
-          'en-us'
-        );
+defaultIndex =
+voicesToShow.findIndex(
+function(voice) {
 
-      }
-    );
+return voice.name
+.toLowerCase()
+.includes('samantha');
 
+}
+);
 
-  if (
-    defaultIndex === -1
-  ) {
+}
 
-    defaultIndex =
-      voicesToShow.findIndex(
-        function (voice) {
 
-          return voice.name
-            .toLowerCase()
-            .includes('google');
+if(defaultIndex === -1) {
 
-        }
-      );
+defaultIndex = 0;
 
-  }
+}
 
 
-  if (
-    defaultIndex === -1
-  ) {
+select.value =
+String(defaultIndex);
 
-    defaultIndex =
-      voicesToShow.findIndex(
-        function (voice) {
+selectedVoiceIndex =
+defaultIndex;
 
-          return voice.name
-            .toLowerCase()
-            .includes('samantha');
-
-        }
-      );
-
-  }
-
-
-  if (
-    defaultIndex === -1
-  ) {
-
-    defaultIndex =
-      0;
-
-  }
-
-
-  select.value =
-    String(defaultIndex);
-
-
-  selectedVoiceIndex =
-    defaultIndex;
-
-
-  selectedVoice =
-    voicesToShow[
-      defaultIndex
-    ];
+selectedVoice =
+voicesToShow[
+defaultIndex
+];
 
 }
 
@@ -1169,54 +1261,47 @@ function loadVoices() {
 
 function changeVoice() {
 
-  const select =
-    document.getElementById(
-      'voiceSelect'
-    );
+const select =
+document.getElementById(
+'voiceSelect'
+);
+
+if(!select) {
+
+return;
+
+}
+
+const index =
+Number(
+select.value
+);
+
+const voicesToShow =
+englishVoices.length
+? englishVoices
+: availableVoices;
 
 
-  if (!select) {
+if(!voicesToShow[index]) {
 
-    return;
+return;
 
-  }
+}
 
+selectedVoiceIndex =
+index;
 
-  const index =
-    Number(
-      select.value
-    );
-
-
-  const voicesToShow =
-    englishVoices.length
-      ? englishVoices
-      : availableVoices;
+selectedVoice =
+voicesToShow[
+index
+];
 
 
-  if (
-    !voicesToShow[index]
-  ) {
-
-    return;
-
-  }
-
-
-  selectedVoiceIndex =
-    index;
-
-
-  selectedVoice =
-    voicesToShow[
-      index
-    ];
-
-
-  setVoiceStatus(
-    '🎙️ Đã chọn: ' +
-    selectedVoice.name
-  );
+setVoiceStatus(
+'🎙️ Đã chọn: ' +
+selectedVoice.name
+);
 
 }
 
@@ -1227,29 +1312,26 @@ function changeVoice() {
 
 function changeSpeed() {
 
-  const slider =
-    document.getElementById(
-      'voiceSpeed'
-    );
+const slider =
+document.getElementById(
+'voiceSpeed'
+);
 
+if(!slider) {
 
-  if (!slider) {
+return;
 
-    return;
+}
 
-  }
+voiceSpeed =
+Number(
+slider.value
+);
 
-
-  voiceSpeed =
-    Number(
-      slider.value
-    );
-
-
-  document.getElementById(
-    'speedValue'
-  ).innerText =
-    voiceSpeed.toFixed(2);
+document.getElementById(
+'speedValue'
+).innerText =
+voiceSpeed.toFixed(2);
 
 }
 
@@ -1260,14 +1342,13 @@ function changeSpeed() {
 
 function testTeacherVoice() {
 
-  const text =
-    'Hello! I am your English teacher. Let us practice English together.';
+const text =
+'Hello! I am your English teacher. Let us practice English together.';
 
-
-  speakTeacher(
-    text,
-    false
-  );
+speakTeacher(
+text,
+false
+);
 
 }
 
@@ -1278,46 +1359,45 @@ function testTeacherVoice() {
 
 function checkEnvironment() {
 
-  if (
-    location.protocol !== 'https:' &&
-    location.hostname !== 'localhost'
-  ) {
+if(
+location.protocol !== 'https:' &&
+location.hostname !== 'localhost'
+) {
 
-    showError(
-      'Website phải chạy bằng HTTPS.'
-    );
+showError(
+'Website phải chạy bằng HTTPS.'
+);
 
-    return false;
+return false;
 
-  }
-
-
-  if (
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices.getUserMedia
-  ) {
-
-    showError(
-      'Trình duyệt không hỗ trợ microphone.'
-    );
-
-    return false;
-
-  }
+}
 
 
-  if (!SpeechRecognition) {
+if(
+!navigator.mediaDevices ||
+!navigator.mediaDevices.getUserMedia
+) {
 
-    showError(
-      'Trình duyệt không hỗ trợ Speech Recognition.'
-    );
+showError(
+'Trình duyệt không hỗ trợ microphone.'
+);
 
-    return false;
+return false;
 
-  }
+}
 
 
-  return true;
+if(!SpeechRecognition) {
+
+showError(
+'Trình duyệt không hỗ trợ Speech Recognition.'
+);
+
+return false;
+
+}
+
+return true;
 
 }
 
@@ -1328,51 +1408,49 @@ function checkEnvironment() {
 
 async function requestMicrophonePermission() {
 
-  if (!checkEnvironment()) {
+if(!checkEnvironment()) {
 
-    return false;
+return false;
 
-  }
+}
 
+try {
 
-  try {
+microphoneStream =
+await navigator.mediaDevices.getUserMedia({
 
-    microphoneStream =
-      await navigator.mediaDevices.getUserMedia({
+audio: {
 
-        audio: {
+echoCancellation: true,
 
-          echoCancellation: true,
+noiseSuppression: true,
 
-          noiseSuppression: true,
+autoGainControl: true
 
-          autoGainControl: true
+}
 
-        }
-
-      });
-
-
-    setVoiceStatus(
-      '✅ Microphone đã được cấp quyền.'
-    );
+});
 
 
-    return true;
+setVoiceStatus(
+'✅ Microphone đã được cấp quyền.'
+);
 
-  }
+return true;
 
-  catch (error) {
+}
 
-    showError(
-      'Không thể truy cập microphone.\n\n' +
-      'Mã lỗi: ' +
-      (error.name || 'Unknown')
-    );
+catch(error) {
 
-    return false;
+showError(
+'Không thể truy cập microphone.\n\n' +
+'Mã lỗi: ' +
+(error.name || 'Unknown')
+);
 
-  }
+return false;
+
+}
 
 }
 
@@ -1383,54 +1461,48 @@ async function requestMicrophonePermission() {
 
 async function toggleConversation() {
 
-  if (isProcessing) {
+if(isProcessing) {
 
-    return;
+return;
 
-  }
+}
 
-
-  clearError();
-
-
-  if (!conversationActive) {
-
-    stopRequested =
-      false;
+clearError();
 
 
-    const granted =
-      await requestMicrophonePermission();
+if(!conversationActive) {
+
+stopRequested = false;
+
+const granted =
+await requestMicrophonePermission();
+
+if(!granted) {
+
+return;
+
+}
+
+conversationActive = true;
+
+startListening();
+
+return;
+
+}
 
 
-    if (!granted) {
+if(isListening) {
 
-      return;
+stopListening();
 
-    }
+}
 
+else {
 
-    conversationActive =
-      true;
+startListening();
 
-
-    startListening();
-
-    return;
-
-  }
-
-
-  if (isListening) {
-
-    stopListening();
-
-  }
-  else {
-
-    startListening();
-
-  }
+}
 
 }
 
@@ -1440,354 +1512,332 @@ async function toggleConversation() {
 // =====================================================
 
 function startListening() {
-  setAvatarStatus(
-    'listening',
-    'I'm listening to you...'
-  );
-  if (
-    !conversationActive ||
-    isProcessing ||
-    isListening ||
-    startingRecognition
-  ) {
 
-    return;
+if(
+!conversationActive ||
+isProcessing ||
+isListening ||
+startingRecognition
+) {
 
-  }
+return;
 
+}
 
-  if (!SpeechRecognition) {
 
-    showError(
-      'Speech Recognition không khả dụng.'
-    );
+if(!SpeechRecognition) {
 
-    return;
+showError(
+'Speech Recognition không khả dụng.'
+);
 
-  }
+return;
 
+}
 
-  if (
-    restartTimer
-  ) {
 
-    clearTimeout(
-      restartTimer
-    );
+if(restartTimer) {
 
-    restartTimer =
-      null;
+clearTimeout(
+restartTimer
+);
 
-  }
+restartTimer = null;
 
+}
 
-  startingRecognition =
-    true;
 
+startingRecognition = true;
 
-  stopRequested =
-    false;
+stopRequested = false;
 
+clearError();
 
-  clearError();
 
+setAvatarStatus(
+'listening',
+"I'm listening to you..."
+);
 
-  recognition =
-    new SpeechRecognition();
 
+recognition =
+new SpeechRecognition();
 
-  recognition.lang =
-    'en-US';
 
+recognition.lang =
+'en-US';
 
-  recognition.continuous =
-    false;
+recognition.continuous =
+false;
 
+recognition.interimResults =
+false;
 
-  recognition.interimResults =
-    false;
+recognition.maxAlternatives =
+1;
 
 
-  recognition.maxAlternatives =
-    1;
+recognition.onstart =
+function() {
 
+startingRecognition =
+false;
 
-  recognition.onstart =
-    function () {
+isListening =
+true;
 
-      startingRecognition =
-        false;
 
+const button =
+document.getElementById(
+'micButton'
+);
 
-      isListening =
-        true;
 
+button.classList.add(
+'listening'
+);
 
-      const button =
-        document.getElementById(
-          'micButton'
-        );
+button.classList.remove(
+'processing'
+);
 
+button.classList.remove(
+'ready'
+);
 
-      button.classList.add(
-        'listening'
-      );
 
+button.innerHTML =
+'🔴<br>ĐANG NGHE';
 
-      button.classList.remove(
-        'processing'
-      );
 
+setVoiceStatus(
+'🎤 Hãy nói tiếng Anh...'
+);
 
-      button.classList.remove(
-        'ready'
-      );
+};
 
 
-      button.innerHTML =
-        '🔴<br>ĐANG NGHE';
+recognition.onresult =
+function(event) {
 
+if(
+!event ||
+!event.results ||
+!event.results.length
+) {
 
-      setVoiceStatus(
-        '🎤 Hãy nói tiếng Anh...'
-      );
+return;
 
-    };
+}
 
 
-  recognition.onresult =
-    function (event) {
+const result =
+event.results[
+event.results.length - 1
+];
 
-      if (
-        !event ||
-        !event.results ||
-        !event.results.length
-      ) {
 
-        return;
+if(
+!result ||
+!result[0]
+) {
 
-      }
+return;
 
+}
 
-      const result =
-        event.results[
-          event.results.length - 1
-        ];
 
+const text =
+result[0]
+.transcript
+.trim();
 
-      if (
-        !result ||
-        !result[0]
-      ) {
 
-        return;
+if(!text) {
 
-      }
+return;
 
+}
 
-      const text =
-        result[0]
-          .transcript
-          .trim();
 
+addStudentMessage(
+text
+);
 
-      if (!text) {
+sendToTeacher(
+text
+);
 
-        return;
+};
 
-      }
 
+recognition.onerror =
+function(event) {
 
-      addStudentMessage(
-        text
-      );
+startingRecognition =
+false;
 
+isListening =
+false;
 
-      sendToTeacher(
-        text
-      );
 
-    };
+const errorCode =
+event &&
+event.error
+? event.error
+: 'unknown';
 
 
-  recognition.onerror =
-    function (event) {
+if(errorCode === 'aborted') {
 
-      startingRecognition =
-        false;
+console.log(
+'Speech Recognition aborted.'
+);
 
+resetMicButton();
 
-      isListening =
-        false;
 
+if(
+conversationActive &&
+!stopRequested &&
+!isProcessing
+) {
 
-      const errorCode =
-        event &&
-        event.error
-          ? event.error
-          : 'unknown';
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
+setVoiceStatus(
+'🎤 Phiên nghe vừa kết thúc. Bấm NÓI để tiếp tục.'
+);
 
-      /*
-       * ABORTED:
-       *
-       * Đây thường là phiên nghe bị kết thúc
-       * chứ không phải lỗi nghiêm trọng.
-       */
+}
 
-      if (
-        errorCode ===
-        'aborted'
-      ) {
+return;
 
-        console.log(
-          'Speech Recognition aborted.'
-        );
+}
 
 
-        resetMicButton();
+resetMicButton();
 
 
-        if (
-          conversationActive &&
-          !stopRequested &&
-          !isProcessing
-        ) {
+let message =
+'Speech Recognition lỗi: ' +
+errorCode;
 
-          setVoiceStatus(
-            '🎤 Phiên nghe vừa kết thúc. Bấm NÓI để tiếp tục.'
-          );
 
-        }
+if(
+errorCode === 'service-not-allowed'
+) {
 
+message =
+'Trình duyệt không cho phép dịch vụ Speech Recognition.\n\n' +
+'Trên iPhone hãy mở website bằng Safari thật.';
 
-        return;
+}
 
-      }
+else if(
+errorCode === 'not-allowed'
+) {
 
+message =
+'Speech Recognition bị trình duyệt từ chối.';
 
-      resetMicButton();
+}
 
+else if(
+errorCode === 'no-speech'
+) {
 
-      let message =
-        'Speech Recognition lỗi: ' +
-        errorCode;
+message =
+'Không nghe thấy giọng nói.\n\n' +
+'Hãy nói rõ và gần microphone hơn.';
 
+}
 
-      if (
-        errorCode ===
-        'service-not-allowed'
-      ) {
+else if(
+errorCode === 'audio-capture'
+) {
 
-        message =
-          'Trình duyệt không cho phép dịch vụ Speech Recognition.\n\n' +
-          'Trên iPhone hãy mở website bằng Safari thật.';
+message =
+'Không lấy được tín hiệu microphone.';
 
-      }
+}
 
+else if(
+errorCode === 'network'
+) {
 
-      else if (
-        errorCode ===
-        'not-allowed'
-      ) {
+message =
+'Speech Recognition gặp lỗi mạng.';
 
-        message =
-          'Speech Recognition bị trình duyệt từ chối.';
+}
 
-      }
 
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
-      else if (
-        errorCode ===
-        'no-speech'
-      ) {
+showError(
+message
+);
 
-        message =
-          'Không nghe thấy giọng nói.\n\n' +
-          'Hãy nói rõ và gần microphone hơn.';
+};
 
-      }
 
+recognition.onend =
+function() {
 
-      else if (
-        errorCode ===
-        'audio-capture'
-      ) {
+startingRecognition =
+false;
 
-        message =
-          'Không lấy được tín hiệu microphone.';
+isListening =
+false;
 
-      }
+resetMicButton();
 
 
-      else if (
-        errorCode ===
-        'network'
-      ) {
+if(
+conversationActive &&
+!stopRequested &&
+!isProcessing
+) {
 
-        message =
-          'Speech Recognition gặp lỗi mạng.';
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
-      }
+setVoiceStatus(
+'🎤 Phiên nghe đã kết thúc. Bấm NÓI để nói tiếp.'
+);
 
+}
 
-      showError(
-        message
-      );
+};
 
-    };
 
+try {
 
-  recognition.onend =
-    function () {
+recognition.start();
 
-      startingRecognition =
-        false;
+}
 
+catch(error) {
 
-      isListening =
-        false;
+startingRecognition =
+false;
 
+console.error(
+'recognition.start():',
+error
+);
 
-      resetMicButton();
+resetMicButton();
 
-
-      if (
-        conversationActive &&
-        !stopRequested &&
-        !isProcessing
-      ) {
-
-        setVoiceStatus(
-          '🎤 Phiên nghe đã kết thúc. Bấm NÓI để nói tiếp.'
-        );
-
-      }
-
-    };
-
-
-  try {
-
-    recognition.start();
-
-  }
-
-  catch (error) {
-
-    startingRecognition =
-      false;
-
-
-    console.error(
-      'recognition.start():',
-      error
-    );
-
-
-    resetMicButton();
-
-  }
+}
 
 }
 
@@ -1798,53 +1848,48 @@ function startListening() {
 
 function stopListening() {
 
-  stopRequested =
-    true;
+stopRequested =
+true;
 
 
-  if (
-    restartTimer
-  ) {
+if(restartTimer) {
 
-    clearTimeout(
-      restartTimer
-    );
+clearTimeout(
+restartTimer
+);
 
-    restartTimer =
-      null;
+restartTimer = null;
 
-  }
+}
 
 
-  if (recognition) {
+if(recognition) {
 
-    try {
+try {
 
-      recognition.stop();
+recognition.stop();
 
-    }
+}
 
-    catch (error) {
+catch(error) {
 
-      console.log(
-        'recognition.stop():',
-        error
-      );
+console.log(
+'recognition.stop():',
+error
+);
 
-    }
+}
 
-  }
-
-
-  isListening =
-    false;
+}
 
 
-  startingRecognition =
-    false;
+isListening =
+false;
 
+startingRecognition =
+false;
 
-  resetMicButton();
+resetMicButton();
 
 }
 
@@ -1855,38 +1900,36 @@ function stopListening() {
 
 function releaseMicrophone() {
 
-  if (!microphoneStream) {
+if(!microphoneStream) {
 
-    return;
+return;
 
-  }
-
-
-  microphoneStream
-    .getTracks()
-    .forEach(
-      function (track) {
-
-        try {
-
-          track.stop();
-
-        }
-
-        catch (error) {
-
-          console.log(
-            error
-          );
-
-        }
-
-      }
-    );
+}
 
 
-  microphoneStream =
-    null;
+microphoneStream
+.getTracks()
+.forEach(
+function(track) {
+
+try {
+
+track.stop();
+
+}
+
+catch(error) {
+
+console.log(error);
+
+}
+
+}
+);
+
+
+microphoneStream =
+null;
 
 }
 
@@ -1897,57 +1940,54 @@ function releaseMicrophone() {
 
 function stopConversation() {
 
-  conversationActive =
-    false;
+conversationActive =
+false;
+
+stopRequested =
+true;
+
+stopListening();
+
+releaseMicrophone();
 
 
-  stopRequested =
-    true;
+if(window.speechSynthesis) {
+
+window.speechSynthesis.cancel();
+
+}
 
 
-  stopListening();
+const button =
+document.getElementById(
+'micButton'
+);
 
 
-  releaseMicrophone();
+button.classList.remove(
+'listening'
+);
+
+button.classList.remove(
+'processing'
+);
+
+button.classList.add(
+'ready'
+);
+
+button.innerHTML =
+'🎤<br>BẮT ĐẦU';
 
 
-  if (
-    window.speechSynthesis
-  ) {
+setAvatarStatus(
+'ready',
+'Conversation stopped.'
+);
 
-    window.speechSynthesis.cancel();
-
-  }
-
-
-  const button =
-    document.getElementById(
-      'micButton'
-    );
-
-
-  button.classList.remove(
-    'listening'
-  );
-
-
-  button.classList.remove(
-    'processing'
-  );
-
-
-  button.classList.add(
-    'ready'
-  );
-
-
-  button.innerHTML =
-    '🎤<br>BẮT ĐẦU';
-
-
-  setVoiceStatus(
-    '⏹ Đã dừng cuộc hội thoại'
-  );
+setVoiceStatus(
+'⏹ Đã dừng cuộc hội thoại'
+);
 
 }
 
@@ -1958,50 +1998,44 @@ function stopConversation() {
 
 function resetMicButton() {
 
-  const button =
-    document.getElementById(
-      'micButton'
-    );
+const button =
+document.getElementById(
+'micButton'
+);
 
 
-  if (isProcessing) {
+if(isProcessing) {
 
-    button.classList.remove(
-      'listening'
-    );
+button.classList.remove(
+'listening'
+);
 
+button.classList.add(
+'processing'
+);
 
-    button.classList.add(
-      'processing'
-    );
+button.innerHTML =
+'🤖<br>AI';
 
+return;
 
-    button.innerHTML =
-      '🤖<br>AI';
-
-
-    return;
-
-  }
+}
 
 
-  button.classList.remove(
-    'listening'
-  );
+button.classList.remove(
+'listening'
+);
 
+button.classList.remove(
+'processing'
+);
 
-  button.classList.remove(
-    'processing'
-  );
+button.classList.remove(
+'ready'
+);
 
-
-  button.classList.remove(
-    'ready'
-  );
-
-
-  button.innerHTML =
-    '🎤<br>NÓI';
+button.innerHTML =
+'🎤<br>NÓI';
 
 }
 
@@ -2010,109 +2044,98 @@ function resetMicButton() {
 // 23. SEND TEACHER
 // =====================================================
 
-function sendToTeacher(
-  message
-) {
-  setAvatarStatus(
-    'thinking',
-    'Let me think...'
-  );
-  if (!message) {
+function sendToTeacher(message) {
 
-    return;
+if(!message) {
 
-  }
+return;
+
+}
 
 
-  isProcessing =
-    true;
+setAvatarStatus(
+'thinking',
+'Let me think...'
+);
 
 
-  stopRequested =
-    true;
+isProcessing =
+true;
+
+stopRequested =
+true;
 
 
-  /*
-   * Sau khi có câu nói,
-   * không khởi động recognition mới
-   * cho tới khi AI trả lời xong.
-   */
+if(recognition) {
 
-  if (recognition) {
+try {
 
-    try {
+recognition.stop();
 
-      recognition.stop();
+}
 
-    }
+catch(error) {
 
-    catch (error) {
+console.log(error);
 
-      console.log(
-        error
-      );
+}
 
-    }
-
-  }
+}
 
 
-  isListening =
-    false;
+isListening =
+false;
+
+resetMicButton();
 
 
-  resetMicButton();
+const button =
+document.getElementById(
+'micButton'
+);
+
+button.classList.add(
+'processing'
+);
+
+button.innerHTML =
+'🤖<br>AI';
 
 
-  const button =
-    document.getElementById(
-      'micButton'
-    );
+document.getElementById(
+'loading'
+).style.display =
+'block';
 
 
-  button.classList.add(
-    'processing'
-  );
+setVoiceStatus(
+'🤖 Giáo viên đang suy nghĩ...'
+);
 
 
-  button.innerHTML =
-    '🤖<br>AI';
+conversationHistory.push({
+
+role:
+'user',
+
+text:
+message
+
+});
 
 
-  document.getElementById(
-    'loading'
-  ).style.display =
-    'block';
+callApi(
+'chat',
+{
 
+message:
+message,
 
-  setVoiceStatus(
-    '🤖 Giáo viên đang suy nghĩ...'
-  );
+history:
+conversationHistory.slice(-6)
 
-
-  conversationHistory.push({
-
-    role:
-      'user',
-
-    text:
-      message
-
-  });
-
-
-  callApi(
-    'chat',
-    {
-
-      message:
-        message,
-
-      history:
-        conversationHistory.slice(-6)
-
-    }
-  );
+}
+);
 
 }
 
@@ -2121,228 +2144,228 @@ function sendToTeacher(
 // 24. API
 // =====================================================
 
-function callApi(
-  action,
-  payload
+function callApi(action,payload) {
+
+const callbackName =
+'apiCallback_' +
+Date.now() +
+'_' +
+Math.floor(
+Math.random() * 1000000
+);
+
+
+let finished =
+false;
+
+
+let script = null;
+
+
+const timeoutId =
+setTimeout(
+function() {
+
+if(finished) {
+
+return;
+
+}
+
+finished = true;
+
+delete window[
+callbackName
+];
+
+
+document.getElementById(
+'loading'
+).style.display =
+'none';
+
+isProcessing =
+false;
+
+resetMicButton();
+
+
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
+
+
+showError(
+'Apps Script không phản hồi sau 30 giây.'
+);
+
+},
+30000
+);
+
+
+window[callbackName] =
+function(response) {
+
+if(finished) {
+
+return;
+
+}
+
+finished = true;
+
+clearTimeout(
+timeoutId
+);
+
+
+try {
+
+handleActionResponse(
+action,
+response
+);
+
+}
+
+catch(error) {
+
+console.error(error);
+
+isProcessing =
+false;
+
+resetMicButton();
+
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
+
+showError(
+error.message
+);
+
+}
+
+
+delete window[
+callbackName
+];
+
+
+if(
+script &&
+script.parentNode
 ) {
 
-  const callbackName =
-    'apiCallback_' +
-    Date.now() +
-    '_' +
-    Math.floor(
-      Math.random() *
-      1000000
-    );
+script.parentNode.removeChild(
+script
+);
 
+}
 
-  let finished =
-    false;
+};
 
 
-  const timeoutId =
-    setTimeout(
-      function () {
+const params =
+new URLSearchParams();
 
-        if (finished) {
 
-          return;
+params.set(
+'api',
+'1'
+);
 
-        }
 
+params.set(
+'action',
+action
+);
 
-        finished =
-          true;
 
+params.set(
+'callback',
+callbackName
+);
 
-        delete window[
-          callbackName
-        ];
 
+if(payload) {
 
-        document.getElementById(
-          'loading'
-        ).style.display =
-          'none';
+params.set(
+'data',
+JSON.stringify(
+payload
+)
+);
 
+}
 
-        isProcessing =
-          false;
 
+script =
+document.createElement(
+'script'
+);
 
-        resetMicButton();
+script.async =
+true;
 
 
-        showError(
-          'Apps Script không phản hồi sau 30 giây.'
-        );
+script.src =
+APPS_SCRIPT_URL +
+'?' +
+params.toString();
 
-      },
-      30000
-    );
 
+script.onerror =
+function() {
 
-  window[callbackName] =
-    function (response) {
+if(finished) {
 
-      if (finished) {
+return;
 
-        return;
+}
 
-      }
+finished = true;
 
+clearTimeout(
+timeoutId
+);
 
-      finished =
-        true;
+delete window[
+callbackName
+];
 
 
-      clearTimeout(
-        timeoutId
-      );
+document.getElementById(
+'loading'
+).style.display =
+'none';
 
+isProcessing =
+false;
 
-      try {
+resetMicButton();
 
-        handleActionResponse(
-          action,
-          response
-        );
 
-      }
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
-      catch (error) {
 
-        console.error(
-          error
-        );
+showError(
+'Không kết nối được Apps Script.'
+);
 
+};
 
-        isProcessing =
-          false;
 
-
-        showError(
-          error.message
-        );
-
-      }
-
-
-      delete window[
-        callbackName
-      ];
-
-
-      if (
-        script.parentNode
-      ) {
-
-        script.parentNode.removeChild(
-          script
-        );
-
-      }
-
-    };
-
-
-  const params =
-    new URLSearchParams();
-
-
-  params.set(
-    'api',
-    '1'
-  );
-
-
-  params.set(
-    'action',
-    action
-  );
-
-
-  params.set(
-    'callback',
-    callbackName
-  );
-
-
-  if (payload) {
-
-    params.set(
-      'data',
-      JSON.stringify(
-        payload
-      )
-    );
-
-  }
-
-
-  const script =
-    document.createElement(
-      'script'
-    );
-
-
-  script.async =
-    true;
-
-
-  script.src =
-    APPS_SCRIPT_URL +
-    '?' +
-    params.toString();
-
-
-  script.onerror =
-    function () {
-
-      if (finished) {
-
-        return;
-
-      }
-
-
-      finished =
-        true;
-
-
-      clearTimeout(
-        timeoutId
-      );
-
-
-      delete window[
-        callbackName
-      ];
-
-
-      document.getElementById(
-        'loading'
-      ).style.display =
-        'none';
-
-
-      isProcessing =
-        false;
-
-
-      resetMicButton();
-
-
-      showError(
-        'Không kết nối được Apps Script.'
-      );
-
-    };
-
-
-  document.body.appendChild(
-    script
-  );
+document.body.appendChild(
+script
+);
 
 }
 
@@ -2352,72 +2375,66 @@ function callApi(
 // =====================================================
 
 function handleActionResponse(
-  action,
-  response
+action,
+response
 ) {
 
-  if (!response) {
+if(!response) {
 
-    throw new Error(
-      'API không trả về dữ liệu.'
-    );
+throw new Error(
+'API không trả về dữ liệu.'
+);
 
-  }
-
-
-  if (!response.success) {
-
-    document.getElementById(
-      'loading'
-    ).style.display =
-      'none';
+}
 
 
-    isProcessing =
-      false;
+if(!response.success) {
+
+document.getElementById(
+'loading'
+).style.display =
+'none';
+
+isProcessing =
+false;
+
+resetMicButton();
+
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
+
+showError(
+response.error ||
+'API xảy ra lỗi.'
+);
+
+return;
+
+}
 
 
-    resetMicButton();
+if(action === 'lesson') {
+
+document.getElementById(
+'lessonTopic'
+).innerText =
+response.data.topic ||
+'Bài học hiện tại';
+
+return;
+
+}
 
 
-    showError(
-      response.error ||
-      'API xảy ra lỗi.'
-    );
+if(action === 'chat') {
 
+handleTeacherResponse(
+response.data
+);
 
-    return;
-
-  }
-
-
-  if (
-    action ===
-    'lesson'
-  ) {
-
-    document.getElementById(
-      'lessonTopic'
-    ).innerText =
-      response.data.topic ||
-      'Bài học hiện tại';
-
-
-    return;
-
-  }
-
-
-  if (
-    action ===
-    'chat'
-  ) {
-
-    handleTeacherResponse(
-      response.data
-    );
-
-  }
+}
 
 }
 
@@ -2426,106 +2443,107 @@ function handleActionResponse(
 // 26. TEACHER RESPONSE
 // =====================================================
 
-function handleTeacherResponse(
-  data
-) {
+function handleTeacherResponse(data) {
 
-  isProcessing =
-    false;
+isProcessing =
+false;
 
-
-  stopRequested =
-    false;
+stopRequested =
+false;
 
 
-  document.getElementById(
-    'loading'
-  ).style.display =
-    'none';
+document.getElementById(
+'loading'
+).style.display =
+'none';
 
 
-  if (!data) {
+if(!data) {
 
-    resetMicButton();
+resetMicButton();
 
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
-    throw new Error(
-      'Giáo viên không trả về dữ liệu.'
-    );
+throw new Error(
+'Giáo viên không trả về dữ liệu.'
+);
 
-  }
-
-
-  const teacherText =
-    String(
-      data.reply ||
-      data.next ||
-      'Good!'
-    ).trim();
+}
 
 
-  lastTeacherText =
-    teacherText;
+const teacherText =
+String(
+data.reply ||
+data.next ||
+'Good!'
+).trim();
 
 
-  addTeacherMessage(
-    teacherText
-  );
+lastTeacherText =
+teacherText;
 
 
-  conversationHistory.push({
-
-    role:
-      'assistant',
-
-    text:
-      teacherText
-
-  });
+addTeacherMessage(
+teacherText
+);
 
 
-  showScore(
-    data
-  );
+conversationHistory.push({
+
+role:
+'assistant',
+
+text:
+teacherText
+
+});
 
 
-  document.getElementById(
-    'correction'
-  ).innerText =
-    data.correction ||
-    'Không có lỗi đáng kể.';
+showScore(
+data
+);
 
 
-  document.getElementById(
-    'correctSentence'
-  ).innerText =
-    data.correctSentence ||
-    '';
+document.getElementById(
+'correction'
+).innerText =
+data.correction ||
+'Không có lỗi đáng kể.';
 
 
-  document.getElementById(
-    'explanation'
-  ).innerText =
-    data.explanation ||
-    '';
+document.getElementById(
+'correctSentence'
+).innerText =
+data.correctSentence ||
+'';
 
 
-  document.getElementById(
-    'comment'
-  ).innerText =
-    data.comment ||
-    '';
+document.getElementById(
+'explanation'
+).innerText =
+data.explanation ||
+'';
 
 
-  showSuccess(
-    '✅ Giáo viên đã trả lời.'
-  );
+document.getElementById(
+'comment'
+).innerText =
+data.comment ||
+'';
 
 
-  speakTeacher(
-    teacherText,
-    true
-  );
+showSuccess(
+'✅ Giáo viên đã trả lời.'
+);
+
+
+speakTeacher(
+teacherText,
+true
+);
 
 }
 
@@ -2534,49 +2552,47 @@ function handleTeacherResponse(
 // 27. ADD STUDENT
 // =====================================================
 
-function addStudentMessage(
-  text
-) {
+function addStudentMessage(text) {
 
-  const chat =
-    document.getElementById(
-      'chat'
-    );
+const chat =
+document.getElementById(
+'chat'
+);
 
 
-  const message =
-    document.createElement(
-      'div'
-    );
+const message =
+document.createElement(
+'div'
+);
 
 
-  message.className =
-    'message student';
+message.className =
+'message student';
 
 
-  message.innerHTML =
+message.innerHTML =
 
-    '<div class="avatar">👨‍🎓</div>' +
+'<div class="avatar">👨‍🎓</div>' +
 
-    '<div class="bubble">' +
+'<div class="bubble">' +
 
-      '<div class="bubble-name">' +
-        'YOU' +
-      '</div>' +
+'<div class="bubble-name">' +
+'YOU' +
+'</div>' +
 
-      escapeHtml(
-        text
-      ) +
+escapeHtml(
+text
+) +
 
-    '</div>';
-
-
-  chat.appendChild(
-    message
-  );
+'</div>';
 
 
-  scrollChat();
+chat.appendChild(
+message
+);
+
+
+scrollChat();
 
 }
 
@@ -2585,49 +2601,47 @@ function addStudentMessage(
 // 28. ADD TEACHER
 // =====================================================
 
-function addTeacherMessage(
-  text
-) {
+function addTeacherMessage(text) {
 
-  const chat =
-    document.getElementById(
-      'chat'
-    );
+const chat =
+document.getElementById(
+'chat'
+);
 
 
-  const message =
-    document.createElement(
-      'div'
-    );
+const message =
+document.createElement(
+'div'
+);
 
 
-  message.className =
-    'message teacher';
+message.className =
+'message teacher';
 
 
-  message.innerHTML =
+message.innerHTML =
 
-    '<div class="avatar">🤖</div>' +
+'<div class="avatar">🤖</div>' +
 
-    '<div class="bubble">' +
+'<div class="bubble">' +
 
-      '<div class="bubble-name">' +
-        'TEACHER' +
-      '</div>' +
+'<div class="bubble-name">' +
+'TEACHER' +
+'</div>' +
 
-      escapeHtml(
-        text
-      ) +
+escapeHtml(
+text
+) +
 
-    '</div>';
-
-
-  chat.appendChild(
-    message
-  );
+'</div>';
 
 
-  scrollChat();
+chat.appendChild(
+message
+);
+
+
+scrollChat();
 
 }
 
@@ -2636,71 +2650,69 @@ function addTeacherMessage(
 // 29. SCORE
 // =====================================================
 
-function showScore(
-  data
-) {
+function showScore(data) {
 
-  document.getElementById(
-    'scoreCard'
-  ).style.display =
-    'block';
+document.getElementById(
+'scoreCard'
+).style.display =
+'block';
 
 
-  const score =
-    Number(
-      data.score || 0
-    );
+const score =
+Number(
+data.score || 0
+);
 
 
-  document.getElementById(
-    'mainScore'
-  ).innerText =
-    score +
-    '/100';
+document.getElementById(
+'mainScore'
+).innerText =
+score +
+'/100';
 
 
-  document.getElementById(
-    'progressBar'
-  ).style.width =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        score
-      )
-    ) +
-    '%';
+document.getElementById(
+'progressBar'
+).style.width =
+Math.max(
+0,
+Math.min(
+100,
+score
+)
+) +
+'%';
 
 
-  document.getElementById(
-    'vocabulary'
-  ).innerText =
-    data.vocabulary ?? 0;
+document.getElementById(
+'vocabulary'
+).innerText =
+data.vocabulary ?? 0;
 
 
-  document.getElementById(
-    'grammar'
-  ).innerText =
-    data.grammar ?? 0;
+document.getElementById(
+'grammar'
+).innerText =
+data.grammar ?? 0;
 
 
-  document.getElementById(
-    'fluency'
-  ).innerText =
-    data.fluency ?? 0;
+document.getElementById(
+'fluency'
+).innerText =
+data.fluency ?? 0;
 
 
-  document.getElementById(
-    'pronunciation'
-  ).innerText =
-    data.pronunciation ?? 0;
+document.getElementById(
+'pronunciation'
+).innerText =
+data.pronunciation ?? 0;
 
 
-  totalScore +=
-    score;
+totalScore +=
+score;
 
 
-  totalQuestions++;
+totalQuestions++;
 
 }
 
@@ -2710,184 +2722,183 @@ function showScore(
 // =====================================================
 
 function speakTeacher(
-  text,
-  autoContinue
+text,
+autoContinue
 ) {
 
-  if (!text) {
+if(!text) {
 
-    return;
+return;
 
-  }
+}
 
 
-  if (
-    !window.speechSynthesis
-  ) {
+if(!window.speechSynthesis) {
 
-    showError(
-      'Trình duyệt không hỗ trợ Text-to-Speech.'
-    );
+showError(
+'Trình duyệt không hỗ trợ Text-to-Speech.'
+);
 
-    return;
+return;
 
-  }
+}
 
 
-  if (
-    typeof autoContinue ===
-    'undefined'
-  ) {
+if(
+typeof autoContinue ===
+'undefined'
+) {
 
-    autoContinue =
-      true;
+autoContinue =
+true;
 
-  }
+}
 
 
-  window.speechSynthesis.cancel();
+window.speechSynthesis.cancel();
 
 
-  if (
-    !availableVoices.length
-  ) {
+if(!availableVoices.length) {
 
-    loadVoices();
+loadVoices();
 
-  }
+}
 
 
-  const speech =
-    new SpeechSynthesisUtterance(
-      text
-    );
+const speech =
+new SpeechSynthesisUtterance(
+text
+);
 
 
-  if (selectedVoice) {
+if(selectedVoice) {
 
-    speech.voice =
-      selectedVoice;
+speech.voice =
+selectedVoice;
 
+speech.lang =
+selectedVoice.lang ||
+'en-US';
 
-    speech.lang =
-      selectedVoice.lang ||
-      'en-US';
+}
 
-  }
+else {
 
-  else {
+speech.lang =
+'en-US';
 
-    speech.lang =
-      'en-US';
+}
 
-  }
 
+speech.rate =
+voiceSpeed;
 
-  speech.rate =
-    voiceSpeed;
+speech.pitch =
+1.0;
 
+speech.volume =
+1.0;
 
-  speech.pitch =
-    1.0;
 
+speech.onstart =
+function() {
 
-  speech.volume =
-    1.0;
+setAvatarStatus(
+'speaking',
+'Teacher is speaking...'
+);
 
+setVoiceStatus(
+'🔊 Giáo viên đang nói...'
+);
 
-  speech.onstart =
-    function () {
+};
 
-      setVoiceStatus(
-        '🔊 Giáo viên đang nói...'
-      );
 
-    };
+speech.onend =
+function() {
 
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
-  speech.onend =
-  function () {
 
-    setAvatarStatus(
-      'ready',
-      'What would you like to say?'
-    );
+if(!autoContinue) {
 
+setVoiceStatus(
+'✅ Đã thử giọng.'
+);
 
-    if (!autoContinue) {
+return;
 
-      setVoiceStatus(
-        '✅ Đã thử giọng.'
-      );
+}
 
-      return;
 
-    }
+if(
+conversationActive &&
+!stopRequested
+) {
 
-      if (
-        conversationActive &&
-        !stopRequested
-      ) {
+setVoiceStatus(
+'🎤 Đến lượt bạn nói'
+);
 
-        setVoiceStatus(
-          '🎤 Đến lượt bạn nói'
-        );
 
+restartTimer =
+setTimeout(
+function() {
 
-        /*
-         * Không tự start ngay lập tức.
-         * Safari/iPhone dễ phát sinh aborted
-         * nếu gọi start quá sát speechSynthesis.
-         */
+restartTimer =
+null;
 
-        restartTimer =
-          setTimeout(
-            function () {
 
-              restartTimer =
-                null;
+if(
+conversationActive &&
+!stopRequested &&
+!isProcessing &&
+!isListening &&
+!startingRecognition
+) {
 
+startListening();
 
-              if (
-                conversationActive &&
-                !stopRequested &&
-                !isProcessing &&
-                !isListening &&
-                !startingRecognition
-              ) {
+}
 
-                startListening();
+},
+1200
+);
 
-              }
+}
 
-            },
-            1200
-          );
+};
 
-      }
 
-    };
+speech.onerror =
+function(event) {
 
+console.error(
+'TTS error:',
+event
+);
 
-  speech.onerror =
-    function (event) {
 
-      console.error(
-        'TTS error:',
-        event
-      );
+setAvatarStatus(
+'ready',
+'What would you like to say?'
+);
 
 
-      setVoiceStatus(
-        '⚠️ Không đọc được giọng đã chọn.'
-      );
+setVoiceStatus(
+'⚠️ Không đọc được giọng đã chọn.'
+);
 
-    };
+};
 
 
-  window.speechSynthesis.speak(
-    speech
-  );
+window.speechSynthesis.speak(
+speech
+);
 
 }
 
@@ -2898,21 +2909,21 @@ function speakTeacher(
 
 function speakLastTeacherMessage() {
 
-  if (!lastTeacherText) {
+if(!lastTeacherText) {
 
-    showError(
-      'Chưa có câu trả lời của giáo viên.'
-    );
+showError(
+'Chưa có câu trả lời của giáo viên.'
+);
 
-    return;
+return;
 
-  }
+}
 
 
-  speakTeacher(
-    lastTeacherText,
-    false
-  );
+speakTeacher(
+lastTeacherText,
+false
+);
 
 }
 
@@ -2921,138 +2932,250 @@ function speakLastTeacherMessage() {
 // 32. STATUS
 // =====================================================
 
-function setVoiceStatus(
-  text
-) {
+function setVoiceStatus(text) {
 
-  document.getElementById(
-    'voiceStatus'
-  ).innerText =
-    text;
+const element =
+document.getElementById(
+'voiceStatus'
+);
+
+if(element) {
+
+element.innerText =
+text;
+
+}
 
 }
 
 
 // =====================================================
-// 33. ERROR
+// 33. AVATAR STATUS
 // =====================================================
 
-function showError(
-  message
+function setAvatarStatus(
+status,
+text
 ) {
 
-  const error =
-    document.getElementById(
-      'error'
-    );
+const avatar =
+document.getElementById(
+'aiAvatar'
+);
+
+const statusElement =
+document.getElementById(
+'avatarStatus'
+);
+
+const messageElement =
+document.getElementById(
+'avatarMessage'
+);
 
 
-  error.style.display =
-    'block';
+if(!avatar) {
+
+return;
+
+}
 
 
-  error.innerText =
-    '❌ ' +
-    message;
+avatar.classList.remove(
+'ready',
+'listening',
+'thinking',
+'speaking'
+);
+
+
+avatar.classList.add(
+status
+);
+
+
+if(statusElement) {
+
+if(status === 'listening') {
+
+statusElement.innerText =
+'🔴 LISTENING';
+
+}
+
+else if(status === 'thinking') {
+
+statusElement.innerText =
+'🧠 THINKING';
+
+}
+
+else if(status === 'speaking') {
+
+statusElement.innerText =
+'🔊 SPEAKING';
+
+}
+
+else {
+
+statusElement.innerText =
+'🟢 READY';
+
+}
+
+}
+
+
+if(messageElement) {
+
+messageElement.innerText =
+text || '';
+
+}
+
+
+if(status === 'listening') {
+
+avatar.innerText =
+'🎤';
+
+}
+
+else if(status === 'thinking') {
+
+avatar.innerText =
+'🧠';
+
+}
+
+else if(status === 'speaking') {
+
+avatar.innerText =
+'🗣️';
+
+}
+
+else {
+
+avatar.innerText =
+'🤖';
+
+}
+
+}
+
+
+// =====================================================
+// 34. ERROR
+// =====================================================
+
+function showError(message) {
+
+const error =
+document.getElementById(
+'error'
+);
+
+
+error.style.display =
+'block';
+
+error.innerText =
+'❌ ' +
+message;
 
 }
 
 
 function clearError() {
 
-  const error =
-    document.getElementById(
-      'error'
-    );
+const error =
+document.getElementById(
+'error'
+);
 
 
-  error.style.display =
-    'none';
+error.style.display =
+'none';
 
-
-  error.innerText =
-    '';
-
-}
-
-
-// =====================================================
-// 34. SUCCESS
-// =====================================================
-
-function showSuccess(
-  message
-) {
-
-  const success =
-    document.getElementById(
-      'success'
-    );
-
-
-  success.style.display =
-    'block';
-
-
-  success.innerText =
-    message;
-
-
-  setTimeout(
-    function () {
-
-      success.style.display =
-        'none';
-
-    },
-    3000
-  );
+error.innerText =
+'';
 
 }
 
 
 // =====================================================
-// 35. SCROLL
+// 35. SUCCESS
+// =====================================================
+
+function showSuccess(message) {
+
+const success =
+document.getElementById(
+'success'
+);
+
+
+success.style.display =
+'block';
+
+success.innerText =
+message;
+
+
+setTimeout(
+function() {
+
+success.style.display =
+'none';
+
+},
+3000
+);
+
+}
+
+
+// =====================================================
+// 36. SCROLL
 // =====================================================
 
 function scrollChat() {
 
-  const chat =
-    document.getElementById(
-      'chat'
-    );
+const chat =
+document.getElementById(
+'chat'
+);
 
 
-  chat.scrollTop =
-    chat.scrollHeight;
+chat.scrollTop =
+chat.scrollHeight;
 
 }
 
 
 // =====================================================
-// 36. ESCAPE HTML
+// 37. ESCAPE HTML
 // =====================================================
 
-function escapeHtml(
-  text
-) {
+function escapeHtml(text) {
 
-  const div =
-    document.createElement(
-      'div'
-    );
+const div =
+document.createElement(
+'div'
+);
 
 
-  div.innerText =
-    String(text);
+div.innerText =
+String(text);
 
 
-  return div.innerHTML;
+return div.innerHTML;
 
 }
 
 </script>
-
 
 </body>
 
