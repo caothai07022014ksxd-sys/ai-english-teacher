@@ -1,869 +1,25 @@
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-  <title>AI English Teacher</title>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #f4f7fb, #eef2f7);
-      color: #1f2937;
-    }
-
-    .container {
-      max-width: 950px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    /* ================================
-       HEADER
-    ================================= */
-
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      margin: 0;
-      color: #172554;
-      font-size: 32px;
-    }
-
-    .header p {
-      color: #64748b;
-      margin-top: 8px;
-    }
-
-    /* ================================
-       CARD
-    ================================= */
-
-    .lesson-card,
-    .chat-card,
-    .voice-card,
-    .score-card {
-      background: white;
-      border-radius: 18px;
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.07);
-    }
-
-    /* ================================
-       LESSON
-    ================================= */
-
-    .lesson-card {
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .lesson-label {
-      font-size: 13px;
-      font-weight: bold;
-      color: #64748b;
-    }
-
-    #lessonTopic {
-      margin-top: 6px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #2563eb;
-    }
-
-    /* ================================
-       CHAT
-    ================================= */
-
-    .chat-card {
-      min-height: 420px;
-      max-height: 560px;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .message {
-      display: flex;
-      margin-bottom: 18px;
-      width: 100%;
-    }
-
-    .teacher {
-      justify-content: flex-start;
-    }
-
-    .student {
-      justify-content: flex-end;
-    }
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 21px;
-    }
-
-    .teacher .avatar {
-      background: #dbeafe;
-      margin-right: 10px;
-    }
-
-    .student .avatar {
-      background: #dcfce7;
-      margin-left: 10px;
-      order: 2;
-    }
-
-    .bubble {
-      max-width: 75%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .teacher .bubble {
-      background: #f1f5f9;
-    }
-
-    .student .bubble {
-      background: #2563eb;
-      color: white;
-    }
-
-    .bubble-name {
-      font-size: 11px;
-      font-weight: bold;
-      opacity: 0.65;
-      margin-bottom: 5px;
-    }
-
-    /* ================================
-       VOICE CARD
-    ================================= */
-
-    .voice-card {
-      margin-top: 16px;
-      padding: 22px;
-      text-align: center;
-    }
-
-    .mic-button {
-      width: 145px;
-      height: 145px;
-      border: none;
-      border-radius: 50%;
-      background: #2563eb;
-      color: white;
-      font-size: 21px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25);
-    }
-
-    .mic-button:hover {
-      transform: scale(1.03);
-    }
-
-    .mic-button.listening {
-      background: #dc2626;
-      animation: pulse 1.2s infinite;
-    }
-
-    .mic-button.processing {
-      background: #f59e0b;
-      cursor: wait;
-    }
-
-    .mic-button.ready {
-      background: #15803d;
-    }
-
-    @keyframes pulse {
-
-      0% {
-        box-shadow:
-          0 0 0 0 rgba(220, 38, 38, 0.45);
-      }
-
-      70% {
-        box-shadow:
-          0 0 0 22px rgba(220, 38, 38, 0);
-      }
-
-      100% {
-        box-shadow:
-          0 0 0 0 rgba(220, 38, 38, 0);
-      }
-
-    }
-
-    #voiceStatus {
-      margin-top: 15px;
-      color: #64748b;
-      min-height: 24px;
-      line-height: 1.5;
-    }
-
-    /* ================================
-       BUTTONS
-    ================================= */
-
-    .control-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    .small-button {
-      border: none;
-      border-radius: 10px;
-      padding: 11px 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .stop-button {
-      background: #dc2626;
-      color: white;
-    }
-
-    .voice-button {
-      background: #475569;
-      color: white;
-    }
-
-    .test-voice-button {
-      background: #15803d;
-      color: white;
-      margin-top: 12px;
-    }
-
-    /* ================================
-       VOICE SETTINGS
-    ================================= */
-
-    .voice-settings {
-      margin-top: 18px;
-      padding: 16px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      text-align: left;
-    }
-
-    .voice-settings-title {
-      font-weight: bold;
-      color: #334155;
-      margin-bottom: 8px;
-    }
-
-    #voiceSelect {
-      width: 100%;
-      padding: 11px 12px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      background: white;
-      color: #334155;
-      font-size: 15px;
-      outline: none;
-    }
-
-    #voiceSelect:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-    }
-
-    .speed-row {
-      margin-top: 15px;
-    }
-
-    .speed-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      color: #475569;
-      font-size: 14px;
-    }
-
-    #speedValue {
-      color: #2563eb;
-      font-weight: bold;
-    }
-
-    #voiceSpeed {
-      width: 100%;
-      accent-color: #2563eb;
-    }
-
-    /* ================================
-       STATUS
-    ================================= */
-
-    .permission-box {
-      display: none;
-      margin-top: 15px;
-      padding: 13px;
-      border-radius: 10px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      text-align: left;
-      line-height: 1.6;
-    }
-
-    #loading {
-      display: none;
-      margin-top: 14px;
-      color: #2563eb;
-      font-weight: bold;
-    }
-
-    #error {
-      display: none;
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 10px;
-      color: #b91c1c;
-      background: #fef2f2;
-      white-space: pre-wrap;
-      text-align: left;
-    }
-
-    #success {
-      display: none;
-      margin-top: 16px;
-      padding: 12px;
-      border-radius: 10px;
-      color: #166534;
-      background: #f0fdf4;
-      text-align: left;
-    }
-
-    /* ================================
-       SCORE
-    ================================= */
-
-    .score-card {
-      margin-top: 16px;
-      padding: 20px;
-      display: none;
-    }
-
-    .score-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #172554;
-    }
-
-    .main-score {
-      text-align: center;
-      font-size: 44px;
-      font-weight: bold;
-      color: #a16207;
-      margin-top: 10px;
-    }
-
-    .progress {
-      width: 100%;
-      height: 14px;
-      background: #e5e7eb;
-      border-radius: 20px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-
-    #progressBar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #2563eb, #38bdf8);
-      transition: width 0.5s;
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .score-item {
-      text-align: center;
-      padding: 14px 8px;
-      background: #f8fafc;
-      border-radius: 12px;
-    }
-
-    .score-item span {
-      display: block;
-      color: #64748b;
-      font-size: 13px;
-    }
-
-    .score-item strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 24px;
-    }
-
-    /* ================================
-       FEEDBACK
-    ================================= */
-
-    .feedback {
-      margin-top: 18px;
-    }
-
-    .feedback-title {
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
-
-    .feedback-box {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 14px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
-
-    .correction {
-      border-left: 4px solid #f97316;
-      background: #fff7ed;
-    }
-
-    .correct {
-      border-left: 4px solid #16a34a;
-      background: #f0fdf4;
-    }
-
-    .explanation {
-      border-left: 4px solid #0284c7;
-      background: #f0f9ff;
-    }
-
-    .comment {
-      border-left: 4px solid #7c3aed;
-      background: #faf5ff;
-    }
-
-    /* ================================
-       MOBILE
-    ================================= */
-
-    @media (max-width: 700px) {
-
-      .container {
-        padding: 10px;
-      }
-
-      .header h1 {
-        font-size: 25px;
-      }
-
-      .bubble {
-        max-width: 85%;
-      }
-
-      .score-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .mic-button {
-        width: 125px;
-        height: 125px;
-        font-size: 18px;
-      }
-
-    }
-
-  </style>
-
-</head>
-
-
-<body>
-
-
-<div class="container">
-
-
-  <!-- HEADER -->
-
-  <div class="header">
-
-    <h1>
-      🇬🇧 AI English Teacher
-    </h1>
-
-    <p>
-      Nói chuyện trực tiếp với giáo viên AI
-    </p>
-
-  </div>
-
-
-  <!-- LESSON -->
-
-  <div class="lesson-card">
-
-    <div class="lesson-label">
-      📚 BÀI HỌC HIỆN TẠI
-    </div>
-
-    <div id="lessonTopic">
-      Đang tải bài học...
-    </div>
-
-  </div>
-
-
-  <!-- CHAT -->
-
-  <div
-    id="chat"
-    class="chat-card">
-
-    <div class="message teacher">
-
-      <div class="avatar">
-        🤖
-      </div>
-
-      <div class="bubble">
-
-        <div class="bubble-name">
-          TEACHER
-        </div>
-
-        <div>
-          Hello! I'm your English teacher.
-          Let's practice English together.
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- VOICE -->
-
-  <div class="voice-card">
-
-
-    <button
-      id="micButton"
-      class="mic-button"
-      onclick="toggleConversation()">
-
-      🎤
-      <br>
-      BẮT ĐẦU
-
-    </button>
-
-
-    <div id="voiceStatus">
-
-      Bấm nút để bắt đầu nói chuyện
-
-    </div>
-
-
-    <div
-      id="permissionBox"
-      class="permission-box">
-    </div>
-
-
-    <div class="control-buttons">
-
-      <button
-        class="small-button stop-button"
-        onclick="stopConversation()">
-
-        ⏹ DỪNG
-
-      </button>
-
-
-      <button
-        class="small-button voice-button"
-        onclick="speakLastTeacherMessage()">
-
-        🔊 NGHE LẠI
-
-      </button>
-
-    </div>
-
-
-    <!-- VOICE SETTINGS -->
-
-    <div class="voice-settings">
-
-      <div class="voice-settings-title">
-        🎙️ Giọng giáo viên
-      </div>
-
-
-      <select
-        id="voiceSelect"
-        onchange="changeVoice()">
-
-        <option value="">
-          Đang tải giọng...
-        </option>
-
-      </select>
-
-
-      <div class="speed-row">
-
-        <div class="speed-header">
-
-          <span>
-            🐢 Tốc độ nói
-          </span>
-
-          <span id="speedValue">
-            0.85
-          </span>
-
-        </div>
-
-
-        <input
-          id="voiceSpeed"
-          type="range"
-          min="0.60"
-          max="1.20"
-          step="0.05"
-          value="0.85"
-          oninput="changeSpeed()">
-
-      </div>
-
-
-      <button
-        class="small-button test-voice-button"
-        onclick="testTeacherVoice()">
-
-        🎧 THỬ GIỌNG
-
-      </button>
-
-    </div>
-
-
-    <div id="loading">
-      🤖 Giáo viên đang suy nghĩ...
-    </div>
-
-
-    <div id="error"></div>
-
-
-    <div id="success"></div>
-
-
-  </div>
-
-
-  <!-- SCORE -->
-
-  <div
-    id="scoreCard"
-    class="score-card">
-
-    <div class="score-title">
-      🏆 Kết quả lượt nói
-    </div>
-
-
-    <div
-      id="mainScore"
-      class="main-score">
-
-      0/100
-
-    </div>
-
-
-    <div class="progress">
-
-      <div id="progressBar"></div>
-
-    </div>
-
-
-    <div class="score-grid">
-
-
-      <div class="score-item">
-
-        <span>
-          📚 Từ vựng
-        </span>
-
-        <strong id="vocabulary">
-          0
-        </strong>
-
-      </div>
-
-
-      <div class="score-item">
-
-        <span>
-          📝 Ngữ pháp
-        </span>
-
-        <strong id="grammar">
-          0
-        </strong>
-
-      </div>
-
-
-      <div class="score-item">
-
-        <span>
-          💬 Phản xạ
-        </span>
-
-        <strong id="fluency">
-          0
-        </strong>
-
-      </div>
-
-
-      <div class="score-item">
-
-        <span>
-          🗣️ Phát âm
-        </span>
-
-        <strong id="pronunciation">
-          0
-        </strong>
-
-      </div>
-
-
-    </div>
-
-
-    <div class="feedback">
-
-      <div class="feedback-title">
-        ✏️ Sửa câu
-      </div>
-
-      <div
-        id="correction"
-        class="feedback-box correction">
-      </div>
-
-    </div>
-
-
-    <div class="feedback">
-
-      <div class="feedback-title">
-        ✅ Câu đúng
-      </div>
-
-      <div
-        id="correctSentence"
-        class="feedback-box correct">
-      </div>
-
-    </div>
-
-
-    <div class="feedback">
-
-      <div class="feedback-title">
-        💡 Giải thích
-      </div>
-
-      <div
-        id="explanation"
-        class="feedback-box explanation">
-      </div>
-
-    </div>
-
-
-    <div class="feedback">
-
-      <div class="feedback-title">
-        🎯 Nhận xét
-      </div>
-
-      <div
-        id="comment"
-        class="feedback-box comment">
-      </div>
-
-    </div>
-
-
-  </div>
-
-
-</div>
-
-
 <script>
 
-
-// =====================================================
-// 1. APPS SCRIPT
-// =====================================================
+/* =====================================================
+   1. APPS SCRIPT
+===================================================== */
 
 const APPS_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbybyMT34Odqd6jnDwHpqck_aizGYEWQjCo1jpuxD4Wc3LY_Hc-G3WHrQvUgkkYn4o_OZg/exec';
 
 
-// =====================================================
-// 2. SPEECH RECOGNITION
-// =====================================================
+/* =====================================================
+   2. SPEECH RECOGNITION
+===================================================== */
 
 const SpeechRecognition =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
 
 
-// =====================================================
-// 3. STATE
-// =====================================================
+/* =====================================================
+   3. STATE
+===================================================== */
 
 let recognition = null;
 
@@ -881,35 +37,37 @@ let stopRequested = false;
 
 let restartTimer = null;
 
+let recognitionGeneration = 0;
 
-// =====================================================
-// 4. HISTORY
-// =====================================================
+
+/* =====================================================
+   4. HISTORY
+===================================================== */
 
 let conversationHistory = [];
 
 
-// =====================================================
-// 5. TEACHER
-// =====================================================
+/* =====================================================
+   5. TEACHER
+===================================================== */
 
 let lastTeacherText = '';
 
 let lastCorrectSentence = '';
 
 
-// =====================================================
-// 6. SCORE
-// =====================================================
+/* =====================================================
+   6. SCORE
+===================================================== */
 
 let totalScore = 0;
 
 let totalQuestions = 0;
 
 
-// =====================================================
-// 7. VOICE
-// =====================================================
+/* =====================================================
+   7. VOICE
+===================================================== */
 
 let availableVoices = [];
 
@@ -922,9 +80,9 @@ let selectedVoiceIndex = -1;
 let voiceSpeed = 0.85;
 
 
-// =====================================================
-// 8. PAGE LOAD
-// =====================================================
+/* =====================================================
+   8. PAGE LOAD
+===================================================== */
 
 window.addEventListener(
   'load',
@@ -934,22 +92,27 @@ window.addEventListener(
 
     loadVoices();
 
+    changeSpeed();
+
     setTimeout(
       loadVoices,
-      500
+      300
+    );
+
+    setTimeout(
+      loadVoices,
+      1000
     );
 
   }
 );
 
 
-// =====================================================
-// 9. VOICES CHANGED
-// =====================================================
+/* =====================================================
+   9. VOICES CHANGED
+===================================================== */
 
-if (
-  window.speechSynthesis
-) {
+if (window.speechSynthesis) {
 
   window.speechSynthesis.addEventListener(
     'voiceschanged',
@@ -959,9 +122,9 @@ if (
 }
 
 
-// =====================================================
-// 10. LOAD LESSON
-// =====================================================
+/* =====================================================
+   10. LOAD LESSON
+===================================================== */
 
 function loadLesson() {
 
@@ -977,15 +140,13 @@ function loadLesson() {
 }
 
 
-// =====================================================
-// 11. LOAD VOICES
-// =====================================================
+/* =====================================================
+   11. LOAD VOICES
+===================================================== */
 
 function loadVoices() {
 
-  if (
-    !window.speechSynthesis
-  ) {
+  if (!window.speechSynthesis) {
 
     return;
 
@@ -996,9 +157,7 @@ function loadVoices() {
     window.speechSynthesis.getVoices();
 
 
-  if (
-    !availableVoices.length
-  ) {
+  if (!availableVoices.length) {
 
     return;
 
@@ -1039,6 +198,10 @@ function loadVoices() {
   }
 
 
+  const previousValue =
+    select.value;
+
+
   select.innerHTML = '';
 
 
@@ -1062,14 +225,20 @@ function loadVoices() {
         voice.name;
 
 
-      if (
-        voice.lang
-      ) {
+      if (voice.lang) {
 
         label +=
           ' (' +
           voice.lang +
           ')';
+
+      }
+
+
+      if (voice.default) {
+
+        label +=
+          ' ⭐';
 
       }
 
@@ -1086,24 +255,61 @@ function loadVoices() {
   );
 
 
-  let defaultIndex =
-    voicesToShow.findIndex(
-      function (voice) {
+  let defaultIndex = -1;
 
-        return (
-          voice.lang &&
-          voice.lang
-            .toLowerCase() ===
-          'en-us'
-        );
 
-      }
-    );
+  /*
+   * Ưu tiên:
+   *
+   * 1. Voice đang chọn
+   * 2. English US
+   * 3. Google
+   * 4. Samantha
+   * 5. Voice mặc định
+   * 6. Voice đầu tiên
+   */
 
 
   if (
-    defaultIndex === -1
+    selectedVoice &&
+    selectedVoice.name
   ) {
+
+    defaultIndex =
+      voicesToShow.findIndex(
+        function (voice) {
+
+          return (
+            voice.name ===
+            selectedVoice.name
+          );
+
+        }
+      );
+
+  }
+
+
+  if (defaultIndex === -1) {
+
+    defaultIndex =
+      voicesToShow.findIndex(
+        function (voice) {
+
+          return (
+            voice.lang &&
+            voice.lang
+              .toLowerCase() ===
+            'en-us'
+          );
+
+        }
+      );
+
+  }
+
+
+  if (defaultIndex === -1) {
 
     defaultIndex =
       voicesToShow.findIndex(
@@ -1119,9 +325,7 @@ function loadVoices() {
   }
 
 
-  if (
-    defaultIndex === -1
-  ) {
+  if (defaultIndex === -1) {
 
     defaultIndex =
       voicesToShow.findIndex(
@@ -1137,12 +341,57 @@ function loadVoices() {
   }
 
 
-  if (
-    defaultIndex === -1
-  ) {
+  if (defaultIndex === -1) {
 
     defaultIndex =
-      0;
+      voicesToShow.findIndex(
+        function (voice) {
+
+          return voice.default;
+
+        }
+      );
+
+  }
+
+
+  if (defaultIndex === -1) {
+
+    defaultIndex = 0;
+
+  }
+
+
+  /*
+   * Nếu voice cũ vẫn còn tồn tại
+   * thì giữ nguyên voice đó.
+   */
+
+  if (
+    previousValue !== '' &&
+    voicesToShow[
+      Number(previousValue)
+    ]
+  ) {
+
+    const oldVoice =
+      voicesToShow[
+        Number(previousValue)
+      ];
+
+
+    const sameVoice =
+      selectedVoice &&
+      oldVoice.name ===
+      selectedVoice.name;
+
+
+    if (sameVoice) {
+
+      defaultIndex =
+        Number(previousValue);
+
+    }
 
   }
 
@@ -1163,9 +412,9 @@ function loadVoices() {
 }
 
 
-// =====================================================
-// 12. CHANGE VOICE
-// =====================================================
+/* =====================================================
+   12. CHANGE VOICE
+===================================================== */
 
 function changeVoice() {
 
@@ -1194,9 +443,7 @@ function changeVoice() {
       : availableVoices;
 
 
-  if (
-    !voicesToShow[index]
-  ) {
+  if (!voicesToShow[index]) {
 
     return;
 
@@ -1208,9 +455,7 @@ function changeVoice() {
 
 
   selectedVoice =
-    voicesToShow[
-      index
-    ];
+    voicesToShow[index];
 
 
   setVoiceStatus(
@@ -1221,15 +466,21 @@ function changeVoice() {
 }
 
 
-// =====================================================
-// 13. CHANGE SPEED
-// =====================================================
+/* =====================================================
+   13. CHANGE SPEED
+===================================================== */
 
 function changeSpeed() {
 
   const slider =
     document.getElementById(
       'voiceSpeed'
+    );
+
+
+  const value =
+    document.getElementById(
+      'speedValue'
     );
 
 
@@ -1246,19 +497,24 @@ function changeSpeed() {
     );
 
 
-  document.getElementById(
-    'speedValue'
-  ).innerText =
-    voiceSpeed.toFixed(2);
+  if (value) {
+
+    value.innerText =
+      voiceSpeed.toFixed(2);
+
+  }
 
 }
 
 
-// =====================================================
-// 14. TEST VOICE
-// =====================================================
+/* =====================================================
+   14. TEST VOICE
+===================================================== */
 
 function testTeacherVoice() {
+
+  clearError();
+
 
   const text =
     'Hello! I am your English teacher. Let us practice English together.';
@@ -1272,9 +528,9 @@ function testTeacherVoice() {
 }
 
 
-// =====================================================
-// 15. ENVIRONMENT
-// =====================================================
+/* =====================================================
+   15. ENVIRONMENT
+===================================================== */
 
 function checkEnvironment() {
 
@@ -1322,15 +578,27 @@ function checkEnvironment() {
 }
 
 
-// =====================================================
-// 16. MICROPHONE
-// =====================================================
+/* =====================================================
+   16. MICROPHONE
+===================================================== */
 
 async function requestMicrophonePermission() {
 
   if (!checkEnvironment()) {
 
     return false;
+
+  }
+
+
+  /*
+   * Nếu microphone đã được cấp quyền
+   * thì không xin lại.
+   */
+
+  if (microphoneStream) {
+
+    return true;
 
   }
 
@@ -1364,11 +632,56 @@ async function requestMicrophonePermission() {
 
   catch (error) {
 
+    console.error(
+      'Microphone error:',
+      error
+    );
+
+
+    let message =
+      'Không thể truy cập microphone.';
+
+
+    if (
+      error.name ===
+      'NotAllowedError'
+    ) {
+
+      message =
+        'Bạn chưa cho phép website sử dụng microphone.\n\n' +
+        'Hãy bấm biểu tượng 🔒 trên thanh địa chỉ → Microphone → Allow.';
+
+    }
+
+
+    else if (
+      error.name ===
+      'NotFoundError'
+    ) {
+
+      message =
+        'Không tìm thấy microphone trên thiết bị.';
+
+    }
+
+
+    else if (
+      error.name ===
+      'NotReadableError'
+    ) {
+
+      message =
+        'Microphone đang được sử dụng bởi ứng dụng khác.';
+
+    }
+
+
     showError(
-      'Không thể truy cập microphone.\n\n' +
-      'Mã lỗi: ' +
+      message +
+      '\n\nMã lỗi: ' +
       (error.name || 'Unknown')
     );
+
 
     return false;
 
@@ -1377,9 +690,9 @@ async function requestMicrophonePermission() {
 }
 
 
-// =====================================================
-// 17. START / STOP CONVERSATION
-// =====================================================
+/* =====================================================
+   17. TOGGLE CONVERSATION
+===================================================== */
 
 async function toggleConversation() {
 
@@ -1392,6 +705,10 @@ async function toggleConversation() {
 
   clearError();
 
+
+  /*
+   * BẮT ĐẦU
+   */
 
   if (!conversationActive) {
 
@@ -1414,30 +731,50 @@ async function toggleConversation() {
       true;
 
 
+    setVoiceStatus(
+      '🎤 Chuẩn bị microphone...'
+    );
+
+
     startListening();
+
 
     return;
 
   }
 
 
+  /*
+   * Đang nghe → dừng lượt nghe
+   */
+
   if (isListening) {
 
     stopListening();
 
-  }
-  else {
 
-    startListening();
+    setVoiceStatus(
+      '⏸️ Đã tạm dừng. Bấm NÓI để tiếp tục.'
+    );
+
+
+    return;
 
   }
+
+
+  /*
+   * Không nghe → bắt đầu lượt mới
+   */
+
+  startListening();
 
 }
 
 
-// =====================================================
-// 18. START LISTENING
-// =====================================================
+/* =====================================================
+   18. START LISTENING
+===================================================== */
 
 function startListening() {
 
@@ -1464,9 +801,7 @@ function startListening() {
   }
 
 
-  if (
-    restartTimer
-  ) {
+  if (restartTimer) {
 
     clearTimeout(
       restartTimer
@@ -1487,6 +822,16 @@ function startListening() {
 
 
   clearError();
+
+
+  /*
+   * Mỗi phiên recognition có một ID riêng.
+   * Giúp tránh callback của phiên cũ
+   * làm ảnh hưởng phiên mới.
+   */
+
+  const currentGeneration =
+    ++recognitionGeneration;
 
 
   recognition =
@@ -1511,6 +856,16 @@ function startListening() {
 
   recognition.onstart =
     function () {
+
+      if (
+        currentGeneration !==
+        recognitionGeneration
+      ) {
+
+        return;
+
+      }
+
 
       startingRecognition =
         false;
@@ -1556,6 +911,16 @@ function startListening() {
     function (event) {
 
       if (
+        currentGeneration !==
+        recognitionGeneration
+      ) {
+
+        return;
+
+      }
+
+
+      if (
         !event ||
         !event.results ||
         !event.results.length
@@ -1595,6 +960,17 @@ function startListening() {
       }
 
 
+      /*
+       * Chỉ xử lý đúng một lần.
+       */
+
+      if (isProcessing) {
+
+        return;
+
+      }
+
+
       addStudentMessage(
         text
       );
@@ -1609,6 +985,16 @@ function startListening() {
 
   recognition.onerror =
     function (event) {
+
+      if (
+        currentGeneration !==
+        recognitionGeneration
+      ) {
+
+        return;
+
+      }
+
 
       startingRecognition =
         false;
@@ -1625,22 +1011,22 @@ function startListening() {
           : 'unknown';
 
 
+      console.log(
+        'Speech Recognition:',
+        errorCode
+      );
+
+
       /*
-       * ABORTED:
+       * ABORTED
        *
-       * Đây thường là phiên nghe bị kết thúc
-       * chứ không phải lỗi nghiêm trọng.
+       * Không coi đây là lỗi nghiêm trọng.
        */
 
       if (
         errorCode ===
         'aborted'
       ) {
-
-        console.log(
-          'Speech Recognition aborted.'
-        );
-
 
         resetMicButton();
 
@@ -1652,7 +1038,7 @@ function startListening() {
         ) {
 
           setVoiceStatus(
-            '🎤 Phiên nghe vừa kết thúc. Bấm NÓI để tiếp tục.'
+            '🎤 Phiên nghe đã kết thúc. Bấm NÓI để tiếp tục.'
           );
 
         }
@@ -1677,8 +1063,8 @@ function startListening() {
       ) {
 
         message =
-          'Trình duyệt không cho phép dịch vụ Speech Recognition.\n\n' +
-          'Trên iPhone hãy mở website bằng Safari thật.';
+          'Trình duyệt không cho phép Speech Recognition.\n\n' +
+          'Hãy thử Chrome trên máy tính hoặc Safari trên iPhone.';
 
       }
 
@@ -1689,7 +1075,8 @@ function startListening() {
       ) {
 
         message =
-          'Speech Recognition bị trình duyệt từ chối.';
+          'Speech Recognition bị trình duyệt từ chối.\n\n' +
+          'Hãy kiểm tra quyền Microphone của website.';
 
       }
 
@@ -1738,6 +1125,16 @@ function startListening() {
   recognition.onend =
     function () {
 
+      if (
+        currentGeneration !==
+        recognitionGeneration
+      ) {
+
+        return;
+
+      }
+
+
       startingRecognition =
         false;
 
@@ -1749,6 +1146,11 @@ function startListening() {
       resetMicButton();
 
 
+      /*
+       * Nếu vừa gửi câu cho AI
+       * thì không báo "đến lượt bạn".
+       */
+
       if (
         conversationActive &&
         !stopRequested &&
@@ -1756,7 +1158,7 @@ function startListening() {
       ) {
 
         setVoiceStatus(
-          '🎤 Phiên nghe đã kết thúc. Bấm NÓI để nói tiếp.'
+          '🎤 Đã nghe xong. Bấm NÓI để nói tiếp.'
         );
 
       }
@@ -1776,6 +1178,10 @@ function startListening() {
       false;
 
 
+    isListening =
+      false;
+
+
     console.error(
       'recognition.start():',
       error
@@ -1784,14 +1190,31 @@ function startListening() {
 
     resetMicButton();
 
+
+    /*
+     * Nếu trình duyệt báo recognition
+     * đang chạy thì không hiện lỗi đỏ.
+     */
+
+    if (
+      error.name !==
+      'InvalidStateError'
+    ) {
+
+      showError(
+        'Không thể bắt đầu nhận diện giọng nói.'
+      );
+
+    }
+
   }
 
 }
 
 
-// =====================================================
-// 19. STOP LISTENING
-// =====================================================
+/* =====================================================
+   19. STOP LISTENING
+===================================================== */
 
 function stopListening() {
 
@@ -1799,9 +1222,10 @@ function stopListening() {
     true;
 
 
-  if (
-    restartTimer
-  ) {
+  recognitionGeneration++;
+
+
+  if (restartTimer) {
 
     clearTimeout(
       restartTimer
@@ -1817,20 +1241,24 @@ function stopListening() {
 
     try {
 
-      recognition.stop();
+      recognition.abort();
 
     }
 
     catch (error) {
 
       console.log(
-        'recognition.stop():',
+        'recognition.abort():',
         error
       );
 
     }
 
   }
+
+
+  recognition =
+    null;
 
 
   isListening =
@@ -1846,9 +1274,9 @@ function stopListening() {
 }
 
 
-// =====================================================
-// 20. RELEASE MICROPHONE
-// =====================================================
+/* =====================================================
+   20. RELEASE MICROPHONE
+===================================================== */
 
 function releaseMicrophone() {
 
@@ -1888,9 +1316,9 @@ function releaseMicrophone() {
 }
 
 
-// =====================================================
-// 21. STOP CONVERSATION
-// =====================================================
+/* =====================================================
+   21. STOP CONVERSATION
+===================================================== */
 
 function stopConversation() {
 
@@ -1949,9 +1377,9 @@ function stopConversation() {
 }
 
 
-// =====================================================
-// 22. RESET MIC
-// =====================================================
+/* =====================================================
+   22. RESET MIC BUTTON
+===================================================== */
 
 function resetMicButton() {
 
@@ -1959,6 +1387,13 @@ function resetMicButton() {
     document.getElementById(
       'micButton'
     );
+
+
+  if (!button) {
+
+    return;
+
+  }
 
 
   if (isProcessing) {
@@ -1992,26 +1427,49 @@ function resetMicButton() {
   );
 
 
-  button.classList.remove(
-    'ready'
-  );
+  if (conversationActive) {
+
+    button.classList.remove(
+      'ready'
+    );
 
 
-  button.innerHTML =
-    '🎤<br>NÓI';
+    button.innerHTML =
+      '🎤<br>NÓI';
+
+  }
+
+  else {
+
+    button.classList.add(
+      'ready'
+    );
+
+
+    button.innerHTML =
+      '🎤<br>BẮT ĐẦU';
+
+  }
 
 }
 
 
-// =====================================================
-// 23. SEND TEACHER
-// =====================================================
+/* =====================================================
+   23. SEND TO TEACHER
+===================================================== */
 
 function sendToTeacher(
   message
 ) {
 
   if (!message) {
+
+    return;
+
+  }
+
+
+  if (isProcessing) {
 
     return;
 
@@ -2027,16 +1485,14 @@ function sendToTeacher(
 
 
   /*
-   * Sau khi có câu nói,
-   * không khởi động recognition mới
-   * cho tới khi AI trả lời xong.
+   * Dừng recognition hiện tại.
    */
 
   if (recognition) {
 
     try {
 
-      recognition.stop();
+      recognition.abort();
 
     }
 
@@ -2051,7 +1507,15 @@ function sendToTeacher(
   }
 
 
+  recognition =
+    null;
+
+
   isListening =
+    false;
+
+
+  startingRecognition =
     false;
 
 
@@ -2095,6 +1559,14 @@ function sendToTeacher(
   });
 
 
+  /*
+   * Chỉ giữ 8 message gần nhất.
+   */
+
+  const history =
+    conversationHistory.slice(-8);
+
+
   callApi(
     'chat',
     {
@@ -2103,7 +1575,7 @@ function sendToTeacher(
         message,
 
       history:
-        conversationHistory.slice(-6)
+        history
 
     }
   );
@@ -2111,9 +1583,9 @@ function sendToTeacher(
 }
 
 
-// =====================================================
-// 24. API
-// =====================================================
+/* =====================================================
+   24. API
+===================================================== */
 
 function callApi(
   action,
@@ -2215,8 +1687,18 @@ function callApi(
           false;
 
 
+        document.getElementById(
+          'loading'
+        ).style.display =
+          'none';
+
+
+        resetMicButton();
+
+
         showError(
-          error.message
+          error.message ||
+          'Lỗi không xác định.'
         );
 
       }
@@ -2228,6 +1710,7 @@ function callApi(
 
 
       if (
+        script &&
         script.parentNode
       ) {
 
@@ -2341,9 +1824,9 @@ function callApi(
 }
 
 
-// =====================================================
-// 25. HANDLE RESPONSE
-// =====================================================
+/* =====================================================
+   25. HANDLE RESPONSE
+===================================================== */
 
 function handleActionResponse(
   action,
@@ -2393,8 +1876,10 @@ function handleActionResponse(
     document.getElementById(
       'lessonTopic'
     ).innerText =
-      response.data.topic ||
-      'Bài học hiện tại';
+      response.data &&
+      response.data.topic
+        ? response.data.topic
+        : 'Bài học hiện tại';
 
 
     return;
@@ -2416,9 +1901,9 @@ function handleActionResponse(
 }
 
 
-// =====================================================
-// 26. TEACHER RESPONSE
-// =====================================================
+/* =====================================================
+   26. TEACHER RESPONSE
+===================================================== */
 
 function handleTeacherResponse(
   data
@@ -2460,6 +1945,11 @@ function handleTeacherResponse(
 
   lastTeacherText =
     teacherText;
+
+
+  lastCorrectSentence =
+    data.correctSentence ||
+    '';
 
 
   addTeacherMessage(
@@ -2516,6 +2006,11 @@ function handleTeacherResponse(
   );
 
 
+  /*
+   * Cho giáo viên nói.
+   * Sau khi nói xong → tự chuyển sang lượt người học.
+   */
+
   speakTeacher(
     teacherText,
     true
@@ -2524,9 +2019,9 @@ function handleTeacherResponse(
 }
 
 
-// =====================================================
-// 27. ADD STUDENT
-// =====================================================
+/* =====================================================
+   27. ADD STUDENT MESSAGE
+===================================================== */
 
 function addStudentMessage(
   text
@@ -2575,9 +2070,9 @@ function addStudentMessage(
 }
 
 
-// =====================================================
-// 28. ADD TEACHER
-// =====================================================
+/* =====================================================
+   28. ADD TEACHER MESSAGE
+===================================================== */
 
 function addTeacherMessage(
   text
@@ -2626,17 +2121,21 @@ function addTeacherMessage(
 }
 
 
-// =====================================================
-// 29. SCORE
-// =====================================================
+/* =====================================================
+   29. SCORE
+===================================================== */
 
 function showScore(
   data
 ) {
 
-  document.getElementById(
-    'scoreCard'
-  ).style.display =
+  const scoreCard =
+    document.getElementById(
+      'scoreCard'
+    );
+
+
+  scoreCard.style.display =
     'block';
 
 
@@ -2646,23 +2145,27 @@ function showScore(
     );
 
 
-  document.getElementById(
-    'mainScore'
-  ).innerText =
-    score +
-    '/100';
-
-
-  document.getElementById(
-    'progressBar'
-  ).style.width =
+  const safeScore =
     Math.max(
       0,
       Math.min(
         100,
         score
       )
-    ) +
+    );
+
+
+  document.getElementById(
+    'mainScore'
+  ).innerText =
+    safeScore +
+    '/100';
+
+
+  document.getElementById(
+    'progressBar'
+  ).style.width =
+    safeScore +
     '%';
 
 
@@ -2691,7 +2194,7 @@ function showScore(
 
 
   totalScore +=
-    score;
+    safeScore;
 
 
   totalQuestions++;
@@ -2699,9 +2202,9 @@ function showScore(
 }
 
 
-// =====================================================
-// 30. TEXT TO SPEECH
-// =====================================================
+/* =====================================================
+   30. TEXT TO SPEECH
+===================================================== */
 
 function speakTeacher(
   text,
@@ -2715,9 +2218,7 @@ function speakTeacher(
   }
 
 
-  if (
-    !window.speechSynthesis
-  ) {
+  if (!window.speechSynthesis) {
 
     showError(
       'Trình duyệt không hỗ trợ Text-to-Speech.'
@@ -2739,12 +2240,14 @@ function speakTeacher(
   }
 
 
+  /*
+   * Hủy giọng đang đọc trước đó.
+   */
+
   window.speechSynthesis.cancel();
 
 
-  if (
-    !availableVoices.length
-  ) {
+  if (!availableVoices.length) {
 
     loadVoices();
 
@@ -2824,9 +2327,8 @@ function speakTeacher(
 
 
         /*
-         * Không tự start ngay lập tức.
-         * Safari/iPhone dễ phát sinh aborted
-         * nếu gọi start quá sát speechSynthesis.
+         * Chờ một chút trước khi bật microphone.
+         * Điều này giúp giảm lỗi aborted trên Safari.
          */
 
         restartTimer =
@@ -2850,8 +2352,16 @@ function speakTeacher(
               }
 
             },
-            1200
+            1000
           );
+
+      }
+
+      else {
+
+        setVoiceStatus(
+          '⏸️ Cuộc hội thoại đã dừng.'
+        );
 
       }
 
@@ -2867,23 +2377,58 @@ function speakTeacher(
       );
 
 
-      setVoiceStatus(
-        '⚠️ Không đọc được giọng đã chọn.'
-      );
+      if (
+        conversationActive &&
+        !stopRequested
+      ) {
+
+        setVoiceStatus(
+          '⚠️ Không đọc được giọng. Bấm NÓI để tiếp tục.'
+        );
+
+      }
 
     };
 
 
-  window.speechSynthesis.speak(
-    speech
+  /*
+   * Một số trình duyệt cần delay rất ngắn
+   * trước khi gọi speak().
+   */
+
+  setTimeout(
+    function () {
+
+      try {
+
+        window.speechSynthesis.speak(
+          speech
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          error
+        );
+
+        showError(
+          'Không thể phát giọng giáo viên.'
+        );
+
+      }
+
+    },
+    50
   );
 
 }
 
 
-// =====================================================
-// 31. LISTEN AGAIN
-// =====================================================
+/* =====================================================
+   31. LISTEN AGAIN
+===================================================== */
 
 function speakLastTeacherMessage() {
 
@@ -2906,25 +2451,33 @@ function speakLastTeacherMessage() {
 }
 
 
-// =====================================================
-// 32. STATUS
-// =====================================================
+/* =====================================================
+   32. STATUS
+===================================================== */
 
 function setVoiceStatus(
   text
 ) {
 
-  document.getElementById(
-    'voiceStatus'
-  ).innerText =
-    text;
+  const element =
+    document.getElementById(
+      'voiceStatus'
+    );
+
+
+  if (element) {
+
+    element.innerText =
+      text;
+
+  }
 
 }
 
 
-// =====================================================
-// 33. ERROR
-// =====================================================
+/* =====================================================
+   33. ERROR
+===================================================== */
 
 function showError(
   message
@@ -2934,6 +2487,13 @@ function showError(
     document.getElementById(
       'error'
     );
+
+
+  if (!error) {
+
+    return;
+
+  }
 
 
   error.style.display =
@@ -2955,6 +2515,13 @@ function clearError() {
     );
 
 
+  if (!error) {
+
+    return;
+
+  }
+
+
   error.style.display =
     'none';
 
@@ -2965,9 +2532,9 @@ function clearError() {
 }
 
 
-// =====================================================
-// 34. SUCCESS
-// =====================================================
+/* =====================================================
+   34. SUCCESS
+===================================================== */
 
 function showSuccess(
   message
@@ -2977,6 +2544,13 @@ function showSuccess(
     document.getElementById(
       'success'
     );
+
+
+  if (!success) {
+
+    return;
+
+  }
 
 
   success.style.display =
@@ -3000,9 +2574,9 @@ function showSuccess(
 }
 
 
-// =====================================================
-// 35. SCROLL
-// =====================================================
+/* =====================================================
+   35. SCROLL
+===================================================== */
 
 function scrollChat() {
 
@@ -3012,15 +2586,22 @@ function scrollChat() {
     );
 
 
+  if (!chat) {
+
+    return;
+
+  }
+
+
   chat.scrollTop =
     chat.scrollHeight;
 
 }
 
 
-// =====================================================
-// 36. ESCAPE HTML
-// =====================================================
+/* =====================================================
+   36. ESCAPE HTML
+===================================================== */
 
 function escapeHtml(
   text
@@ -3040,9 +2621,57 @@ function escapeHtml(
 
 }
 
+
+/* =====================================================
+   37. PAGE UNLOAD
+===================================================== */
+
+window.addEventListener(
+  'beforeunload',
+  function () {
+
+    conversationActive =
+      false;
+
+
+    stopRequested =
+      true;
+
+
+    if (restartTimer) {
+
+      clearTimeout(
+        restartTimer
+      );
+
+    }
+
+
+    if (recognition) {
+
+      try {
+
+        recognition.abort();
+
+      }
+
+      catch (error) {}
+
+    }
+
+
+    releaseMicrophone();
+
+
+    if (
+      window.speechSynthesis
+    ) {
+
+      window.speechSynthesis.cancel();
+
+    }
+
+  }
+);
+
 </script>
-
-
-</body>
-
-</html>
