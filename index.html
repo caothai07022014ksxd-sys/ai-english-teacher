@@ -5,11 +5,16 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>AI English Teacher</title>
 
 <style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
 
 * {
   box-sizing: border-box;
@@ -28,9 +33,10 @@ body {
   padding: 20px;
 }
 
-/* ================================
+
+/* =====================================================
    HEADER
-================================ */
+===================================================== */
 
 .header {
   text-align: center;
@@ -48,276 +54,471 @@ body {
   margin-top: 8px;
 }
 
-/* ================================
-   CARD
-================================ */
+
+/* =====================================================
+   CARDS
+===================================================== */
 
 .lesson-card,
 .chat-card,
 .voice-card,
-.score-card {
+.score-card,
+.ai-avatar-card {
+
   background: white;
+
   border-radius: 18px;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+
+  box-shadow:
+    0 6px 25px rgba(0,0,0,0.07);
 }
 
-/* ================================
+
+/* =====================================================
    LESSON
-================================ */
+===================================================== */
 
 .lesson-card {
+
   padding: 18px;
+
   margin-bottom: 16px;
 }
 
 .lesson-label {
+
   font-size: 13px;
+
   font-weight: bold;
+
   color: #64748b;
 }
 
 #lessonTopic {
+
   margin-top: 6px;
+
   font-size: 20px;
+
   font-weight: bold;
+
   color: #2563eb;
 }
 
-/* ================================
+
+/* =====================================================
    CHAT
-================================ */
+===================================================== */
 
 .chat-card {
+
   min-height: 420px;
+
   max-height: 560px;
+
   overflow-y: auto;
+
   padding: 20px;
 }
 
 .message {
+
   display: flex;
+
   margin-bottom: 18px;
+
   width: 100%;
 }
 
 .teacher {
+
   justify-content: flex-start;
 }
 
 .student {
+
   justify-content: flex-end;
 }
 
 .avatar {
+
   width: 42px;
+
   height: 42px;
+
   border-radius: 50%;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   flex-shrink: 0;
+
   font-size: 21px;
 }
 
 .teacher .avatar {
+
   background: #dbeafe;
+
   margin-right: 10px;
 }
 
 .student .avatar {
+
   background: #dcfce7;
+
   margin-left: 10px;
+
   order: 2;
 }
 
 .bubble {
+
   max-width: 75%;
+
   padding: 14px 16px;
+
   border-radius: 16px;
+
   line-height: 1.55;
+
   white-space: pre-wrap;
+
   word-break: break-word;
 }
 
 .teacher .bubble {
+
   background: #f1f5f9;
 }
 
 .student .bubble {
+
   background: #2563eb;
+
   color: white;
 }
 
 .bubble-name {
+
   font-size: 11px;
+
   font-weight: bold;
+
   opacity: 0.65;
+
   margin-bottom: 5px;
 }
 
-/* ================================
-   AI AVATAR
-================================ */
+
+/* =====================================================
+   AI HUMAN TEACHER
+===================================================== */
 
 .ai-avatar-card {
+
   margin-top: 16px;
-  background: white;
-  border-radius: 20px;
+
   padding: 24px;
+
   text-align: center;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+
+  overflow: hidden;
 }
 
-.ai-avatar {
-  width: 110px;
-  height: 110px;
+
+/* Main human avatar */
+
+.ai-human-avatar {
+
+  position: relative;
+
+  width: min(100%, 420px);
+
+  height: 480px;
+
   margin: auto;
-  border-radius: 50%;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dbeafe,
+      #eff6ff
+    );
+
+  box-shadow:
+    0 15px 40px rgba(15,23,42,0.18);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+/* Teacher image */
+
+#teacherImage {
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  object-position: center top;
+
+  display: block;
+}
+
+
+/* Fallback */
+
+.teacher-fallback {
+
+  position: absolute;
+
+  inset: 0;
+
   display: flex;
+
+  flex-direction: column;
+
   align-items: center;
+
   justify-content: center;
-  font-size: 55px;
-  background: #dbeafe;
-  transition: 0.3s;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dbeafe,
+      #eff6ff
+    );
+
+  color: #1e3a8a;
 }
 
-.ai-avatar.listening {
-  background: #fee2e2;
-  animation: avatarPulse 1.2s infinite;
+.teacher-fallback-icon {
+
+  font-size: 100px;
+
+  margin-bottom: 10px;
 }
 
-.ai-avatar.thinking {
-  background: #fef3c7;
-  animation: thinkingPulse 1s infinite;
+.teacher-fallback-name {
+
+  font-size: 24px;
+
+  font-weight: bold;
 }
 
-.ai-avatar.speaking {
-  background: #dcfce7;
-  animation: speakingPulse 0.8s infinite;
+.teacher-fallback-role {
+
+  margin-top: 6px;
+
+  color: #64748b;
 }
 
-.ai-avatar.ready {
-  background: #dbeafe;
+
+/* Status overlay */
+
+.teacher-status-overlay {
+
+  position: absolute;
+
+  left: 15px;
+
+  right: 15px;
+
+  bottom: 15px;
+
+  padding: 12px 15px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(15,23,42,0.78);
+
+  backdrop-filter: blur(8px);
+
+  color: white;
+
+  text-align: left;
 }
 
-@keyframes avatarPulse {
+.teacher-status-title {
 
-  0% {
+  font-size: 13px;
+
+  font-weight: bold;
+
+  letter-spacing: 0.5px;
+}
+
+.teacher-status-message {
+
+  margin-top: 4px;
+
+  font-size: 13px;
+
+  opacity: 0.9;
+}
+
+
+/* =====================================================
+   AVATAR STATES
+===================================================== */
+
+.ai-human-avatar.listening {
+
+  transform: scale(1.015);
+
+  box-shadow:
+    0 0 0 5px rgba(220,38,38,0.15),
+    0 15px 45px rgba(220,38,38,0.18);
+}
+
+.ai-human-avatar.thinking {
+
+  box-shadow:
+    0 0 0 5px rgba(245,158,11,0.15),
+    0 15px 45px rgba(245,158,11,0.18);
+}
+
+.ai-human-avatar.speaking {
+
+  animation:
+    teacherSpeaking 0.8s infinite alternate;
+}
+
+@keyframes teacherSpeaking {
+
+  from {
+
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(220,38,38,0.35);
+
+    box-shadow:
+      0 15px 40px rgba(22,163,74,0.15);
   }
 
-  70% {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 20px rgba(220,38,38,0);
-  }
+  to {
 
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(220,38,38,0);
-  }
+    transform: scale(1.02);
 
-}
-
-@keyframes thinkingPulse {
-
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
+    box-shadow:
+      0 0 0 7px rgba(22,163,74,0.12),
+      0 15px 45px rgba(22,163,74,0.22);
   }
 
 }
 
-@keyframes speakingPulse {
 
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.08);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-
-}
+/* Small status below avatar */
 
 #avatarStatus {
-  margin-top: 12px;
+
+  margin-top: 15px;
+
   font-size: 15px;
+
   font-weight: bold;
+
   color: #475569;
 }
 
 #avatarMessage {
+
   margin-top: 5px;
+
   color: #64748b;
 }
 
-/* ================================
+
+/* =====================================================
    VOICE
-================================ */
+===================================================== */
 
 .voice-card {
+
   margin-top: 16px;
+
   padding: 22px;
+
   text-align: center;
 }
 
 .mic-button {
+
   width: 145px;
+
   height: 145px;
+
   border: none;
+
   border-radius: 50%;
+
   background: #2563eb;
+
   color: white;
+
   font-size: 21px;
+
   font-weight: bold;
+
   cursor: pointer;
+
   transition: 0.2s;
-  box-shadow: 0 10px 30px rgba(37,99,235,0.25);
+
+  box-shadow:
+    0 10px 30px rgba(37,99,235,0.25);
 }
 
 .mic-button:hover {
+
   transform: scale(1.03);
 }
 
 .mic-button.listening {
+
   background: #dc2626;
+
   animation: pulse 1.2s infinite;
 }
 
 .mic-button.processing {
+
   background: #f59e0b;
+
   cursor: wait;
 }
 
 .mic-button.ready {
+
   background: #15803d;
 }
 
 @keyframes pulse {
 
   0% {
+
     box-shadow:
       0 0 0 0 rgba(220,38,38,0.45);
   }
 
   70% {
+
     box-shadow:
       0 0 0 22px rgba(220,38,38,0);
   }
 
   100% {
+
     box-shadow:
       0 0 0 0 rgba(220,38,38,0);
   }
@@ -325,282 +526,442 @@ body {
 }
 
 #voiceStatus {
+
   margin-top: 15px;
+
   color: #64748b;
+
   min-height: 24px;
+
   line-height: 1.5;
 }
 
-/* ================================
+
+/* =====================================================
    BUTTONS
-================================ */
+===================================================== */
 
 .control-buttons {
+
   display: flex;
+
   justify-content: center;
+
   gap: 10px;
+
   flex-wrap: wrap;
+
   margin-top: 15px;
 }
 
 .small-button {
+
   border: none;
+
   border-radius: 10px;
+
   padding: 11px 16px;
+
   font-weight: bold;
+
   cursor: pointer;
 }
 
 .stop-button {
+
   background: #dc2626;
+
   color: white;
 }
 
 .voice-button {
+
   background: #475569;
+
   color: white;
 }
 
 .test-voice-button {
+
   background: #15803d;
+
   color: white;
+
   margin-top: 12px;
 }
 
-/* ================================
+
+/* =====================================================
    VOICE SETTINGS
-================================ */
+===================================================== */
 
 .voice-settings {
+
   margin-top: 18px;
+
   padding: 16px;
+
   background: #f8fafc;
+
   border: 1px solid #e2e8f0;
+
   border-radius: 14px;
+
   text-align: left;
 }
 
 .voice-settings-title {
+
   font-weight: bold;
+
   color: #334155;
+
   margin-bottom: 8px;
 }
 
 #voiceSelect {
+
   width: 100%;
+
   padding: 11px 12px;
+
   border-radius: 10px;
+
   border: 1px solid #cbd5e1;
+
   background: white;
+
   color: #334155;
+
   font-size: 15px;
+
   outline: none;
 }
 
 #voiceSelect:focus {
+
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+
+  box-shadow:
+    0 0 0 3px rgba(37,99,235,0.12);
 }
 
 .speed-row {
+
   margin-top: 15px;
 }
 
 .speed-header {
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   margin-bottom: 6px;
+
   color: #475569;
+
   font-size: 14px;
 }
 
 #speedValue {
+
   color: #2563eb;
+
   font-weight: bold;
 }
 
 #voiceSpeed {
+
   width: 100%;
+
   accent-color: #2563eb;
 }
 
-/* ================================
+
+/* =====================================================
    STATUS
-================================ */
+===================================================== */
 
 .permission-box {
+
   display: none;
+
   margin-top: 15px;
+
   padding: 13px;
+
   border-radius: 10px;
+
   background: #eff6ff;
+
   color: #1d4ed8;
+
   text-align: left;
+
   line-height: 1.6;
 }
 
 #loading {
+
   display: none;
+
   margin-top: 14px;
+
   color: #2563eb;
+
   font-weight: bold;
 }
 
 #error {
+
   display: none;
+
   margin-top: 16px;
+
   padding: 12px;
+
   border-radius: 10px;
+
   color: #b91c1c;
+
   background: #fef2f2;
+
   white-space: pre-wrap;
+
   text-align: left;
 }
 
 #success {
+
   display: none;
+
   margin-top: 16px;
+
   padding: 12px;
+
   border-radius: 10px;
+
   color: #166534;
+
   background: #f0fdf4;
+
   text-align: left;
 }
 
-/* ================================
+
+/* =====================================================
    SCORE
-================================ */
+===================================================== */
 
 .score-card {
+
   margin-top: 16px;
+
   padding: 20px;
+
   display: none;
 }
 
 .score-title {
+
   font-size: 20px;
+
   font-weight: bold;
+
   color: #172554;
 }
 
 .main-score {
+
   text-align: center;
+
   font-size: 44px;
+
   font-weight: bold;
+
   color: #a16207;
+
   margin-top: 10px;
 }
 
 .progress {
+
   width: 100%;
+
   height: 14px;
+
   background: #e5e7eb;
+
   border-radius: 20px;
+
   overflow: hidden;
+
   margin-top: 12px;
 }
 
 #progressBar {
+
   width: 0%;
+
   height: 100%;
-  background: linear-gradient(90deg,#2563eb,#38bdf8);
-  transition: width 0.5s;
+
+  background:
+    linear-gradient(
+      90deg,
+      #2563eb,
+      #38bdf8
+    );
+
+  transition:
+    width 0.5s;
 }
 
 .score-grid {
+
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+
+  grid-template-columns:
+    repeat(4,1fr);
+
   gap: 10px;
+
   margin-top: 18px;
 }
 
 .score-item {
+
   text-align: center;
+
   padding: 14px 8px;
+
   background: #f8fafc;
+
   border-radius: 12px;
 }
 
 .score-item span {
+
   display: block;
+
   color: #64748b;
+
   font-size: 13px;
 }
 
 .score-item strong {
+
   display: block;
+
   margin-top: 5px;
+
   font-size: 24px;
 }
 
-/* ================================
+
+/* =====================================================
    FEEDBACK
-================================ */
+===================================================== */
 
 .feedback {
+
   margin-top: 18px;
 }
 
 .feedback-title {
+
   font-weight: bold;
+
   margin-bottom: 7px;
 }
 
 .feedback-box {
+
   background: #f8fafc;
+
   border-radius: 10px;
+
   padding: 14px;
+
   line-height: 1.6;
+
   white-space: pre-wrap;
 }
 
 .correction {
-  border-left: 4px solid #f97316;
+
+  border-left:
+    4px solid #f97316;
+
   background: #fff7ed;
 }
 
 .correct {
-  border-left: 4px solid #16a34a;
+
+  border-left:
+    4px solid #16a34a;
+
   background: #f0fdf4;
 }
 
 .explanation {
-  border-left: 4px solid #0284c7;
+
+  border-left:
+    4px solid #0284c7;
+
   background: #f0f9ff;
 }
 
 .comment {
-  border-left: 4px solid #7c3aed;
+
+  border-left:
+    4px solid #7c3aed;
+
   background: #faf5ff;
 }
 
-/* ================================
+
+/* =====================================================
    MOBILE
-================================ */
+===================================================== */
 
 @media (max-width:700px) {
 
   .container {
+
     padding: 10px;
   }
 
   .header h1 {
+
     font-size: 25px;
   }
 
   .bubble {
+
     max-width: 85%;
   }
 
   .score-grid {
-    grid-template-columns: repeat(2,1fr);
+
+    grid-template-columns:
+      repeat(2,1fr);
   }
 
   .mic-button {
+
     width: 125px;
+
     height: 125px;
+
     font-size: 18px;
+  }
+
+  .ai-human-avatar {
+
+    height: 430px;
   }
 
 }
@@ -609,11 +970,15 @@ body {
 
 </head>
 
+
 <body>
 
 <div class="container">
 
-<!-- HEADER -->
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <div class="header">
 
@@ -628,7 +993,9 @@ Nói chuyện trực tiếp với giáo viên AI
 </div>
 
 
-<!-- LESSON -->
+<!-- =====================================================
+     LESSON
+===================================================== -->
 
 <div class="lesson-card">
 
@@ -643,20 +1010,116 @@ Nói chuyện trực tiếp với giáo viên AI
 </div>
 
 
-<!-- CHAT -->
+<!-- =====================================================
+     AI HUMAN TEACHER
+===================================================== -->
 
-<div id="chat" class="chat-card">
+<div class="ai-avatar-card">
+
+<div
+class="ai-human-avatar ready"
+id="aiAvatar">
+
+
+<!--
+  ẢNH GIÁO VIÊN NGƯỜI THẬT
+
+  File cần đặt cùng thư mục với index.html:
+
+  teacher.png
+-->
+
+<img
+id="teacherImage"
+src="teacher.png"
+alt="Anna - AI English Teacher"
+onerror="showTeacherFallback()"
+>
+
+
+<!-- FALLBACK -->
+
+<div
+id="teacherFallback"
+class="teacher-fallback"
+style="display:none;">
+
+<div class="teacher-fallback-icon">
+👩‍🏫
+</div>
+
+<div class="teacher-fallback-name">
+Anna
+</div>
+
+<div class="teacher-fallback-role">
+AI English Teacher
+</div>
+
+</div>
+
+
+<!-- STATUS OVERLAY -->
+
+<div class="teacher-status-overlay">
+
+<div
+id="teacherStatusTitle"
+class="teacher-status-title">
+
+🟢 READY
+
+</div>
+
+<div
+id="teacherStatusMessage"
+class="teacher-status-message">
+
+What would you like to say?
+
+</div>
+
+</div>
+
+</div>
+
+
+<div
+id="avatarStatus">
+
+🟢 READY
+
+</div>
+
+
+<div
+id="avatarMessage">
+
+What would you like to say?
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     CHAT
+===================================================== -->
+
+<div
+id="chat"
+class="chat-card">
 
 <div class="message teacher">
 
 <div class="avatar">
-🤖
+👩‍🏫
 </div>
 
 <div class="bubble">
 
 <div class="bubble-name">
-TEACHER
+ANNA
 </div>
 
 <div>
@@ -671,38 +1134,12 @@ Let's practice English together.
 </div>
 
 
-<!-- AI AVATAR -->
-
-<div class="ai-avatar-card">
-
-<div
-id="aiAvatar"
-class="ai-avatar ready">
-
-🤖
-
-</div>
-
-<div
-id="avatarStatus">
-
-READY
-
-</div>
-
-<div
-id="avatarMessage">
-
-What would you like to say?
-
-</div>
-
-</div>
-
-
-<!-- VOICE -->
+<!-- =====================================================
+     VOICE
+===================================================== -->
 
 <div class="voice-card">
+
 
 <button
 id="micButton"
@@ -714,6 +1151,7 @@ onclick="toggleConversation()">
 BẮT ĐẦU
 
 </button>
+
 
 <div id="voiceStatus">
 
@@ -729,6 +1167,7 @@ class="permission-box">
 
 
 <div class="control-buttons">
+
 
 <button
 class="small-button stop-button"
@@ -747,16 +1186,23 @@ onclick="speakLastTeacherMessage()">
 
 </button>
 
+
 </div>
 
 
-<!-- VOICE SETTINGS -->
+<!-- =====================================================
+     VOICE SETTINGS
+===================================================== -->
 
 <div class="voice-settings">
 
+
 <div class="voice-settings-title">
+
 🎙️ Giọng giáo viên
+
 </div>
+
 
 <select
 id="voiceSelect"
@@ -771,6 +1217,7 @@ onchange="changeVoice()">
 
 <div class="speed-row">
 
+
 <div class="speed-header">
 
 <span>
@@ -782,6 +1229,7 @@ onchange="changeVoice()">
 </span>
 
 </div>
+
 
 <input
 id="voiceSpeed"
@@ -807,8 +1255,11 @@ onclick="testTeacherVoice()">
 
 
 <div id="loading">
+
 🤖 Giáo viên đang suy nghĩ...
+
 </div>
+
 
 <div id="error"></div>
 
@@ -817,14 +1268,19 @@ onclick="testTeacherVoice()">
 </div>
 
 
-<!-- SCORE -->
+<!-- =====================================================
+     SCORE
+===================================================== -->
 
 <div
 id="scoreCard"
 class="score-card">
 
+
 <div class="score-title">
+
 🏆 Kết quả lượt nói
+
 </div>
 
 
@@ -957,6 +1413,7 @@ class="feedback-box comment">
 
 </div>
 
+
 </div>
 
 </div>
@@ -965,26 +1422,26 @@ class="feedback-box comment">
 <script>
 
 
-// =====================================================
-// 1. APPS SCRIPT
-// =====================================================
+/* =====================================================
+   1. APPS SCRIPT
+===================================================== */
 
 const APPS_SCRIPT_URL =
 'https://script.google.com/macros/s/AKfycbybyMT34Odqd6jnDwHpqck_aizGYEWQjCo1jpuxD4Wc3LY_Hc-G3WHrQvUgkkYn4o_OZg/exec';
 
 
-// =====================================================
-// 2. SPEECH RECOGNITION
-// =====================================================
+/* =====================================================
+   2. SPEECH RECOGNITION
+===================================================== */
 
 const SpeechRecognition =
 window.SpeechRecognition ||
 window.webkitSpeechRecognition;
 
 
-// =====================================================
-// 3. STATE
-// =====================================================
+/* =====================================================
+   3. STATE
+===================================================== */
 
 let recognition = null;
 
@@ -1003,34 +1460,34 @@ let stopRequested = false;
 let restartTimer = null;
 
 
-// =====================================================
-// 4. HISTORY
-// =====================================================
+/* =====================================================
+   4. HISTORY
+===================================================== */
 
 let conversationHistory = [];
 
 
-// =====================================================
-// 5. TEACHER
-// =====================================================
+/* =====================================================
+   5. TEACHER
+===================================================== */
 
 let lastTeacherText = '';
 
 let lastCorrectSentence = '';
 
 
-// =====================================================
-// 6. SCORE
-// =====================================================
+/* =====================================================
+   6. SCORE
+===================================================== */
 
 let totalScore = 0;
 
 let totalQuestions = 0;
 
 
-// =====================================================
-// 7. VOICE
-// =====================================================
+/* =====================================================
+   7. VOICE
+===================================================== */
 
 let availableVoices = [];
 
@@ -1043,9 +1500,9 @@ let selectedVoiceIndex = -1;
 let voiceSpeed = 0.85;
 
 
-// =====================================================
-// 8. PAGE LOAD
-// =====================================================
+/* =====================================================
+   8. PAGE LOAD
+===================================================== */
 
 window.addEventListener(
 'load',
@@ -1069,9 +1526,9 @@ setAvatarStatus(
 );
 
 
-// =====================================================
-// 9. VOICES CHANGED
-// =====================================================
+/* =====================================================
+   9. VOICES CHANGED
+===================================================== */
 
 if(window.speechSynthesis) {
 
@@ -1083,9 +1540,42 @@ loadVoices
 }
 
 
-// =====================================================
-// 10. LOAD LESSON
-// =====================================================
+/* =====================================================
+   10. TEACHER IMAGE FALLBACK
+===================================================== */
+
+function showTeacherFallback() {
+
+const image =
+document.getElementById(
+'teacherImage'
+);
+
+const fallback =
+document.getElementById(
+'teacherFallback'
+);
+
+if(image) {
+
+image.style.display =
+'none';
+
+}
+
+if(fallback) {
+
+fallback.style.display =
+'flex';
+
+}
+
+}
+
+
+/* =====================================================
+   11. LOAD LESSON
+===================================================== */
 
 function loadLesson() {
 
@@ -1101,9 +1591,9 @@ callApi(
 }
 
 
-// =====================================================
-// 11. LOAD VOICES
-// =====================================================
+/* =====================================================
+   12. LOAD VOICES
+===================================================== */
 
 function loadVoices() {
 
@@ -1255,9 +1745,9 @@ defaultIndex
 }
 
 
-// =====================================================
-// 12. CHANGE VOICE
-// =====================================================
+/* =====================================================
+   13. CHANGE VOICE
+===================================================== */
 
 function changeVoice() {
 
@@ -1306,9 +1796,9 @@ selectedVoice.name
 }
 
 
-// =====================================================
-// 13. CHANGE SPEED
-// =====================================================
+/* =====================================================
+   14. CHANGE SPEED
+===================================================== */
 
 function changeSpeed() {
 
@@ -1336,9 +1826,9 @@ voiceSpeed.toFixed(2);
 }
 
 
-// =====================================================
-// 14. TEST VOICE
-// =====================================================
+/* =====================================================
+   15. TEST VOICE
+===================================================== */
 
 function testTeacherVoice() {
 
@@ -1353,9 +1843,9 @@ false
 }
 
 
-// =====================================================
-// 15. ENVIRONMENT
-// =====================================================
+/* =====================================================
+   16. ENVIRONMENT
+===================================================== */
 
 function checkEnvironment() {
 
@@ -1402,9 +1892,9 @@ return true;
 }
 
 
-// =====================================================
-// 16. MICROPHONE
-// =====================================================
+/* =====================================================
+   17. MICROPHONE
+===================================================== */
 
 async function requestMicrophonePermission() {
 
@@ -1455,9 +1945,9 @@ return false;
 }
 
 
-// =====================================================
-// 17. START / STOP CONVERSATION
-// =====================================================
+/* =====================================================
+   18. START / STOP
+===================================================== */
 
 async function toggleConversation() {
 
@@ -1507,9 +1997,9 @@ startListening();
 }
 
 
-// =====================================================
-// 18. START LISTENING
-// =====================================================
+/* =====================================================
+   19. START LISTENING
+===================================================== */
 
 function startListening() {
 
@@ -1690,12 +2180,7 @@ event.error
 
 if(errorCode === 'aborted') {
 
-console.log(
-'Speech Recognition aborted.'
-);
-
 resetMicButton();
-
 
 if(
 conversationActive &&
@@ -1842,9 +2327,9 @@ resetMicButton();
 }
 
 
-// =====================================================
-// 19. STOP LISTENING
-// =====================================================
+/* =====================================================
+   20. STOP LISTENING
+===================================================== */
 
 function stopListening() {
 
@@ -1894,9 +2379,9 @@ resetMicButton();
 }
 
 
-// =====================================================
-// 20. RELEASE MICROPHONE
-// =====================================================
+/* =====================================================
+   21. RELEASE MICROPHONE
+===================================================== */
 
 function releaseMicrophone() {
 
@@ -1934,9 +2419,9 @@ null;
 }
 
 
-// =====================================================
-// 21. STOP CONVERSATION
-// =====================================================
+/* =====================================================
+   22. STOP CONVERSATION
+===================================================== */
 
 function stopConversation() {
 
@@ -1992,9 +2477,9 @@ setVoiceStatus(
 }
 
 
-// =====================================================
-// 22. RESET MIC
-// =====================================================
+/* =====================================================
+   23. RESET MIC
+===================================================== */
 
 function resetMicButton() {
 
@@ -2040,9 +2525,9 @@ button.innerHTML =
 }
 
 
-// =====================================================
-// 23. SEND TEACHER
-// =====================================================
+/* =====================================================
+   24. SEND TEACHER
+===================================================== */
 
 function sendToTeacher(message) {
 
@@ -2140,9 +2625,9 @@ conversationHistory.slice(-6)
 }
 
 
-// =====================================================
-// 24. API
-// =====================================================
+/* =====================================================
+   25. API
+===================================================== */
 
 function callApi(action,payload) {
 
@@ -2157,7 +2642,6 @@ Math.random() * 1000000
 
 let finished =
 false;
-
 
 let script = null;
 
@@ -2279,12 +2763,10 @@ params.set(
 '1'
 );
 
-
 params.set(
 'action',
 action
 );
-
 
 params.set(
 'callback',
@@ -2370,9 +2852,9 @@ script
 }
 
 
-// =====================================================
-// 25. HANDLE RESPONSE
-// =====================================================
+/* =====================================================
+   26. HANDLE RESPONSE
+===================================================== */
 
 function handleActionResponse(
 action,
@@ -2439,9 +2921,9 @@ response.data
 }
 
 
-// =====================================================
-// 26. TEACHER RESPONSE
-// =====================================================
+/* =====================================================
+   27. TEACHER RESPONSE
+===================================================== */
 
 function handleTeacherResponse(data) {
 
@@ -2548,9 +3030,9 @@ true
 }
 
 
-// =====================================================
-// 27. ADD STUDENT
-// =====================================================
+/* =====================================================
+   28. ADD STUDENT
+===================================================== */
 
 function addStudentMessage(text) {
 
@@ -2597,9 +3079,9 @@ scrollChat();
 }
 
 
-// =====================================================
-// 28. ADD TEACHER
-// =====================================================
+/* =====================================================
+   29. ADD TEACHER
+===================================================== */
 
 function addTeacherMessage(text) {
 
@@ -2621,12 +3103,12 @@ message.className =
 
 message.innerHTML =
 
-'<div class="avatar">🤖</div>' +
+'<div class="avatar">👩‍🏫</div>' +
 
 '<div class="bubble">' +
 
 '<div class="bubble-name">' +
-'TEACHER' +
+'ANNA' +
 '</div>' +
 
 escapeHtml(
@@ -2646,9 +3128,9 @@ scrollChat();
 }
 
 
-// =====================================================
-// 29. SCORE
-// =====================================================
+/* =====================================================
+   30. SCORE
+===================================================== */
 
 function showScore(data) {
 
@@ -2717,9 +3199,9 @@ totalQuestions++;
 }
 
 
-// =====================================================
-// 30. TEXT TO SPEECH
-// =====================================================
+/* =====================================================
+   31. TEXT TO SPEECH
+===================================================== */
 
 function speakTeacher(
 text,
@@ -2903,9 +3385,9 @@ speech
 }
 
 
-// =====================================================
-// 31. LISTEN AGAIN
-// =====================================================
+/* =====================================================
+   32. LISTEN AGAIN
+===================================================== */
 
 function speakLastTeacherMessage() {
 
@@ -2928,30 +3410,9 @@ false
 }
 
 
-// =====================================================
-// 32. STATUS
-// =====================================================
-
-function setVoiceStatus(text) {
-
-const element =
-document.getElementById(
-'voiceStatus'
-);
-
-if(element) {
-
-element.innerText =
-text;
-
-}
-
-}
-
-
-// =====================================================
-// 33. AVATAR STATUS
-// =====================================================
+/* =====================================================
+   33. AVATAR STATUS
+===================================================== */
 
 function setAvatarStatus(
 status,
@@ -2971,6 +3432,16 @@ document.getElementById(
 const messageElement =
 document.getElementById(
 'avatarMessage'
+);
+
+const overlayTitle =
+document.getElementById(
+'teacherStatusTitle'
+);
+
+const overlayMessage =
+document.getElementById(
+'teacherStatusMessage'
 );
 
 
@@ -2994,35 +3465,55 @@ status
 );
 
 
-if(statusElement) {
+let title = '';
+let icon = '';
+
 
 if(status === 'listening') {
 
-statusElement.innerText =
+title =
 '🔴 LISTENING';
+
+icon =
+'🔴';
 
 }
 
 else if(status === 'thinking') {
 
-statusElement.innerText =
+title =
 '🧠 THINKING';
+
+icon =
+'🧠';
 
 }
 
 else if(status === 'speaking') {
 
-statusElement.innerText =
+title =
 '🔊 SPEAKING';
+
+icon =
+'🔊';
 
 }
 
 else {
 
-statusElement.innerText =
+title =
 '🟢 READY';
 
+icon =
+'🟢';
+
 }
+
+
+if(statusElement) {
+
+statusElement.innerText =
+title;
 
 }
 
@@ -3035,40 +3526,48 @@ text || '';
 }
 
 
-if(status === 'listening') {
+if(overlayTitle) {
 
-avatar.innerText =
-'🎤';
-
-}
-
-else if(status === 'thinking') {
-
-avatar.innerText =
-'🧠';
+overlayTitle.innerText =
+title;
 
 }
 
-else if(status === 'speaking') {
 
-avatar.innerText =
-'🗣️';
+if(overlayMessage) {
 
-}
-
-else {
-
-avatar.innerText =
-'🤖';
+overlayMessage.innerText =
+text || '';
 
 }
 
 }
 
 
-// =====================================================
-// 34. ERROR
-// =====================================================
+/* =====================================================
+   34. VOICE STATUS
+===================================================== */
+
+function setVoiceStatus(text) {
+
+const element =
+document.getElementById(
+'voiceStatus'
+);
+
+if(element) {
+
+element.innerText =
+text;
+
+}
+
+}
+
+
+/* =====================================================
+   35. ERROR
+===================================================== */
 
 function showError(message) {
 
@@ -3105,9 +3604,9 @@ error.innerText =
 }
 
 
-// =====================================================
-// 35. SUCCESS
-// =====================================================
+/* =====================================================
+   36. SUCCESS
+===================================================== */
 
 function showSuccess(message) {
 
@@ -3137,9 +3636,29 @@ success.style.display =
 }
 
 
-// =====================================================
-// 36. SCROLL
-// =====================================================
+function clearSuccess() {
+
+const success =
+document.getElementById(
+'success'
+);
+
+if(success) {
+
+success.style.display =
+'none';
+
+success.innerText =
+'';
+
+}
+
+}
+
+
+/* =====================================================
+   37. SCROLL
+===================================================== */
 
 function scrollChat() {
 
@@ -3148,16 +3667,15 @@ document.getElementById(
 'chat'
 );
 
-
 chat.scrollTop =
 chat.scrollHeight;
 
 }
 
 
-// =====================================================
-// 37. ESCAPE HTML
-// =====================================================
+/* =====================================================
+   38. ESCAPE HTML
+===================================================== */
 
 function escapeHtml(text) {
 
@@ -3166,10 +3684,8 @@ document.createElement(
 'div'
 );
 
-
 div.innerText =
 String(text);
-
 
 return div.innerHTML;
 
