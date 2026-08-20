@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>AI English Teacher</title>
 
 <style>
-
 * {
   box-sizing: border-box;
 }
@@ -47,11 +42,17 @@ body {
 
 /* LESSON */
 
-.lesson-card {
+.lesson-card,
+.chat-card,
+.voice-card,
+.score-card {
   background: white;
-  padding: 18px;
   border-radius: 18px;
   box-shadow: 0 6px 25px rgba(0,0,0,.07);
+}
+
+.lesson-card {
+  padding: 18px;
   margin-bottom: 16px;
 }
 
@@ -71,13 +72,10 @@ body {
 /* CHAT */
 
 .chat-card {
-  background: white;
   min-height: 420px;
   max-height: 560px;
   overflow-y: auto;
   padding: 20px;
-  border-radius: 18px;
-  box-shadow: 0 6px 25px rgba(0,0,0,.07);
 }
 
 .message {
@@ -141,8 +139,6 @@ body {
   margin-bottom: 5px;
 }
 
-/* QUESTION */
-
 .next-question {
   margin-top: 10px;
   padding: 12px 14px;
@@ -157,10 +153,7 @@ body {
 
 .voice-card {
   margin-top: 16px;
-  background: white;
   padding: 22px;
-  border-radius: 18px;
-  box-shadow: 0 6px 25px rgba(0,0,0,.07);
   text-align: center;
 }
 
@@ -197,19 +190,17 @@ body {
 }
 
 @keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220,38,38,.45);
+  }
 
-0% {
-  box-shadow: 0 0 0 0 rgba(220,38,38,.45);
-}
+  70% {
+    box-shadow: 0 0 0 22px rgba(220,38,38,0);
+  }
 
-70% {
-  box-shadow: 0 0 0 22px rgba(220,38,38,0);
-}
-
-100% {
-  box-shadow: 0 0 0 0 rgba(220,38,38,0);
-}
-
+  100% {
+    box-shadow: 0 0 0 0 rgba(220,38,38,0);
+  }
 }
 
 #voiceStatus {
@@ -288,10 +279,7 @@ body {
 
 .score-card {
   margin-top: 16px;
-  background: white;
   padding: 20px;
-  border-radius: 18px;
-  box-shadow: 0 6px 25px rgba(0,0,0,.07);
   display: none;
 }
 
@@ -394,237 +382,228 @@ body {
 
 @media (max-width:700px) {
 
-.container {
-  padding: 10px;
-}
+  .container {
+    padding: 10px;
+  }
 
-.header h1 {
-  font-size: 25px;
-}
+  .header h1 {
+    font-size: 25px;
+  }
 
-.bubble {
-  max-width: 85%;
-}
+  .bubble {
+    max-width: 85%;
+  }
 
-.score-grid {
-  grid-template-columns: repeat(2,1fr);
-}
+  .score-grid {
+    grid-template-columns: repeat(2,1fr);
+  }
 
-.mic-button {
-  width: 125px;
-  height: 125px;
-  font-size: 18px;
+  .mic-button {
+    width: 125px;
+    height: 125px;
+    font-size: 18px;
+  }
 }
-
-}
-
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="header">
+  <div class="header">
+    <h1>🇬🇧 AI English Teacher</h1>
+    <p>Nói chuyện trực tiếp với giáo viên AI</p>
+  </div>
 
-<h1>
-🇬🇧 AI English Teacher
-</h1>
+  <!-- LESSON -->
 
-<p>
-Nói chuyện trực tiếp với giáo viên AI
-</p>
+  <div class="lesson-card">
 
-</div>
+    <div class="lesson-label">
+      📚 BÀI HỌC HIỆN TẠI
+    </div>
 
+    <div id="lessonTopic">
+      Đang tải bài học...
+    </div>
 
-<!-- LESSON -->
+  </div>
 
-<div class="lesson-card">
+  <!-- CHAT -->
 
-<div class="lesson-label">
-📚 BÀI HỌC HIỆN TẠI
-</div>
+  <div id="chat" class="chat-card">
 
-<div id="lessonTopic">
-Đang tải bài học...
-</div>
+    <div class="message teacher">
 
-</div>
+      <div class="avatar">
+        🤖
+      </div>
 
+      <div class="bubble">
 
-<!-- CHAT -->
+        <div class="bubble-name">
+          TEACHER
+        </div>
 
-<div id="chat" class="chat-card">
+        <div id="welcomeMessage">
+          Hello! I'm your English teacher.
+          Let's practice English together.
+        </div>
 
-<div class="message teacher">
+      </div>
 
-<div class="avatar">
-🤖
-</div>
+    </div>
 
-<div class="bubble">
+  </div>
 
-<div class="bubble-name">
-TEACHER
-</div>
+  <!-- VOICE -->
 
-<div id="welcomeMessage">
-Hello! I'm your English teacher.
-Let's practice English together.
-</div>
+  <div class="voice-card">
 
-</div>
+    <button
+      id="micButton"
+      class="mic-button"
+      onclick="toggleConversation()">
 
-</div>
+      🎤
+      <br>
+      BẮT ĐẦU
 
-</div>
+    </button>
 
+    <div id="voiceStatus">
+      Bấm nút để bắt đầu nói chuyện
+    </div>
 
-<!-- VOICE -->
+    <div
+      id="permissionBox"
+      class="permission-box">
+    </div>
 
-<div class="voice-card">
+    <div class="control-buttons">
 
-<button
-id="micButton"
-class="mic-button"
-onclick="toggleConversation()">
+      <button
+        class="small-button stop-button"
+        onclick="stopConversation()">
 
-🎤
-<br>
-BẮT ĐẦU
+        ⏹ DỪNG
 
-</button>
+      </button>
 
-<div id="voiceStatus">
-Bấm nút để bắt đầu nói chuyện
-</div>
+      <button
+        class="small-button voice-button"
+        onclick="speakLastTeacherMessage()">
 
-<div id="permissionBox"
-class="permission-box">
-</div>
+        🔊 NGHE LẠI
 
-<div class="control-buttons">
+      </button>
 
-<button
-class="small-button stop-button"
-onclick="stopConversation()">
+    </div>
 
-⏹ DỪNG
+    <div id="loading">
+      🤖 Giáo viên đang suy nghĩ...
+    </div>
 
-</button>
+    <div id="error"></div>
 
-<button
-class="small-button voice-button"
-onclick="speakLastTeacherMessage()">
+    <div id="success"></div>
 
-🔊 NGHE LẠI
+  </div>
 
-</button>
+  <!-- SCORE -->
 
-</div>
+  <div id="scoreCard" class="score-card">
 
-<div id="loading">
-🤖 Giáo viên đang suy nghĩ...
-</div>
+    <div class="score-title">
+      🏆 Kết quả lượt nói
+    </div>
 
-<div id="error"></div>
+    <div id="mainScore" class="main-score">
+      0/100
+    </div>
 
-<div id="success"></div>
+    <div class="progress">
+      <div id="progressBar"></div>
+    </div>
 
-</div>
+    <div class="score-grid">
 
+      <div class="score-item">
+        <span>📚 Từ vựng</span>
+        <strong id="vocabulary">0</strong>
+      </div>
 
-<!-- SCORE -->
+      <div class="score-item">
+        <span>📝 Ngữ pháp</span>
+        <strong id="grammar">0</strong>
+      </div>
 
-<div id="scoreCard" class="score-card">
+      <div class="score-item">
+        <span>💬 Phản xạ</span>
+        <strong id="fluency">0</strong>
+      </div>
 
-<div class="score-title">
-🏆 Kết quả lượt nói
-</div>
+      <div class="score-item">
+        <span>🗣️ Phát âm</span>
+        <strong id="pronunciation">0</strong>
+      </div>
 
-<div id="mainScore" class="main-score">
-0/100
-</div>
+    </div>
 
-<div class="progress">
-<div id="progressBar"></div>
-</div>
+    <div class="feedback">
 
-<div class="score-grid">
+      <div class="feedback-title">
+        ✏️ Sửa câu
+      </div>
 
-<div class="score-item">
-<span>📚 Từ vựng</span>
-<strong id="vocabulary">0</strong>
-</div>
+      <div
+        id="correction"
+        class="feedback-box correction">
+      </div>
 
-<div class="score-item">
-<span>📝 Ngữ pháp</span>
-<strong id="grammar">0</strong>
-</div>
+    </div>
 
-<div class="score-item">
-<span>💬 Phản xạ</span>
-<strong id="fluency">0</strong>
-</div>
+    <div class="feedback">
 
-<div class="score-item">
-<span>🗣️ Phát âm</span>
-<strong id="pronunciation">0</strong>
-</div>
+      <div class="feedback-title">
+        ✅ Câu đúng
+      </div>
 
-</div>
+      <div
+        id="correctSentence"
+        class="feedback-box correct">
+      </div>
 
-<div class="feedback">
+    </div>
 
-<div class="feedback-title">
-✏️ Sửa câu
-</div>
+    <div class="feedback">
 
-<div id="correction"
-class="feedback-box correction">
-</div>
+      <div class="feedback-title">
+        💡 Giải thích
+      </div>
 
-</div>
+      <div
+        id="explanation"
+        class="feedback-box explanation">
+      </div>
 
-<div class="feedback">
+    </div>
 
-<div class="feedback-title">
-✅ Câu đúng
-</div>
+    <div class="feedback">
 
-<div id="correctSentence"
-class="feedback-box correct">
-</div>
+      <div class="feedback-title">
+        🎯 Nhận xét
+      </div>
 
-</div>
+      <div
+        id="comment"
+        class="feedback-box comment">
+      </div>
 
-<div class="feedback">
+    </div>
 
-<div class="feedback-title">
-💡 Giải thích
-</div>
-
-<div id="explanation"
-class="feedback-box explanation">
-</div>
-
-</div>
-
-<div class="feedback">
-
-<div class="feedback-title">
-🎯 Nhận xét
-</div>
-
-<div id="comment"
-class="feedback-box comment">
-</div>
-
-</div>
-
-</div>
+  </div>
 
 </div>
 
@@ -640,12 +619,12 @@ const APPS_SCRIPT_URL =
 
 
 /* =====================================================
-   2. SPEECH API
+   2. SPEECH RECOGNITION
 ===================================================== */
 
 const SpeechRecognition =
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
 
 
 /* =====================================================
@@ -666,8 +645,6 @@ let conversationHistory = [];
 
 let lastTeacherText = '';
 
-let lastCorrectSentence = '';
-
 let lastNextQuestion = '';
 
 let totalScore = 0;
@@ -679,14 +656,11 @@ let totalQuestions = 0;
    4. LOAD
 ===================================================== */
 
-window.addEventListener(
-'load',
-function() {
+window.addEventListener('load', function() {
 
-loadLesson();
+  loadLesson();
 
-}
-);
+});
 
 
 /* =====================================================
@@ -695,66 +669,57 @@ loadLesson();
 
 function loadLesson() {
 
-clearError();
+  clearError();
 
-clearSuccess();
-
-callApi(
-'lesson',
-{}
-);
+  callApi('lesson', {});
 
 }
 
 
 /* =====================================================
-   6. CHECK ENVIRONMENT
+   6. ENVIRONMENT
 ===================================================== */
 
 function checkEnvironment() {
 
-if (
-location.protocol !== 'https:' &&
-location.hostname !== 'localhost'
-) {
+  if (
+    location.protocol !== 'https:' &&
+    location.hostname !== 'localhost'
+  ) {
 
-showError(
-'Voice App phải chạy bằng HTTPS.\n\n' +
-'Mở đúng GitHub Pages dạng:\n' +
-'https://caothai07022014ksxd-sys.github.io/ai-english-teacher/'
-);
+    showError(
+      'Trang phải chạy bằng HTTPS.\n\n' +
+      'Hãy mở GitHub Pages.'
+    );
 
-return false;
+    return false;
 
-}
+  }
 
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
 
-if (
-!navigator.mediaDevices ||
-!navigator.mediaDevices.getUserMedia
-) {
+    showError(
+      'Trình duyệt không hỗ trợ microphone.'
+    );
 
-showError(
-'Trình duyệt không hỗ trợ microphone.'
-);
+    return false;
 
-return false;
+  }
 
-}
+  if (!SpeechRecognition) {
 
+    showError(
+      'Chrome không hỗ trợ Speech Recognition.'
+    );
 
-if (!SpeechRecognition) {
+    return false;
 
-showError(
-'Chrome không hỗ trợ Speech Recognition trên trang này.'
-);
+  }
 
-return false;
-
-}
-
-
-return true;
+  return true;
 
 }
 
@@ -765,62 +730,55 @@ return true;
 
 async function requestMicrophonePermission() {
 
-if (!checkEnvironment()) {
-return false;
-}
+  if (!checkEnvironment()) {
+    return false;
+  }
 
-try {
+  try {
 
-microphoneStream =
-await navigator.mediaDevices.getUserMedia({
+    microphoneStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
 
-audio: {
+    const tracks =
+      microphoneStream.getAudioTracks();
 
-echoCancellation: true,
+    const microphoneName =
+      tracks &&
+      tracks.length &&
+      tracks[0].label
+      ? tracks[0].label
+      : 'Microphone';
 
-noiseSuppression: true,
+    const permissionBox =
+      document.getElementById(
+        'permissionBox'
+      );
 
-autoGainControl: true
+    permissionBox.style.display =
+      'block';
 
-}
+    permissionBox.innerText =
+      '✅ Microphone đã được cấp quyền.\n' +
+      'Thiết bị: ' +
+      microphoneName;
 
-});
+    return true;
 
+  }
 
-const tracks =
-microphoneStream.getAudioTracks();
+  catch(error) {
 
-const microphoneName =
-tracks &&
-tracks.length &&
-tracks[0].label
-? tracks[0].label
-: 'Microphone';
+    handleMicrophoneError(error);
 
-const permissionBox =
-document.getElementById(
-'permissionBox'
-);
+    return false;
 
-permissionBox.style.display =
-'block';
-
-permissionBox.innerText =
-'✅ Microphone đã được cấp quyền.\n' +
-'Thiết bị: ' +
-microphoneName;
-
-return true;
-
-}
-
-catch(error) {
-
-handleMicrophoneError(error);
-
-return false;
-
-}
+  }
 
 }
 
@@ -831,59 +789,59 @@ return false;
 
 function handleMicrophoneError(error) {
 
-let message =
-'Không thể truy cập microphone.';
+  let message =
+    'Không thể truy cập microphone.';
 
-if (
-error &&
-error.name === 'NotAllowedError'
-) {
+  if (
+    error &&
+    error.name === 'NotAllowedError'
+  ) {
 
-message =
-'Chrome hoặc Windows đang chặn microphone.\n\n' +
-'Hãy kiểm tra quyền microphone của GitHub Pages.';
+    message =
+      'Chrome đang chặn microphone.\n\n' +
+      'Hãy bấm biểu tượng 🔒 trên thanh địa chỉ ' +
+      'và cho phép Microphone.';
 
-}
+  }
 
-else if (
-error &&
-error.name === 'NotFoundError'
-) {
+  else if (
+    error &&
+    error.name === 'NotFoundError'
+  ) {
 
-message =
-'Không tìm thấy microphone trên máy tính.';
+    message =
+      'Không tìm thấy microphone.';
 
-}
+  }
 
-else if (
-error &&
-error.name === 'NotReadableError'
-) {
+  else if (
+    error &&
+    error.name === 'NotReadableError'
+  ) {
 
-message =
-'Microphone đang được ứng dụng khác sử dụng.\n\n' +
-'Hãy đóng Zoom, Teams, Meet, Discord hoặc phần mềm ghi âm.';
+    message =
+      'Microphone đang được ứng dụng khác sử dụng.';
 
-}
+  }
 
-else if (
-error &&
-error.name === 'SecurityError'
-) {
+  else if (
+    error &&
+    error.name === 'SecurityError'
+  ) {
 
-message =
-'Trang web không được phép truy cập microphone.';
+    message =
+      'Trang web không được phép sử dụng microphone.';
 
-}
+  }
 
-showError(
-message +
-(
-error && error.name
-? '\n\nMã lỗi: ' + error.name
-: ''
-)
-);
+  showError(
+    message +
+    (
+      error && error.name
+      ? '\n\nMã lỗi: ' + error.name
+      : ''
+    )
+  );
 
 }
 
@@ -894,44 +852,42 @@ error && error.name
 
 async function toggleConversation() {
 
-if (isProcessing) {
-return;
-}
+  if (isProcessing) {
+    return;
+  }
 
-clearError();
+  clearError();
 
-if (!conversationActive) {
+  if (!conversationActive) {
 
-const granted =
-await requestMicrophonePermission();
+    const granted =
+      await requestMicrophonePermission();
 
-if (!granted) {
-return;
-}
+    if (!granted) {
+      return;
+    }
 
-conversationActive = true;
+    conversationActive = true;
 
-setVoiceStatus(
-'🎤 Đang chuẩn bị microphone...'
-);
+    setVoiceStatus(
+      '🎤 Đang chuẩn bị...'
+    );
 
-startListening();
+    startListening();
 
-return;
+    return;
+  }
 
-}
+  if (isListening) {
 
-if (isListening) {
+    stopListening();
 
-stopListening();
+  }
+  else {
 
-}
+    startListening();
 
-else {
-
-startListening();
-
-}
+  }
 
 }
 
@@ -942,184 +898,198 @@ startListening();
 
 function startListening() {
 
-if (!conversationActive) {
-return;
-}
+  if (!conversationActive) {
+    return;
+  }
 
-if (isProcessing) {
-return;
-}
+  if (isProcessing) {
+    return;
+  }
 
-if (isListening) {
-return;
-}
+  if (isListening) {
+    return;
+  }
 
-if (!SpeechRecognition) {
-showError('Speech Recognition không khả dụng.');
-return;
-}
+  if (!SpeechRecognition) {
 
-clearError();
+    showError(
+      'Speech Recognition không khả dụng.'
+    );
 
-recognition =
-new SpeechRecognition();
+    return;
 
-recognition.lang =
-'en-US';
+  }
 
-recognition.continuous =
-false;
+  clearError();
 
-recognition.interimResults =
-false;
+  recognition =
+    new SpeechRecognition();
 
-recognition.maxAlternatives =
-1;
+  recognition.lang =
+    'en-US';
 
+  recognition.continuous =
+    false;
 
-recognition.onstart =
-function() {
+  recognition.interimResults =
+    false;
 
-isListening = true;
+  recognition.maxAlternatives =
+    1;
 
-const button =
-document.getElementById(
-'micButton'
-);
 
-button.classList.remove(
-'processing'
-);
+  recognition.onstart =
+    function() {
 
-button.classList.remove(
-'ready'
-);
+      isListening = true;
 
-button.classList.add(
-'listening'
-);
+      const button =
+        document.getElementById(
+          'micButton'
+        );
 
-button.innerHTML =
-'🔴<br>ĐANG NGHE';
+      button.classList.remove(
+        'processing'
+      );
 
-setVoiceStatus(
-'🎤 Hãy nói tiếng Anh...'
-);
+      button.classList.remove(
+        'ready'
+      );
 
-};
+      button.classList.add(
+        'listening'
+      );
 
+      button.innerHTML =
+        '🔴<br>ĐANG NGHE';
 
-recognition.onresult =
-function(event) {
+      setVoiceStatus(
+        '🎤 Hãy nói tiếng Anh...'
+      );
 
-const result =
-event.results[0];
+    };
 
-if (
-!result ||
-!result[0]
-) {
-return;
-}
 
-const text =
-result[0]
-.transcript
-.trim();
+  recognition.onresult =
+    function(event) {
 
-if (!text) {
-return;
-}
+      const result =
+        event.results[0];
 
-addStudentMessage(text);
+      if (
+        !result ||
+        !result[0]
+      ) {
+        return;
+      }
 
-sendToTeacher(text);
+      const text =
+        result[0]
+          .transcript
+          .trim();
 
-};
+      if (!text) {
+        return;
+      }
 
+      stopListening();
 
-recognition.onerror =
-function(event) {
+      addStudentMessage(text);
 
-isListening = false;
+      sendToTeacher(text);
 
-resetMicButton();
+    };
 
-let message =
-'Speech Recognition lỗi: ' +
-event.error;
 
-if (event.error === 'not-allowed') {
+  recognition.onerror =
+    function(event) {
 
-message =
-'Chrome đang từ chối Speech Recognition.\n\n' +
-'Kiểm tra quyền microphone của trình duyệt.';
+      isListening = false;
 
-}
+      resetMicButton();
 
-else if (event.error === 'no-speech') {
+      let message =
+        'Speech Recognition lỗi: ' +
+        event.error;
 
-message =
-'Không nghe thấy giọng nói.\n\n' +
-'Hãy nói gần microphone và rõ hơn.';
+      if (
+        event.error === 'not-allowed'
+      ) {
 
-}
+        message =
+          'Chrome đang chặn quyền microphone.';
 
-else if (event.error === 'audio-capture') {
+      }
 
-message =
-'Không lấy được tín hiệu microphone.';
+      else if (
+        event.error === 'no-speech'
+      ) {
 
-}
+        message =
+          'Không nghe thấy giọng nói.\n\n' +
+          'Hãy nói rõ và gần microphone hơn.';
 
-else if (event.error === 'network') {
+      }
 
-message =
-'Speech Recognition gặp lỗi kết nối mạng.';
+      else if (
+        event.error === 'audio-capture'
+      ) {
 
-}
+        message =
+          'Không lấy được tín hiệu microphone.';
 
-showError(message);
+      }
 
-};
+      else if (
+        event.error === 'network'
+      ) {
 
+        message =
+          'Speech Recognition gặp lỗi mạng.';
 
-recognition.onend =
-function() {
+      }
 
-isListening = false;
+      showError(message);
 
-if (!isProcessing) {
+    };
 
-resetMicButton();
 
-if (conversationActive) {
+  recognition.onend =
+    function() {
 
-setVoiceStatus(
-'🎤 Có thể nói tiếp'
-);
+      isListening = false;
 
-}
+      if (!isProcessing) {
 
-}
+        resetMicButton();
 
-};
+        if (conversationActive) {
 
+          setVoiceStatus(
+            '🎤 Có thể nói tiếp'
+          );
 
-try {
+        }
 
-recognition.start();
+      }
 
-}
+    };
 
-catch(error) {
 
-console.error(
-'recognition.start():',
-error
-);
+  try {
 
-}
+    recognition.start();
+
+  }
+
+  catch(error) {
+
+    console.error(
+      'recognition.start():',
+      error
+    );
+
+  }
 
 }
 
@@ -1130,25 +1100,21 @@ error
 
 function stopListening() {
 
-if (recognition) {
+  if (recognition) {
 
-try {
+    try {
+      recognition.stop();
+    }
 
-recognition.stop();
+    catch(error) {
+      console.log(error);
+    }
 
-}
+  }
 
-catch(error) {
+  isListening = false;
 
-console.log(error);
-
-}
-
-}
-
-isListening = false;
-
-resetMicButton();
+  resetMicButton();
 
 }
 
@@ -1159,31 +1125,25 @@ resetMicButton();
 
 function releaseMicrophone() {
 
-if (!microphoneStream) {
-return;
-}
+  if (!microphoneStream) {
+    return;
+  }
 
-microphoneStream
-.getTracks()
-.forEach(
-function(track) {
+  microphoneStream
+    .getTracks()
+    .forEach(function(track) {
 
-try {
+      try {
+        track.stop();
+      }
 
-track.stop();
+      catch(error) {
+        console.log(error);
+      }
 
-}
+    });
 
-catch(error) {
-
-console.log(error);
-
-}
-
-}
-);
-
-microphoneStream = null;
+  microphoneStream = null;
 
 }
 
@@ -1194,41 +1154,39 @@ microphoneStream = null;
 
 function stopConversation() {
 
-conversationActive = false;
+  conversationActive = false;
 
-stopListening();
+  stopListening();
 
-releaseMicrophone();
+  releaseMicrophone();
 
-if (window.speechSynthesis) {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
 
-window.speechSynthesis.cancel();
+  const button =
+    document.getElementById(
+      'micButton'
+    );
 
-}
+  button.classList.remove(
+    'listening'
+  );
 
-const button =
-document.getElementById(
-'micButton'
-);
+  button.classList.remove(
+    'processing'
+  );
 
-button.classList.remove(
-'listening'
-);
+  button.classList.add(
+    'ready'
+  );
 
-button.classList.remove(
-'processing'
-);
+  button.innerHTML =
+    '🎤<br>BẮT ĐẦU';
 
-button.classList.add(
-'ready'
-);
-
-button.innerHTML =
-'🎤<br>BẮT ĐẦU';
-
-setVoiceStatus(
-'⏹ Đã dừng cuộc hội thoại'
-);
+  setVoiceStatus(
+    '⏹ Đã dừng cuộc hội thoại'
+  );
 
 }
 
@@ -1239,42 +1197,42 @@ setVoiceStatus(
 
 function resetMicButton() {
 
-const button =
-document.getElementById(
-'micButton'
-);
+  const button =
+    document.getElementById(
+      'micButton'
+    );
 
-if (isProcessing) {
+  if (isProcessing) {
 
-button.classList.remove(
-'listening'
-);
+    button.classList.remove(
+      'listening'
+    );
 
-button.classList.add(
-'processing'
-);
+    button.classList.add(
+      'processing'
+    );
 
-button.innerHTML =
-'🤖<br>AI';
+    button.innerHTML =
+      '🤖<br>AI';
 
-return;
+    return;
 
-}
+  }
 
-button.classList.remove(
-'listening'
-);
+  button.classList.remove(
+    'listening'
+  );
 
-button.classList.remove(
-'processing'
-);
+  button.classList.remove(
+    'processing'
+  );
 
-button.classList.remove(
-'ready'
-);
+  button.classList.remove(
+    'ready'
+  );
 
-button.innerHTML =
-'🎤<br>NÓI';
+  button.innerHTML =
+    '🎤<br>NÓI';
 
 }
 
@@ -1285,270 +1243,289 @@ button.innerHTML =
 
 function sendToTeacher(message) {
 
-if (!message) {
-return;
-}
+  if (!message) {
+    return;
+  }
 
-isProcessing = true;
+  isProcessing = true;
 
-const button =
-document.getElementById(
-'micButton'
-);
+  const button =
+    document.getElementById(
+      'micButton'
+    );
 
-button.classList.remove(
-'listening'
-);
+  button.classList.remove(
+    'listening'
+  );
 
-button.classList.add(
-'processing'
-);
+  button.classList.add(
+    'processing'
+  );
 
-button.innerHTML =
-'🤖<br>AI';
+  button.innerHTML =
+    '🤖<br>AI';
 
-document.getElementById(
-'loading'
-).style.display =
-'block';
+  document.getElementById(
+    'loading'
+  ).style.display =
+    'block';
 
-setVoiceStatus(
-'🤖 Giáo viên đang suy nghĩ...'
-);
+  setVoiceStatus(
+    '🤖 Giáo viên đang suy nghĩ...'
+  );
 
-conversationHistory.push({
 
-role: 'user',
+  conversationHistory.push({
 
-text: message
+    role: 'user',
 
-});
+    text: message
 
-const recentHistory =
-conversationHistory.slice(-10);
+  });
 
-callApi(
-'chat',
-{
 
-message: message,
+  const recentHistory =
+    conversationHistory.slice(-10);
 
-history: recentHistory
 
-}
-);
+  callApi(
+    'chat',
+    {
+      message: message,
+      history: recentHistory
+    }
+  );
 
 }
 
 
 /* =====================================================
-   16. CALL API JSONP
+   16. JSONP API
 ===================================================== */
 
-function callApi(action,payload) {
+function callApi(action, payload) {
 
-if (!APPS_SCRIPT_URL) {
+  if (!APPS_SCRIPT_URL) {
 
-showError(
-'Chưa có URL Apps Script.'
-);
+    showError(
+      'Chưa có URL Apps Script.'
+    );
 
-return;
+    return;
 
-}
+  }
 
-const callbackName =
-'apiCallback_' +
-Date.now() +
-'_' +
-Math.floor(
-Math.random() * 1000000
-);
 
-let finished = false;
+  const callbackName =
+    'apiCallback_' +
+    Date.now() +
+    '_' +
+    Math.floor(
+      Math.random() * 1000000
+    );
 
-let script = null;
 
-const timeoutId =
-setTimeout(
-function() {
+  let finished = false;
 
-if (finished) {
-return;
-}
+  let script = null;
 
-finished = true;
 
-delete window[
-callbackName
-];
+  const timeoutId =
+    setTimeout(
+      function() {
 
-if (
-script &&
-script.parentNode
-) {
+        if (finished) {
+          return;
+        }
 
-script.parentNode.removeChild(
-script
-);
+        finished = true;
 
-}
+        delete window[
+          callbackName
+        ];
 
-document.getElementById(
-'loading'
-).style.display =
-'none';
+        if (
+          script &&
+          script.parentNode
+        ) {
 
-isProcessing = false;
+          script.parentNode.removeChild(
+            script
+          );
 
-resetMicButton();
+        }
 
-showError(
-'Apps Script không phản hồi sau 30 giây.\n\n' +
-'Kiểm tra Web App URL, quyền truy cập và Gemini API.'
-);
+        document.getElementById(
+          'loading'
+        ).style.display =
+          'none';
 
-},
-30000
-);
+        isProcessing = false;
 
+        resetMicButton();
 
-window[callbackName] =
-function(response) {
+        showError(
+          'Apps Script không phản hồi sau 30 giây.\n\n' +
+          'Kiểm tra Web App URL và Apps Script.'
+        );
 
-if (finished) {
-return;
-}
+      },
+      30000
+    );
 
-finished = true;
 
-clearTimeout(timeoutId);
+  window[callbackName] =
+    function(response) {
 
-try {
+      if (finished) {
+        return;
+      }
 
-handleActionResponse(
-action,
-response
-);
+      finished = true;
 
-}
+      clearTimeout(
+        timeoutId
+      );
 
-catch(error) {
 
-console.error(
-'API callback error:',
-error
-);
+      try {
 
-showError(
-error.message
-);
+        handleActionResponse(
+          action,
+          response
+        );
 
-}
+      }
 
-delete window[
-callbackName
-];
+      catch(error) {
 
-if (
-script &&
-script.parentNode
-) {
+        console.error(
+          error
+        );
 
-script.parentNode.removeChild(
-script
-);
+        showError(
+          error.message ||
+          'Lỗi xử lý dữ liệu.'
+        );
 
-}
+      }
 
-};
 
+      delete window[
+        callbackName
+      ];
 
-const params =
-new URLSearchParams();
 
-params.set(
-'api',
-'1'
-);
+      if (
+        script &&
+        script.parentNode
+      ) {
 
-params.set(
-'action',
-action
-);
+        script.parentNode.removeChild(
+          script
+        );
 
-params.set(
-'callback',
-callbackName
-);
+      }
 
-if (payload) {
+    };
 
-params.set(
-'data',
-JSON.stringify(payload)
-);
 
-}
+  const params =
+    new URLSearchParams();
 
 
-script =
-document.createElement(
-'script'
-);
+  params.set(
+    'api',
+    '1'
+  );
 
-script.async = true;
+  params.set(
+    'action',
+    action
+  );
 
-script.src =
-APPS_SCRIPT_URL +
-'?' +
-params.toString();
+  params.set(
+    'callback',
+    callbackName
+  );
 
 
-script.onerror =
-function() {
+  if (payload) {
 
-if (finished) {
-return;
-}
+    params.set(
+      'data',
+      JSON.stringify(payload)
+    );
 
-finished = true;
+  }
 
-clearTimeout(timeoutId);
 
-delete window[
-callbackName
-];
+  script =
+    document.createElement(
+      'script'
+    );
 
-if (
-script &&
-script.parentNode
-) {
+  script.async = true;
 
-script.parentNode.removeChild(
-script
-);
 
-}
+  script.src =
+    APPS_SCRIPT_URL +
+    '?' +
+    params.toString();
 
-document.getElementById(
-'loading'
-).style.display =
-'none';
 
-isProcessing = false;
+  script.onerror =
+    function() {
 
-resetMicButton();
+      if (finished) {
+        return;
+      }
 
-showError(
-'Không tải được Apps Script API.\n\n' +
-'Kiểm tra URL Web App và quyền "Bất kỳ ai".'
-);
+      finished = true;
 
-};
+      clearTimeout(
+        timeoutId
+      );
 
+      delete window[
+        callbackName
+      ];
 
-document.body.appendChild(script);
+
+      if (
+        script &&
+        script.parentNode
+      ) {
+
+        script.parentNode.removeChild(
+          script
+        );
+
+      }
+
+
+      document.getElementById(
+        'loading'
+      ).style.display =
+        'none';
+
+
+      isProcessing = false;
+
+      resetMicButton();
+
+
+      showError(
+        'Không tải được Apps Script API.\n\n' +
+        'Kiểm tra Web App URL và quyền truy cập.'
+      );
+
+    };
+
+
+  document.body.appendChild(
+    script
+  );
 
 }
 
@@ -1558,64 +1535,65 @@ document.body.appendChild(script);
 ===================================================== */
 
 function handleActionResponse(
-action,
-response
+  action,
+  response
 ) {
 
-if (!response) {
+  if (!response) {
 
-throw new Error(
-'API không trả về dữ liệu.'
-);
+    throw new Error(
+      'API không trả về dữ liệu.'
+    );
 
-}
-
-if (!response.success) {
-
-document.getElementById(
-'loading'
-).style.display =
-'none';
-
-isProcessing = false;
-
-resetMicButton();
-
-showError(
-response.error ||
-'API xảy ra lỗi.'
-);
-
-return;
-
-}
+  }
 
 
-if (action === 'lesson') {
+  if (!response.success) {
 
-const lesson =
-response.data;
+    document.getElementById(
+      'loading'
+    ).style.display =
+      'none';
 
-document.getElementById(
-'lessonTopic'
-).innerText =
-lesson &&
-lesson.topic
-? lesson.topic
-: 'Bài học hiện tại';
+    isProcessing = false;
 
-return;
+    resetMicButton();
 
-}
+    showError(
+      response.error ||
+      'API xảy ra lỗi.'
+    );
+
+    return;
+
+  }
 
 
-if (action === 'chat') {
+  if (action === 'lesson') {
 
-handleTeacherResponse(
-response.data
-);
+    const lesson =
+      response.data || {};
 
-}
+
+    document.getElementById(
+      'lessonTopic'
+    ).innerText =
+      lesson.topic ||
+      'Bài học hiện tại';
+
+
+    return;
+
+  }
+
+
+  if (action === 'chat') {
+
+    handleTeacherResponse(
+      response.data || {}
+    );
+
+  }
 
 }
 
@@ -1626,179 +1604,215 @@ response.data
 
 function handleTeacherResponse(data) {
 
-isProcessing = false;
+  isProcessing = false;
 
-document.getElementById(
-'loading'
-).style.display =
-'none';
-
-if (!data) {
-
-resetMicButton();
-
-throw new Error(
-'Giáo viên không trả về dữ liệu.'
-);
-
-}
+  document.getElementById(
+    'loading'
+  ).style.display =
+    'none';
 
 
-/* -----------------------------------------
-   REPLY
------------------------------------------ */
-
-const teacherText =
-String(
-data.reply ||
-'Good!'
-).trim();
-
-lastTeacherText =
-teacherText;
-
-addTeacherMessage(
-teacherText
-);
+  const teacherText =
+    String(
+      data.reply ||
+      'Good!'
+    ).trim();
 
 
-/* -----------------------------------------
-   NEXT QUESTION
------------------------------------------ */
-
-const nextQuestion =
-String(
-data.next ||
-'Can you tell me more?'
-).trim();
-
-lastNextQuestion =
-nextQuestion;
+  const nextQuestion =
+    String(
+      data.next ||
+      'Can you tell me more?'
+    ).trim();
 
 
-/*
- * Lưu cả reply và next vào lịch sử.
- * Điều này giúp AI biết nó vừa hỏi học viên gì.
- */
-
-conversationHistory.push({
-
-role: 'assistant',
-
-text:
-teacherText +
-'\n' +
-nextQuestion
-
-});
+  lastTeacherText =
+    teacherText;
 
 
-/* -----------------------------------------
-   SCORE
------------------------------------------ */
-
-showScore(data);
+  lastNextQuestion =
+    nextQuestion;
 
 
-/* -----------------------------------------
-   FEEDBACK
------------------------------------------ */
+  /* HIỂN THỊ GIÁO VIÊN */
 
-document.getElementById(
-'correction'
-).innerText =
-data.correction ||
-'Không có lỗi đáng kể.';
-
-document.getElementById(
-'correctSentence'
-).innerText =
-data.correctSentence ||
-'';
-
-document.getElementById(
-'explanation'
-).innerText =
-data.explanation ||
-'';
-
-document.getElementById(
-'comment'
-).innerText =
-data.comment ||
-'';
+  addTeacherMessage(
+    teacherText
+  );
 
 
-lastCorrectSentence =
-data.correctSentence ||
-'';
+  /* HIỂN THỊ CÂU HỎI NGAY */
+
+  addNextQuestion(
+    nextQuestion
+  );
 
 
-/* -----------------------------------------
-   SUCCESS
------------------------------------------ */
+  /* LƯU LỊCH SỬ */
 
-showSuccess(
-'✅ Giáo viên đã trả lời và đặt câu hỏi tiếp theo.'
-);
+  conversationHistory.push({
+
+    role: 'assistant',
+
+    text:
+      teacherText +
+      '\n' +
+      nextQuestion
+
+  });
 
 
-/* -----------------------------------------
-   ĐỌC REPLY + NEXT
------------------------------------------ */
+  /* SCORE */
 
-speakTeacherConversation(
-teacherText,
-nextQuestion
-);
+  showScore(
+    data
+  );
+
+
+  /* FEEDBACK */
+
+  document.getElementById(
+    'correction'
+  ).innerText =
+    data.correction ||
+    'Không có lỗi đáng kể.';
+
+
+  document.getElementById(
+    'correctSentence'
+  ).innerText =
+    data.correctSentence ||
+    '';
+
+
+  document.getElementById(
+    'explanation'
+  ).innerText =
+    data.explanation ||
+    '';
+
+
+  document.getElementById(
+    'comment'
+  ).innerText =
+    data.comment ||
+    '';
+
+
+  showSuccess(
+    '✅ Giáo viên đã trả lời.'
+  );
+
+
+  resetMicButton();
+
+
+  /* ĐỌC */
+
+  speakTeacherConversation(
+    teacherText,
+    nextQuestion
+  );
 
 }
 
 
 /* =====================================================
-   19. HIỂN THỊ CÂU HỎI TIẾP THEO
+   19. ADD NEXT QUESTION
 ===================================================== */
 
 function addNextQuestion(text) {
 
-if (!text) {
-return;
-}
+  if (!text) {
+    return;
+  }
 
-const chat =
-document.getElementById(
-'chat'
-);
 
-const message =
-document.createElement(
-'div'
-);
+  const chat =
+    document.getElementById(
+      'chat'
+    );
 
-message.className =
-'message teacher';
 
-message.innerHTML =
+  const message =
+    document.createElement(
+      'div'
+    );
 
-'<div class="avatar">🤖</div>' +
 
-'<div class="bubble">' +
+  message.className =
+    'message teacher';
 
-'<div class="bubble-name">' +
-'QUESTION' +
-'</div>' +
 
-'<div class="next-question">' +
-escapeHtml(text) +
-'</div>' +
+  const avatar =
+    document.createElement(
+      'div'
+    );
 
-'</div>';
+  avatar.className =
+    'avatar';
 
-chat.appendChild(
-message
-);
+  avatar.innerText =
+    '🤖';
 
-scrollChat();
+
+  const bubble =
+    document.createElement(
+      'div'
+    );
+
+  bubble.className =
+    'bubble';
+
+
+  const name =
+    document.createElement(
+      'div'
+    );
+
+  name.className =
+    'bubble-name';
+
+  name.innerText =
+    'QUESTION';
+
+
+  const question =
+    document.createElement(
+      'div'
+    );
+
+  question.className =
+    'next-question';
+
+  question.innerText =
+    text;
+
+
+  bubble.appendChild(
+    name
+  );
+
+  bubble.appendChild(
+    question
+  );
+
+
+  message.appendChild(
+    avatar
+  );
+
+  message.appendChild(
+    bubble
+  );
+
+
+  chat.appendChild(
+    message
+  );
+
+
+  scrollChat();
 
 }
 
@@ -1809,36 +1823,88 @@ scrollChat();
 
 function addStudentMessage(text) {
 
-const chat =
-document.getElementById(
-'chat'
-);
+  const chat =
+    document.getElementById(
+      'chat'
+    );
 
-const message =
-document.createElement(
-'div'
-);
 
-message.className =
-'message student';
+  const message =
+    document.createElement(
+      'div'
+    );
 
-message.innerHTML =
 
-'<div class="avatar">👨‍🎓</div>' +
+  message.className =
+    'message student';
 
-'<div class="bubble">' +
 
-'<div class="bubble-name">YOU</div>' +
+  const avatar =
+    document.createElement(
+      'div'
+    );
 
-escapeHtml(text) +
+  avatar.className =
+    'avatar';
 
-'</div>';
+  avatar.innerText =
+    '👨‍🎓';
 
-chat.appendChild(
-message
-);
 
-scrollChat();
+  const bubble =
+    document.createElement(
+      'div'
+    );
+
+  bubble.className =
+    'bubble';
+
+
+  const name =
+    document.createElement(
+      'div'
+    );
+
+  name.className =
+    'bubble-name';
+
+  name.innerText =
+    'YOU';
+
+
+  const content =
+    document.createElement(
+      'div'
+    );
+
+  content.innerText =
+    text;
+
+
+  bubble.appendChild(
+    name
+  );
+
+  bubble.appendChild(
+    content
+  );
+
+
+  message.appendChild(
+    bubble
+  );
+
+  message.appendChild(
+    avatar
+  );
+
+
+  chat.appendChild(
+    message
+  );
+
+
+  scrollChat();
 
 }
 
@@ -1849,36 +1915,88 @@ scrollChat();
 
 function addTeacherMessage(text) {
 
-const chat =
-document.getElementById(
-'chat'
-);
+  const chat =
+    document.getElementById(
+      'chat'
+    );
 
-const message =
-document.createElement(
-'div'
-);
 
-message.className =
-'message teacher';
+  const message =
+    document.createElement(
+      'div'
+    );
 
-message.innerHTML =
 
-'<div class="avatar">🤖</div>' +
+  message.className =
+    'message teacher';
 
-'<div class="bubble">' +
 
-'<div class="bubble-name">TEACHER</div>' +
+  const avatar =
+    document.createElement(
+      'div'
+    );
 
-escapeHtml(text) +
+  avatar.className =
+    'avatar';
 
-'</div>';
+  avatar.innerText =
+    '🤖';
 
-chat.appendChild(
-message
-);
 
-scrollChat();
+  const bubble =
+    document.createElement(
+      'div'
+    );
+
+  bubble.className =
+    'bubble';
+
+
+  const name =
+    document.createElement(
+      'div'
+    );
+
+  name.className =
+    'bubble-name';
+
+  name.innerText =
+    'TEACHER';
+
+
+  const content =
+    document.createElement(
+      'div'
+    );
+
+  content.innerText =
+    text;
+
+
+  bubble.appendChild(
+    name
+  );
+
+  bubble.appendChild(
+    content
+  );
+
+
+  message.appendChild(
+    avatar
+  );
+
+  message.appendChild(
+    bubble
+  );
+
+
+  chat.appendChild(
+    message
+  );
+
+
+  scrollChat();
 
 }
 
@@ -1889,251 +2007,253 @@ scrollChat();
 
 function showScore(data) {
 
-const card =
-document.getElementById(
-'scoreCard'
-);
+  const card =
+    document.getElementById(
+      'scoreCard'
+    );
 
-card.style.display =
-'block';
 
-const score =
-Number(data.score || 0);
+  card.style.display =
+    'block';
 
-document.getElementById(
-'mainScore'
-).innerText =
-score +
-'/100';
 
-document.getElementById(
-'progressBar'
-).style.width =
-Math.max(
-0,
-Math.min(
-100,
-score
-)
-) +
-'%';
+  const score =
+    Number(
+      data.score || 0
+    );
 
-document.getElementById(
-'vocabulary'
-).innerText =
-Number(
-data.vocabulary ?? 0
-);
 
-document.getElementById(
-'grammar'
-).innerText =
-Number(
-data.grammar ?? 0
-);
+  document.getElementById(
+    'mainScore'
+  ).innerText =
+    score +
+    '/100';
 
-document.getElementById(
-'fluency'
-).innerText =
-Number(
-data.fluency ?? 0
-);
 
-document.getElementById(
-'pronunciation'
-).innerText =
-Number(
-data.pronunciation ?? 0
-);
+  document.getElementById(
+    'progressBar'
+  ).style.width =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        score
+      )
+    ) +
+    '%';
 
-totalScore += score;
 
-totalQuestions++;
+  document.getElementById(
+    'vocabulary'
+  ).innerText =
+    Number(
+      data.vocabulary ?? 0
+    );
+
+
+  document.getElementById(
+    'grammar'
+  ).innerText =
+    Number(
+      data.grammar ?? 0
+    );
+
+
+  document.getElementById(
+    'fluency'
+  ).innerText =
+    Number(
+      data.fluency ?? 0
+    );
+
+
+  document.getElementById(
+    'pronunciation'
+  ).innerText =
+    Number(
+      data.pronunciation ?? 0
+    );
+
+
+  totalScore += score;
+
+  totalQuestions++;
 
 }
 
 
 /* =====================================================
-   23. ĐỌC CẢ PHẢN HỒI + CÂU HỎI
+   23. SPEECH
 ===================================================== */
 
 function speakTeacherConversation(
-reply,
-nextQuestion
+  reply,
+  nextQuestion
 ) {
 
-if (!reply) {
-return;
-}
-
-if (!window.speechSynthesis) {
-
-showError(
-'Trình duyệt không hỗ trợ Text-to-Speech.'
-);
-
-resetMicButton();
-
-return;
-
-}
-
-window.speechSynthesis.cancel();
+  if (!reply) {
+    return;
+  }
 
 
-const textToSpeak =
-nextQuestion
-? reply +
-'. ' +
-nextQuestion
-: reply;
+  if (!window.speechSynthesis) {
+
+    showError(
+      'Trình duyệt không hỗ trợ Text-to-Speech.'
+    );
+
+    return;
+
+  }
 
 
-const speech =
-new SpeechSynthesisUtterance(
-textToSpeak
-);
-
-speech.lang =
-'en-US';
-
-speech.rate =
-0.85;
-
-speech.pitch =
-1;
-
-speech.volume =
-1;
+  window.speechSynthesis.cancel();
 
 
-speech.onstart =
-function() {
-
-setVoiceStatus(
-'🔊 Giáo viên đang trả lời...'
-);
-
-};
+  const textToSpeak =
+    nextQuestion
+      ? reply +
+        '. ' +
+        nextQuestion
+      : reply;
 
 
-speech.onend =
-function() {
-
-if (
-!conversationActive ||
-isProcessing
-) {
-
-return;
-
-}
+  const speech =
+    new SpeechSynthesisUtterance(
+      textToSpeak
+    );
 
 
-/*
- * Hiển thị câu hỏi rõ ràng trong giao diện
- */
+  speech.lang =
+    'en-US';
 
-addNextQuestion(
-nextQuestion
-);
+  speech.rate =
+    0.85;
 
+  speech.pitch =
+    1;
 
-setVoiceStatus(
-'🎤 Đến lượt bạn trả lời câu hỏi trên'
-);
-
-
-/*
- * Tự động bật microphone
- */
-
-setTimeout(
-function() {
-
-if (
-conversationActive &&
-!isProcessing &&
-!isListening
-) {
-
-startListening();
-
-}
-
-},
-800
-);
-
-};
+  speech.volume =
+    1;
 
 
-speech.onerror =
-function(event) {
+  speech.onstart =
+    function() {
 
-console.error(
-'Speech synthesis error:',
-event
-);
+      setVoiceStatus(
+        '🔊 Giáo viên đang trả lời...'
+      );
 
-if (
-conversationActive &&
-!isProcessing
-) {
-
-setVoiceStatus(
-'🎤 Đến lượt bạn nói'
-);
-
-setTimeout(
-function() {
-
-if (
-conversationActive &&
-!isProcessing &&
-!isListening
-) {
-
-startListening();
-
-}
-
-},
-500
-);
-
-}
-
-};
+    };
 
 
-window.speechSynthesis.speak(
-speech
-);
+  speech.onend =
+    function() {
+
+      if (
+        !conversationActive ||
+        isProcessing
+      ) {
+
+        return;
+
+      }
+
+
+      setVoiceStatus(
+        '🎤 Đến lượt bạn trả lời'
+      );
+
+
+      setTimeout(
+        function() {
+
+          if (
+            conversationActive &&
+            !isProcessing &&
+            !isListening
+          ) {
+
+            startListening();
+
+          }
+
+        },
+        500
+      );
+
+    };
+
+
+  speech.onerror =
+    function(event) {
+
+      console.error(
+        'Speech error:',
+        event
+      );
+
+
+      if (
+        conversationActive &&
+        !isProcessing
+      ) {
+
+        setVoiceStatus(
+          '🎤 Đến lượt bạn nói'
+        );
+
+
+        setTimeout(
+          function() {
+
+            if (
+              conversationActive &&
+              !isProcessing &&
+              !isListening
+            ) {
+
+              startListening();
+
+            }
+
+          },
+          500
+        );
+
+      }
+
+    };
+
+
+  window.speechSynthesis.speak(
+    speech
+  );
 
 }
 
 
 /* =====================================================
-   24. NGHE LẠI
+   24. REPLAY
 ===================================================== */
 
 function speakLastTeacherMessage() {
 
-if (!lastTeacherText) {
+  if (!lastTeacherText) {
 
-showError(
-'Chưa có câu trả lời của giáo viên.'
-);
+    showError(
+      'Chưa có câu trả lời của giáo viên.'
+    );
 
-return;
+    return;
 
-}
+  }
 
-speakTeacherConversation(
-lastTeacherText,
-lastNextQuestion
-);
+
+  speakTeacherConversation(
+    lastTeacherText,
+    lastNextQuestion
+  );
 
 }
 
@@ -2144,10 +2264,10 @@ lastNextQuestion
 
 function setVoiceStatus(text) {
 
-document.getElementById(
-'voiceStatus'
-).innerText =
-text;
+  document.getElementById(
+    'voiceStatus'
+  ).innerText =
+    text;
 
 }
 
@@ -2158,33 +2278,37 @@ text;
 
 function showError(message) {
 
-const error =
-document.getElementById(
-'error'
-);
+  const error =
+    document.getElementById(
+      'error'
+    );
 
-error.style.display =
-'block';
 
-error.innerText =
-'❌ ' +
-message;
+  error.style.display =
+    'block';
+
+
+  error.innerText =
+    '❌ ' +
+    message;
 
 }
 
 
 function clearError() {
 
-const error =
-document.getElementById(
-'error'
-);
+  const error =
+    document.getElementById(
+      'error'
+    );
 
-error.style.display =
-'none';
 
-error.innerText =
-'';
+  error.style.display =
+    'none';
+
+
+  error.innerText =
+    '';
 
 }
 
@@ -2195,26 +2319,29 @@ error.innerText =
 
 function showSuccess(message) {
 
-const success =
-document.getElementById(
-'success'
-);
+  const success =
+    document.getElementById(
+      'success'
+    );
 
-success.style.display =
-'block';
 
-success.innerText =
-message;
+  success.style.display =
+    'block';
 
-setTimeout(
-function() {
 
-success.style.display =
-'none';
+  success.innerText =
+    message;
 
-},
-3000
-);
+
+  setTimeout(
+    function() {
+
+      success.style.display =
+        'none';
+
+    },
+    3000
+  );
 
 }
 
@@ -2225,37 +2352,18 @@ success.style.display =
 
 function scrollChat() {
 
-const chat =
-document.getElementById(
-'chat'
-);
-
-chat.scrollTop =
-chat.scrollHeight;
-
-}
+  const chat =
+    document.getElementById(
+      'chat'
+    );
 
 
-/* =====================================================
-   29. ESCAPE HTML
-===================================================== */
-
-function escapeHtml(text) {
-
-const div =
-document.createElement(
-'div'
-);
-
-div.innerText =
-String(text);
-
-return div.innerHTML;
+  chat.scrollTop =
+    chat.scrollHeight;
 
 }
 
 </script>
 
 </body>
-
 </html>
