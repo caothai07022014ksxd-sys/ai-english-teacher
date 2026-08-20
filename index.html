@@ -1440,7 +1440,10 @@ async function toggleConversation() {
 // =====================================================
 
 function startListening() {
-
+  setAvatarStatus(
+    'listening',
+    'I'm listening to you...'
+  );
   if (
     !conversationActive ||
     isProcessing ||
@@ -2010,7 +2013,10 @@ function resetMicButton() {
 function sendToTeacher(
   message
 ) {
-
+  setAvatarStatus(
+    'thinking',
+    'Let me think...'
+  );
   if (!message) {
 
     return;
@@ -2800,18 +2806,23 @@ function speakTeacher(
 
 
   speech.onend =
-    function () {
+  function () {
 
-      if (!autoContinue) {
+    setAvatarStatus(
+      'ready',
+      'What would you like to say?'
+    );
 
-        setVoiceStatus(
-          '✅ Đã thử giọng.'
-        );
 
-        return;
+    if (!autoContinue) {
 
-      }
+      setVoiceStatus(
+        '✅ Đã thử giọng.'
+      );
 
+      return;
+
+    }
 
       if (
         conversationActive &&
