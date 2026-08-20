@@ -875,6 +875,12 @@ let isProcessing = false;
 
 let conversationActive = false;
 
+let startingRecognition = false;
+
+let stopRequested = false;
+
+let restartTimer = null;
+
 
 // =====================================================
 // 4. HISTORY
@@ -1068,19 +1074,17 @@ function loadVoices() {
       }
 
 
+      option.textContent =
+        label;
+
+
       select.appendChild(
         option
       );
 
-
-      option.textContent =
-        label;
-
     }
   );
 
-
-  // Ưu tiên en-US
 
   let defaultIndex =
     voicesToShow.findIndex(
@@ -1096,8 +1100,6 @@ function loadVoices() {
       }
     );
 
-
-  // Sau đó ưu tiên Google
 
   if (
     defaultIndex === -1
@@ -1117,8 +1119,6 @@ function loadVoices() {
   }
 
 
-  // Sau đó Samantha
-
   if (
     defaultIndex === -1
   ) {
@@ -1136,8 +1136,6 @@ function loadVoices() {
 
   }
 
-
-  // Cuối cùng voice đầu tiên
 
   if (
     defaultIndex === -1
@@ -1380,7 +1378,7 @@ async function requestMicrophonePermission() {
 
 
 // =====================================================
-// 17. START CONVERSATION
+// 17. START / STOP CONVERSATION
 // =====================================================
 
 async function toggleConversation() {
@@ -1396,6 +1394,10 @@ async function toggleConversation() {
 
 
   if (!conversationActive) {
+
+    stopRequested =
+      false;
+
 
     const granted =
       await requestMicrophonePermission();
@@ -1434,7 +1436,7 @@ async function toggleConversation() {
 
 
 // =====================================================
-// 18. LISTENING
+// 18. START LISTENING
 // =====================================================
 
 function startListening() {
@@ -1442,7 +1444,8 @@ function startListening() {
   if (
     !conversationActive ||
     isProcessing ||
-    isListening
+    isListening ||
+    startingRecognition
   ) {
 
     return;
@@ -1459,6 +1462,28 @@ function startListening() {
     return;
 
   }
+
+
+  if (
+    restartTimer
+  ) {
+
+    clearTimeout(
+      restartTimer
+    );
+
+    restartTimer =
+      null;
+
+  }
+
+
+  startingRecognition =
+    true;
+
+
+  stopRequested =
+    false;
 
 
   clearError();
@@ -1487,6 +1512,10 @@ function startListening() {
   recognition.onstart =
     function () {
 
+      startingRecognition =
+        false;
+
+
       isListening =
         true;
 
@@ -1507,6 +1536,11 @@ function startListening() {
       );
 
 
+      button.classList.remove(
+        'ready'
+      );
+
+
       button.innerHTML =
         '🔴<br>ĐANG NGHE';
 
@@ -1521,8 +1555,21 @@ function startListening() {
   recognition.onresult =
     function (event) {
 
+      if (
+        !event ||
+        !event.results ||
+        !event.results.length
+      ) {
+
+        return;
+
+      }
+
+
       const result =
-        event.results[0];
+        event.results[
+          event.results.length - 1
+        ];
 
 
       if (
@@ -1563,8 +1610,57 @@ function startListening() {
   recognition.onerror =
     function (event) {
 
+      startingRecognition =
+        false;
+
+
       isListening =
         false;
+
+
+      const errorCode =
+        event &&
+        event.error
+          ? event.error
+          : 'unknown';
+
+
+      /*
+       * ABORTED:
+       *
+       * Đây thường là phiên nghe bị kết thúc
+       * chứ không phải lỗi nghiêm trọng.
+       */
+
+      if (
+        errorCode ===
+        'aborted'
+      ) {
+
+        console.log(
+          'Speech Recognition aborted.'
+        );
+
+
+        resetMicButton();
+
+
+        if (
+          conversationActive &&
+          !stopRequested &&
+          !isProcessing
+        ) {
+
+          setVoiceStatus(
+            '🎤 Phiên nghe vừa kết thúc. Bấm NÓI để tiếp tục.'
+          );
+
+        }
+
+
+        return;
+
+      }
 
 
       resetMicButton();
@@ -1572,11 +1668,11 @@ function startListening() {
 
       let message =
         'Speech Recognition lỗi: ' +
-        event.error;
+        errorCode;
 
 
       if (
-        event.error ===
+        errorCode ===
         'service-not-allowed'
       ) {
 
@@ -1588,7 +1684,7 @@ function startListening() {
 
 
       else if (
-        event.error ===
+        errorCode ===
         'not-allowed'
       ) {
 
@@ -1599,18 +1695,30 @@ function startListening() {
 
 
       else if (
-        event.error ===
+        errorCode ===
         'no-speech'
       ) {
 
         message =
-          'Không nghe thấy giọng nói.';
+          'Không nghe thấy giọng nói.\n\n' +
+          'Hãy nói rõ và gần microphone hơn.';
 
       }
 
 
       else if (
-        event.error ===
+        errorCode ===
+        'audio-capture'
+      ) {
+
+        message =
+          'Không lấy được tín hiệu microphone.';
+
+      }
+
+
+      else if (
+        errorCode ===
         'network'
       ) {
 
@@ -1630,15 +1738,26 @@ function startListening() {
   recognition.onend =
     function () {
 
+      startingRecognition =
+        false;
+
+
       isListening =
         false;
 
 
+      resetMicButton();
+
+
       if (
+        conversationActive &&
+        !stopRequested &&
         !isProcessing
       ) {
 
-        resetMicButton();
+        setVoiceStatus(
+          '🎤 Phiên nghe đã kết thúc. Bấm NÓI để nói tiếp.'
+        );
 
       }
 
@@ -1653,9 +1772,17 @@ function startListening() {
 
   catch (error) {
 
+    startingRecognition =
+      false;
+
+
     console.error(
+      'recognition.start():',
       error
     );
+
+
+    resetMicButton();
 
   }
 
@@ -1663,10 +1790,28 @@ function startListening() {
 
 
 // =====================================================
-// 19. STOP
+// 19. STOP LISTENING
 // =====================================================
 
 function stopListening() {
+
+  stopRequested =
+    true;
+
+
+  if (
+    restartTimer
+  ) {
+
+    clearTimeout(
+      restartTimer
+    );
+
+    restartTimer =
+      null;
+
+  }
+
 
   if (recognition) {
 
@@ -1675,9 +1820,11 @@ function stopListening() {
       recognition.stop();
 
     }
+
     catch (error) {
 
       console.log(
+        'recognition.stop():',
         error
       );
 
@@ -1690,10 +1837,18 @@ function stopListening() {
     false;
 
 
+  startingRecognition =
+    false;
+
+
   resetMicButton();
 
 }
 
+
+// =====================================================
+// 20. RELEASE MICROPHONE
+// =====================================================
 
 function releaseMicrophone() {
 
@@ -1709,7 +1864,19 @@ function releaseMicrophone() {
     .forEach(
       function (track) {
 
-        track.stop();
+        try {
+
+          track.stop();
+
+        }
+
+        catch (error) {
+
+          console.log(
+            error
+          );
+
+        }
 
       }
     );
@@ -1721,10 +1888,18 @@ function releaseMicrophone() {
 }
 
 
+// =====================================================
+// 21. STOP CONVERSATION
+// =====================================================
+
 function stopConversation() {
 
   conversationActive =
     false;
+
+
+  stopRequested =
+    true;
 
 
   stopListening();
@@ -1773,6 +1948,10 @@ function stopConversation() {
 
 }
 
+
+// =====================================================
+// 22. RESET MIC
+// =====================================================
 
 function resetMicButton() {
 
@@ -1825,7 +2004,7 @@ function resetMicButton() {
 
 
 // =====================================================
-// 20. SEND TO TEACHER
+// 23. SEND TEACHER
 // =====================================================
 
 function sendToTeacher(
@@ -1841,6 +2020,39 @@ function sendToTeacher(
 
   isProcessing =
     true;
+
+
+  stopRequested =
+    true;
+
+
+  /*
+   * Sau khi có câu nói,
+   * không khởi động recognition mới
+   * cho tới khi AI trả lời xong.
+   */
+
+  if (recognition) {
+
+    try {
+
+      recognition.stop();
+
+    }
+
+    catch (error) {
+
+      console.log(
+        error
+      );
+
+    }
+
+  }
+
+
+  isListening =
+    false;
 
 
   resetMicButton();
@@ -1900,7 +2112,7 @@ function sendToTeacher(
 
 
 // =====================================================
-// 21. API
+// 24. API
 // =====================================================
 
 function callApi(
@@ -1918,8 +2130,70 @@ function callApi(
     );
 
 
+  let finished =
+    false;
+
+
+  const timeoutId =
+    setTimeout(
+      function () {
+
+        if (finished) {
+
+          return;
+
+        }
+
+
+        finished =
+          true;
+
+
+        delete window[
+          callbackName
+        ];
+
+
+        document.getElementById(
+          'loading'
+        ).style.display =
+          'none';
+
+
+        isProcessing =
+          false;
+
+
+        resetMicButton();
+
+
+        showError(
+          'Apps Script không phản hồi sau 30 giây.'
+        );
+
+      },
+      30000
+    );
+
+
   window[callbackName] =
     function (response) {
+
+      if (finished) {
+
+        return;
+
+      }
+
+
+      finished =
+        true;
+
+
+      clearTimeout(
+        timeoutId
+      );
+
 
       try {
 
@@ -1930,11 +2204,36 @@ function callApi(
 
       }
 
-      finally {
+      catch (error) {
 
-        delete window[
-          callbackName
-        ];
+        console.error(
+          error
+        );
+
+
+        isProcessing =
+          false;
+
+
+        showError(
+          error.message
+        );
+
+      }
+
+
+      delete window[
+        callbackName
+      ];
+
+
+      if (
+        script.parentNode
+      ) {
+
+        script.parentNode.removeChild(
+          script
+        );
 
       }
 
@@ -1981,6 +2280,10 @@ function callApi(
     );
 
 
+  script.async =
+    true;
+
+
   script.src =
     APPS_SCRIPT_URL +
     '?' +
@@ -1990,14 +2293,35 @@ function callApi(
   script.onerror =
     function () {
 
-      isProcessing =
-        false;
+      if (finished) {
+
+        return;
+
+      }
+
+
+      finished =
+        true;
+
+
+      clearTimeout(
+        timeoutId
+      );
+
+
+      delete window[
+        callbackName
+      ];
 
 
       document.getElementById(
         'loading'
       ).style.display =
         'none';
+
+
+      isProcessing =
+        false;
 
 
       resetMicButton();
@@ -2018,7 +2342,7 @@ function callApi(
 
 
 // =====================================================
-// 22. RESPONSE
+// 25. HANDLE RESPONSE
 // =====================================================
 
 function handleActionResponse(
@@ -2028,25 +2352,23 @@ function handleActionResponse(
 
   if (!response) {
 
-    showError(
+    throw new Error(
       'API không trả về dữ liệu.'
     );
-
-    return;
 
   }
 
 
   if (!response.success) {
 
-    isProcessing =
-      false;
-
-
     document.getElementById(
       'loading'
     ).style.display =
       'none';
+
+
+    isProcessing =
+      false;
 
 
     resetMicButton();
@@ -2056,6 +2378,7 @@ function handleActionResponse(
       response.error ||
       'API xảy ra lỗi.'
     );
+
 
     return;
 
@@ -2094,7 +2417,7 @@ function handleActionResponse(
 
 
 // =====================================================
-// 23. TEACHER RESPONSE
+// 26. TEACHER RESPONSE
 // =====================================================
 
 function handleTeacherResponse(
@@ -2105,10 +2428,26 @@ function handleTeacherResponse(
     false;
 
 
+  stopRequested =
+    false;
+
+
   document.getElementById(
     'loading'
   ).style.display =
     'none';
+
+
+  if (!data) {
+
+    resetMicButton();
+
+
+    throw new Error(
+      'Giáo viên không trả về dữ liệu.'
+    );
+
+  }
 
 
   const teacherText =
@@ -2186,7 +2525,7 @@ function handleTeacherResponse(
 
 
 // =====================================================
-// 24. CHAT MESSAGE
+// 27. ADD STUDENT
 // =====================================================
 
 function addStudentMessage(
@@ -2236,6 +2575,10 @@ function addStudentMessage(
 }
 
 
+// =====================================================
+// 28. ADD TEACHER
+// =====================================================
+
 function addTeacherMessage(
   text
 ) {
@@ -2284,7 +2627,7 @@ function addTeacherMessage(
 
 
 // =====================================================
-// 25. SCORE
+// 29. SCORE
 // =====================================================
 
 function showScore(
@@ -2357,7 +2700,7 @@ function showScore(
 
 
 // =====================================================
-// 26. TEXT TO SPEECH
+// 30. TEXT TO SPEECH
 // =====================================================
 
 function speakTeacher(
@@ -2399,8 +2742,6 @@ function speakTeacher(
   window.speechSynthesis.cancel();
 
 
-  // Lấy lại voice nếu cần
-
   if (
     !availableVoices.length
   ) {
@@ -2415,8 +2756,6 @@ function speakTeacher(
       text
     );
 
-
-  // Dùng voice đang chọn
 
   if (selectedVoice) {
 
@@ -2476,7 +2815,7 @@ function speakTeacher(
 
       if (
         conversationActive &&
-        !isProcessing
+        !stopRequested
       ) {
 
         setVoiceStatus(
@@ -2484,22 +2823,35 @@ function speakTeacher(
         );
 
 
-        setTimeout(
-          function () {
+        /*
+         * Không tự start ngay lập tức.
+         * Safari/iPhone dễ phát sinh aborted
+         * nếu gọi start quá sát speechSynthesis.
+         */
 
-            if (
-              conversationActive &&
-              !isProcessing &&
-              !isListening
-            ) {
+        restartTimer =
+          setTimeout(
+            function () {
 
-              startListening();
+              restartTimer =
+                null;
 
-            }
 
-          },
-          700
-        );
+              if (
+                conversationActive &&
+                !stopRequested &&
+                !isProcessing &&
+                !isListening &&
+                !startingRecognition
+              ) {
+
+                startListening();
+
+              }
+
+            },
+            1200
+          );
 
       }
 
@@ -2530,7 +2882,7 @@ function speakTeacher(
 
 
 // =====================================================
-// 27. LISTEN AGAIN
+// 31. LISTEN AGAIN
 // =====================================================
 
 function speakLastTeacherMessage() {
@@ -2555,7 +2907,7 @@ function speakLastTeacherMessage() {
 
 
 // =====================================================
-// 28. STATUS
+// 32. STATUS
 // =====================================================
 
 function setVoiceStatus(
@@ -2571,7 +2923,7 @@ function setVoiceStatus(
 
 
 // =====================================================
-// 29. ERROR
+// 33. ERROR
 // =====================================================
 
 function showError(
@@ -2614,7 +2966,7 @@ function clearError() {
 
 
 // =====================================================
-// 30. SUCCESS
+// 34. SUCCESS
 // =====================================================
 
 function showSuccess(
@@ -2649,7 +3001,7 @@ function showSuccess(
 
 
 // =====================================================
-// 31. SCROLL
+// 35. SCROLL
 // =====================================================
 
 function scrollChat() {
@@ -2667,7 +3019,7 @@ function scrollChat() {
 
 
 // =====================================================
-// 32. ESCAPE HTML
+// 36. ESCAPE HTML
 // =====================================================
 
 function escapeHtml(
@@ -2689,6 +3041,7 @@ function escapeHtml(
 }
 
 </script>
+
 
 </body>
 
