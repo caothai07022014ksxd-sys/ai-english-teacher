@@ -5728,77 +5728,19 @@ function escapeHtml(text) {
 window.addEventListener(
   'beforeunload',
   function() {
-
     try {
-
       if(recognition) {
-
         recognition.stop();
-
       }
-
-    }
-
-    catch(error) {}
-
+    } catch(error) {}
 
     try {
-
       releaseMicrophone();
-
-    }
-
-    catch(error) {}
-
-
-    try {
-
-      if(window.speechSynthesis) {
-
-        window.speechSynthesis.cancel();
-
-      }
-
-    }
-
-    catch(error) {}
-
+    } catch(error) {}
   }
 );
-// ==========================================
-// CẬP NHẬT LOGIC CHỌN LEVEL & TOPIC
-// ==========================================
 
-function updateLessonConfig() {
-  const levelSelect = document.getElementById('levelSelect');
-  const topicSelect = document.getElementById('topicSelect');
-  
-  if (!levelSelect || !topicSelect) return;
-
-  const level = levelSelect.value;
-  const topicText = topicSelect.options[topicSelect.selectedIndex].text;
-
-  // Cập nhật tiêu đề hiển thị
-  const topicElement = document.getElementById('lessonTopic');
-  if (topicElement) {
-    topicElement.innerText = `${topicText} (${level})`;
-  }
-
-  // Tự động tải lại từ vựng theo chủ đề mới chọn
-  if (typeof loadTopicVocab === 'function') {
-    loadTopicVocab();
-  }
-
-  // Thông báo tới người dùng
-  if (typeof showSuccess === 'function') {
-    showSuccess(`Đã chuyển sang: ${topicText} - Trình độ ${level}`);
-  }
-}
-}
-  }
-}
-
-// Cấu hình Web Speech API ngắt tự động
+// 1. CẤU HÌNH NHẬN DIỆN GIỌNG NÓI (WEB SPEECH API)
 function startSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -5811,10 +5753,7 @@ function startSpeechRecognition() {
   recognition.continuous = false;
   recognition.interimResults = true;
 
-  let silenceTimer;
-
   recognition.onresult = (event) => {
-    clearTimeout(silenceTimer);
     let transcript = '';
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       transcript += event.results[i][0].transcript;
@@ -5827,7 +5766,7 @@ function startSpeechRecognition() {
   recognition.start();
 }
 
-// BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ
+// 2. BỘ DỮ LIỆU TỪ VỰNG BAN ĐẦU
 const vocabDatabase = {
   'Hội thoại hàng ngày': [
     { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày', example: 'I want to improve my daily routine.' },
@@ -5859,7 +5798,25 @@ const vocabDatabase = {
   ]
 };
 
-// Hàm hiển thị & xáo trộn từ vựng theo chủ đề
+// 3. HÀM CẬP NHẬT CẤU HÌNH BÀI HỌC
+function updateLessonConfig() {
+  const levelSelect = document.getElementById('levelSelect');
+  const topicSelect = document.getElementById('topicSelect');
+  
+  if (!levelSelect || !topicSelect) return;
+
+  const level = levelSelect.value;
+  const topicText = topicSelect.options[topicSelect.selectedIndex].text;
+
+  const topicElement = document.getElementById('lessonTopic');
+  if (topicElement) {
+    topicElement.innerText = `${topicText} (${level})`;
+  }
+
+  loadTopicVocab();
+}
+
+// 4. HÀM TẢI & XÁO TRỘN TỪ VỰNG
 function loadTopicVocab() {
   const topicSelect = document.getElementById('topicSelect');
   const currentTopic = topicSelect ? topicSelect.options[topicSelect.selectedIndex].text : 'Hội thoại hàng ngày';
@@ -5892,7 +5849,7 @@ function loadTopicVocab() {
   `).join('');
 }
 
-// Hàm điền câu mẫu vào ô nhập
+// 5. HÀM ĐIỀN CÂU MẪU VÀO Ô NHẬP
 function practiceSentence(sentence) {
   const textInput = document.getElementById('textInput');
   if (textInput) {
@@ -5901,7 +5858,7 @@ function practiceSentence(sentence) {
   }
 }
 
-// Tự động tải từ vựng khi trang sẵn sàng
+// 6. KHỞI TẠO KHI TẢI TRANG
 document.addEventListener('DOMContentLoaded', () => {
   loadTopicVocab();
 });
