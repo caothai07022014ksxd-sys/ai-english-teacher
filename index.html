@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI English Teacher PRO</title>
   <style>
-/* =========================================================
-   AI ENGLISH TEACHER PRO - COMPLETE DESIGN SYSTEM
-========================================================= */
 :root {
   --primary: #2563eb;
   --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
@@ -92,12 +89,12 @@ select {
 
 .main-grid {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1.1fr 0.9fr;
   gap: 24px;
   align-items: start;
 }
 
-.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card {
+.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card, .eval-card {
   background: var(--card-bg) !important;
   backdrop-filter: blur(16px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
@@ -112,7 +109,7 @@ select {
 .teacher-live { font-size: 12px; color: #16a34a; font-weight: 700; }
 
 .ai-human-avatar {
-  position: relative; width: 100%; height: 480px;
+  position: relative; width: 100%; height: 440px;
   border-radius: var(--radius-md); overflow: hidden;
   background: linear-gradient(135deg, #dbeafe, #eff6ff);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
@@ -129,7 +126,7 @@ select {
 .right-column { display: flex; flex-direction: column; gap: 20px; }
 
 .chat-card {
-  height: 400px; display: flex; flex-direction: column; overflow: hidden; padding: 0 !important;
+  height: 320px; display: flex; flex-direction: column; overflow: hidden; padding: 0 !important;
 }
 .chat-header {
   padding: 14px 20px; border-bottom: 1px solid rgba(226, 232, 240, 0.8);
@@ -148,6 +145,21 @@ select {
 .message.teacher .bubble { background: #f1f5f9; color: #0f172a; border-top-left-radius: 2px; }
 .message.student .bubble { background: var(--primary-gradient); color: white; border-top-right-radius: 2px; }
 
+/* BẢNG ĐÁNH GIÁ CHUYÊN NGHIỆP */
+.eval-card { border-left: 5px solid var(--primary) !important; }
+.eval-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.eval-title { font-size: 15px; font-weight: 800; color: #1e293b; }
+.eval-badge { padding: 4px 10px; border-radius: 20px; background: #dbeafe; color: #1e4ed8; font-weight: 800; font-size: 12px; }
+
+.eval-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+.metric-box { background: rgba(241, 245, 249, 0.8); padding: 8px; border-radius: 10px; text-align: center; }
+.metric-val { font-size: 16px; font-weight: 800; color: #2563eb; }
+.metric-name { font-size: 10px; color: #64748b; font-weight: 700; }
+
+.eval-section { margin-top: 10px; font-size: 13px; line-height: 1.5; }
+.eval-label { font-weight: 700; color: #475569; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; }
+.eval-box { background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
+
 .text-input-row { display: flex; gap: 10px; margin-top: 8px; }
 #textInput {
   flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); outline: none;
@@ -158,9 +170,9 @@ select {
 }
 
 .voice-card { text-align: center; }
-.mic-wrapper { display: flex; justify-content: center; margin: 12px 0; }
+.mic-wrapper { display: flex; justify-content: center; margin: 10px 0; }
 .mic-button {
-  width: 90px; height: 90px; border-radius: 50%; border: none;
+  width: 80px; height: 80px; border-radius: 50%; border: none;
   background: var(--primary-gradient); color: white; font-weight: 800;
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); cursor: pointer; transition: all 0.2s ease;
 }
@@ -232,6 +244,7 @@ select {
   </div>
 
   <div class="main-grid">
+    <!-- CỘT TRÁI -->
     <div class="left-column">
       <div class="card teacher-card">
         <div class="teacher-card-header">
@@ -267,7 +280,10 @@ select {
       </div>
     </div>
 
+    <!-- CỘT PHẢI -->
     <div class="right-column">
+      
+      <!-- CỬA SỔ CHAT HỘI THOẠI -->
       <div class="chat-card">
         <div class="chat-header">
           <span class="chat-title">Hội thoại với AI Teacher</span>
@@ -282,6 +298,40 @@ select {
         </div>
       </div>
 
+      <!-- BẢNG ĐÁNH GIÁ & CHẤM ĐIỂM RIÊNG BIỆT -->
+      <div class="eval-card">
+        <div class="eval-header">
+          <div class="eval-title">📊 Phân Tích & Bảng Chấm Điểm</div>
+          <div class="eval-badge" id="evalScoreBadge">--- / 100</div>
+        </div>
+
+        <div class="eval-metrics">
+          <div class="metric-box">
+            <div class="metric-val" id="grammarScore">--</div>
+            <div class="metric-name">NGỮ PHÁP</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val" id="vocabScore">--</div>
+            <div class="metric-name">TỪ VỰNG</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val" id="pronScore">--</div>
+            <div class="metric-name">PHÁT ÂM</div>
+          </div>
+        </div>
+
+        <div class="eval-section">
+          <div class="eval-label">❌ Đánh giá lỗi & Nhận xét:</div>
+          <div class="eval-box" id="evalFeedback" style="color: #64748b;">Chưa có dữ liệu. Hãy nói hoặc nhập câu để AI phân tích!</div>
+        </div>
+
+        <div class="eval-section">
+          <div class="eval-label">✨ Câu gợi ý chuẩn / Hay hơn:</div>
+          <div class="eval-box" id="evalBetterSentence" style="color: #16a34a; font-weight: 600;">--</div>
+        </div>
+      </div>
+
+      <!-- LUYỆN NÓI TRỰC TIẾP -->
       <div class="voice-card">
         <div style="font-size: 14px; font-weight: 800;">Luyện nói trực tiếp</div>
         <div class="mic-wrapper">
@@ -290,6 +340,7 @@ select {
         <div id="voiceStatus" style="font-size: 12px; color: #64748b;">Bấm nút để bắt đầu nói chuyện</div>
       </div>
 
+      <!-- NHẬP CÂU -->
       <div class="input-card">
         <div style="font-size: 13px; font-weight: 800;">Nhập câu tiếng Anh</div>
         <div class="text-input-row">
@@ -297,11 +348,11 @@ select {
           <button class="send-text-button" id="sendBtn">GỬI ➔</button>
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- FUNCTIONAL JAVASCRIPT LOGIC -->
 <script>
   let isListening = false;
   let turns = 0;
@@ -345,9 +396,7 @@ select {
       voiceStatus.innerText = 'Không thể nhận diện giọng nói. Vui lòng thử lại!';
     };
 
-    recognition.onend = () => {
-      stopListening();
-    };
+    recognition.onend = () => { stopListening(); };
   } else {
     voiceStatus.innerText = 'Trình duyệt không hỗ trợ Web Speech API. Vui lòng gõ nội dung!';
   }
@@ -361,11 +410,8 @@ select {
 
   micBtn.addEventListener('click', () => {
     if (!recognition) return;
-    if (isListening) {
-      recognition.stop();
-    } else {
-      recognition.start();
-    }
+    if (isListening) recognition.stop();
+    else recognition.start();
   });
 
   sendBtn.addEventListener('click', () => {
@@ -380,25 +426,26 @@ select {
     if (e.key === 'Enter') sendBtn.click();
   });
 
-  // HÀM XỬ LÝ NÓI, CHẤM ĐIỂM VÀ SỬA LỖI
   function handleUserSpeech(text) {
-    // 1. Phân tích ngữ pháp & Tạo chấm điểm
-    const evaluation = evaluateSentence(text);
-    
-    // 2. Hiển thị tin nhắn người dùng + Khung điểm & Sửa lỗi
-    appendStudentMessage(text, evaluation);
+    appendStudentMessage(text);
     avatarMessage.innerText = `You said: "${text}"`;
-    
-    // 3. Cập nhật chỉ số thống kê
+
+    // 1. Phân tích & Đánh giá câu
+    const result = analyzeSentence(text);
+
+    // 2. Cập nhật Bảng Chấm Điểm Chi Tiết
+    updateEvaluationCard(result);
+
+    // 3. Thống kê tiến độ
     turns++;
-    totalScore += evaluation.score;
-    if (evaluation.score > bestScore) bestScore = evaluation.score;
+    totalScore += result.totalScore;
+    if (result.totalScore > bestScore) bestScore = result.totalScore;
 
     document.getElementById('turnCount').innerText = turns;
     document.getElementById('avgScore').innerText = Math.round(totalScore / turns);
     document.getElementById('highScore').innerText = bestScore;
 
-    // 4. AI phản hồi lại
+    // 4. Phản hồi AI
     setTimeout(() => {
       const response = getAIResponse(text);
       appendTeacherMessage(response);
@@ -406,65 +453,59 @@ select {
     }, 600);
   }
 
-  // THUẬT TOÁN ĐÁNH GIÁ CÂU VÀ CHẤM ĐIỂM NGỮ PHÁP
-  function evaluateSentence(text) {
+  // THUẬT TOÁN PHÂN TÍCH VÀ CHẤM ĐIỂM CÂU
+  function analyzeSentence(text) {
     const lower = text.toLowerCase();
-    let score = 90;
+    let gScore = 95, vScore = 90, pScore = 92;
     let feedback = [];
-    let corrected = text;
+    let betterSentence = text;
 
-    // Sửa các lỗi ngữ pháp phổ biến
+    // Kiểm tra lỗi ngữ pháp phổ biến
     if (lower.includes("i is") || lower.includes("i are")) {
-      corrected = corrected.replace(/i (is|are)/gi, "I am");
-      feedback.push("Đổi 'I is/are' thành 'I am'");
-      score -= 15;
+      betterSentence = betterSentence.replace(/i (is|are)/gi, "I am");
+      feedback.push("Lỗi ngữ pháp: Đổi 'I is/are' thành 'I am'.");
+      gScore -= 25;
     }
     if (lower.includes("he do") || lower.includes("she do")) {
-      corrected = corrected.replace(/(he|she) do/gi, "$1 does");
-      feedback.push("Dùng 'does' thay cho 'do' với ngôi He/She");
-      score -= 10;
+      betterSentence = betterSentence.replace(/(he|she) do/gi, "$1 does");
+      feedback.push("Lỗi chia động từ: Dùng 'does' cho chủ ngữ He/She.");
+      gScore -= 20;
     }
-    if (text.length < 5) {
-      feedback.push("Câu quá ngắn, hãy thử mở rộng câu dài hơn");
-      score -= 10;
+    if (text.length < 8) {
+      feedback.push("Câu ngắn: Bạn nên dùng thêm tính từ hoặc mở rộng ý để tăng điểm từ vựng.");
+      vScore -= 15;
     }
 
     if (feedback.length === 0) {
-      feedback.push("Ngữ pháp và phát âm tốt! Không phát hiện lỗi lớn.");
-      score = Math.min(100, Math.floor(Math.random() * 10) + 91);
+      feedback.push("Câu cấu trúc rất tốt, từ vựng tự nhiên và chuẩn ngữ pháp!");
+      betterSentence = "Great job! " + text;
     }
 
+    const totalScore = Math.round((gScore + vScore + pScore) / 3);
+
     return {
-      score: score,
-      corrected: corrected !== text ? corrected : null,
-      feedback: feedback.join(". ")
+      grammar: gScore,
+      vocab: vScore,
+      pron: pScore,
+      totalScore: totalScore,
+      feedback: feedback.join(" "),
+      betterSentence: betterSentence
     };
   }
 
-  // HIỂN THỊ TIN NHẮN HỌC VIÊN KÈM ĐIỂM & SỬA LỖI
-  function appendStudentMessage(text, evalData) {
+  function updateEvaluationCard(res) {
+    document.getElementById('evalScoreBadge').innerText = `${res.totalScore} / 100`;
+    document.getElementById('grammarScore').innerText = res.grammar;
+    document.getElementById('vocabScore').innerText = res.vocab;
+    document.getElementById('pronScore').innerText = res.pron;
+    document.getElementById('evalFeedback').innerText = res.feedback;
+    document.getElementById('evalBetterSentence').innerText = res.betterSentence;
+  }
+
+  function appendStudentMessage(text) {
     const msgDiv = document.createElement('div');
     msgDiv.className = 'message student';
-    
-    let correctionHtml = '';
-    if (evalData.corrected) {
-      correctionHtml = `
-        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.4); font-size: 12px;">
-          ✏️ <strong>Gợi ý sửa:</strong> ${evalData.corrected}<br>
-          💡 <em>${evalData.feedback}</em>
-        </div>`;
-    } else {
-      correctionHtml = `
-        <div style="margin-top: 6px; font-size: 11.5px; opacity: 0.9;">
-          🎯 <strong>Điểm lượt này:</strong> ${evalData.score}/100 - ${evalData.feedback}
-        </div>`;
-    }
-
-    msgDiv.innerHTML = `
-      <div class="bubble">
-        <strong>You:</strong><br>${text}
-        ${correctionHtml}
-      </div>`;
+    msgDiv.innerHTML = `<div class="bubble"><strong>You:</strong><br>${text}</div>`;
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
@@ -480,11 +521,11 @@ select {
   function getAIResponse(userText) {
     const lower = userText.toLowerCase();
     if (lower.includes('hello') || lower.includes('hi')) {
-      return "Hello! Great start. What topic would you like to speak about today?";
+      return "Hello! Nice to talk to you. What topic would you like to speak about today?";
     } else if (lower.includes('name')) {
       return "I am your personal AI English Teacher PRO. Let's practice speaking everyday!";
     } else {
-      return `That's very interesting! Keep up the good work. What else would you like to share about this topic?`;
+      return `That's very interesting! Keep practicing. What else would you like to say?`;
     }
   }
 
@@ -499,7 +540,6 @@ select {
   }
 
   function updateLessonTopic() {
-    const levelText = levelSelect.options[levelSelect.selectedIndex].text;
     const topicText = topicSelect.options[topicSelect.selectedIndex].text;
     lessonTopic.innerText = `${topicText} (${levelSelect.value})`;
   }
