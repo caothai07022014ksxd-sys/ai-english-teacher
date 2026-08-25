@@ -253,7 +253,69 @@ select {
     </div>
   </div>
 
-  <div class="main-grid">
+  <!-- BANNER CHỌN CHƯƠNG / CHỦ ĐỀ -->
+<div id="chapterSelectScreen" class="card" style="margin-bottom: 24px;">
+  <h2 style="margin-top: 0; font-size: 20px;">📚 Chọn Chương Học</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px;">
+    
+    <div onclick="startChapterFlow('daily')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 1: Hội thoại hàng ngày</h3>
+      <span id="status-daily" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
+    </div>
+
+    <div id="card-work" onclick="startChapterFlow('work')" style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; opacity: 0.6; cursor: not-allowed; background: #f8fafc;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #475569;">Chương 2: Tiếng Anh công sở</h3>
+      <span id="status-work" style="color: #64748b; font-weight: bold; font-size: 13px;">🔒 Đang khoá</span>
+    </div>
+
+    <div id="card-travel" onclick="startChapterFlow('travel')" style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; opacity: 0.6; cursor: not-allowed; background: #f8fafc;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #475569;">Chương 3: Du lịch & Giao tiếp</h3>
+      <span id="status-travel" style="color: #64748b; font-weight: bold; font-size: 13px;">🔒 Đang khoá</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- thanh tiến trình 3 bước -->
+<div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
+    <div style="display: flex; gap: 12px; font-weight: 700; font-size: 14px;">
+      <span id="step1-tab" style="color: #2563eb;">1. Học từ vựng</span> ➔ 
+      <span id="step2-tab" style="color: #94a3b8;">2. Kiểm tra</span> ➔ 
+      <span id="step3-tab" style="color: #94a3b8;">3. Luyện nói AI</span>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 1: HỌC TỪ VỰNG -->
+<div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
+  <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
+  <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
+    <h1 id="fcWord" style="color: #2563eb; margin: 0 0 10px 0; font-size: 32px;">Word</h1>
+    <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
+    <button onclick="playFcAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe đọc mẫu</button>
+  </div>
+  <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+    <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
+    <span id="cardProgress" style="font-weight: 700;">1 / 5</span>
+    <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
+  </div>
+  <br>
+  <button id="btnStartQuiz" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">
+    Làm Bài Kiểm Tra ➔
+  </button>
+</div>
+
+<!-- STEP 2: BÀI TEST -->
+<div id="stage2-quiz" class="card" style="display: none; max-width: 600px; margin: 0 auto; padding: 24px;">
+  <h2 style="margin-top: 0;">✍️ Bước 2: Kiểm tra khả năng nhớ từ</h2>
+  <div id="quizContainer">
+    <p id="quizQuestion" style="font-size: 16px; font-weight: 700;">Câu hỏi ở đây</p>
+    <div id="quizOptions" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;"></div>
+  </div>
+</div>
+  <div class="main-grid" id="stage3-practice" style="display: none;">
     <!-- CỘT TRÁI -->
     <div class="left-column">
       <div class="card teacher-card">
@@ -434,7 +496,7 @@ select {
       const transcript = e.results[0][0].transcript;
       handleUserSpeech(transcript);
     };
-
+    
     recognition.onerror = () => {
       stopListening();
       voiceStatus.innerText = 'Không thể nhận diện giọng nói. Vui lòng thử lại!';
@@ -490,7 +552,24 @@ select {
       appendTeacherMessage(response);
       speakText(response);
     }, 600);
+ // Mở khoá chương tiếp theo khi thực hành đủ 5 lượt
+  if (turns >= 5) {
+    if (currentChapter === 'daily' && !chapterStatus.work.unlocked) {
+      chapterStatus.work.unlocked = true;
+      document.getElementById('card-work').style.opacity = '1';
+      document.getElementById('card-work').style.cursor = 'pointer';
+      document.getElementById('status-work').innerText = '● Đã mở';
+      document.getElementById('status-work').style.color = '#16a34a';
+    } else if (currentChapter === 'work' && !chapterStatus.travel.unlocked) {
+      chapterStatus.travel.unlocked = true;
+      document.getElementById('card-travel').style.opacity = '1';
+      document.getElementById('card-travel').style.cursor = 'pointer';
+      document.getElementById('status-travel').innerText = '● Đã mở';
+      document.getElementById('status-travel').style.color = '#16a34a';
+    }
   }
+  }
+
 
   function analyzeSentence(text) {
     const lower = text.toLowerCase();
@@ -602,6 +681,145 @@ select {
   topicSelect.addEventListener('change', updateLessonTopic);
 
   updateLessonTopic();
+  // Trạng thái khóa/mở chương
+let chapterStatus = {
+  daily: { unlocked: true },
+  work: { unlocked: false },
+  travel: { unlocked: false }
+};
+
+// Ngân hàng câu hỏi trắc nghiệm
+const quizData = {
+  daily: [
+    { q: "Từ nào có nghĩa là 'Sở thích'?", options: ["Hobby", "Routine", "Leisure time"], a: 0 },
+    { q: "Từ nào có nghĩa là 'Thói quen hàng ngày'?", options: ["Relaxing", "Routine", "Family gathering"], a: 1 }
+  ],
+  work: [
+    { q: "Từ nào có nghĩa là 'Hạn chót'?", options: ["Deadline", "Meeting", "Presentation"], a: 0 }
+  ],
+  travel: [
+    { q: "Từ nào có nghĩa là 'Lịch trình'?", options: ["Itinerary", "Destination", "Accommodation"], a: 0 }
+  ]
+};
+
+let currentChapter = 'daily';
+let currentCardIdx = 0;
+let currentQuizIdx = 0;
+let quizScore = 0;
+
+// Bắt đầu vào học theo chương được chọn
+function startChapterFlow(chapterKey) {
+  if (!chapterStatus[chapterKey].unlocked) {
+    alert("Bạn cần hoàn thành bài tập nói của chương trước để mở khoá chương này!");
+    return;
+  }
+
+  currentChapter = chapterKey;
+  currentCardIdx = 0;
+  
+  document.getElementById('chapterSelectScreen').style.display = 'none';
+  document.getElementById('learningFlowHeader').style.display = 'block';
+  document.getElementById('stage1-vocab').style.display = 'block';
+  document.getElementById('stage2-quiz').style.display = 'none';
+  document.getElementById('stage3-practice').style.display = 'none';
+  
+  updateStageTabs(1);
+  renderFlashcard();
+}
+
+// Render Flashcard từ vựng
+function renderFlashcard() {
+  const list = vocabularyData[currentChapter] || [];
+  document.getElementById('fcWord').innerText = list[currentCardIdx].word;
+  document.getElementById('fcMeaning').innerText = list[currentCardIdx].mean;
+  document.getElementById('cardProgress').innerText = `${currentCardIdx + 1} / ${list.length}`;
+  
+  // Hiển thị nút test khi đã xem đến từ cuối
+  if (currentCardIdx === list.length - 1) {
+    document.getElementById('btnStartQuiz').style.display = 'inline-block';
+  }
+}
+
+function nextCard() {
+  const list = vocabularyData[currentChapter] || [];
+  if (currentCardIdx < list.length - 1) { currentCardIdx++; renderFlashcard(); }
+}
+
+function prevCard() {
+  if (currentCardIdx > 0) { currentCardIdx--; renderFlashcard(); }
+}
+
+function playFcAudio() {
+  const word = vocabularyData[currentChapter][currentCardIdx].word;
+  speakText(word);
+}
+
+// Xử lý bài Test
+function goToStage2() {
+  document.getElementById('stage1-vocab').style.display = 'none';
+  document.getElementById('stage2-quiz').style.display = 'block';
+  updateStageTabs(2);
+  currentQuizIdx = 0;
+  quizScore = 0;
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const questions = quizData[currentChapter] || [];
+  const q = questions[currentQuizIdx];
+  document.getElementById('quizQuestion').innerText = `Câu ${currentQuizIdx + 1}: ${q.q}`;
+  
+  const optionsContainer = document.getElementById('quizOptions');
+  optionsContainer.innerHTML = q.options.map((opt, idx) => `
+    <button onclick="checkAnswer(${idx})" style="padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: 600; text-align: left; cursor: pointer;">
+      ${String.fromCharCode(65 + idx)}. ${opt}
+    </button>
+  `).join('');
+}
+
+function checkAnswer(selectedIdx) {
+  const questions = quizData[currentChapter] || [];
+  if (selectedIdx === questions[currentQuizIdx].a) quizScore++;
+  
+  currentQuizIdx++;
+  if (currentQuizIdx < questions.length) {
+    renderQuizQuestion();
+  } else {
+    if (quizScore === questions.length) {
+      alert("🎯 Chính xác 100%! Bắt đầu mở giao diện Luyện nói AI.");
+      goToStage3();
+    } else {
+      alert(`Bạn trả lời đúng ${quizScore}/${questions.length} câu. Hãy thử lại để đạt điểm tuyệt đối nhé!`);
+      currentQuizIdx = 0;
+      quizScore = 0;
+      renderQuizQuestion();
+    }
+  }
+}
+
+// Chuyển sang phần Luyện Nói AI
+function goToStage3() {
+  document.getElementById('stage2-quiz').style.display = 'none';
+  document.getElementById('stage3-practice').style.display = 'grid';
+  updateStageTabs(3);
+  
+  topicSelect.value = currentChapter;
+  updateLessonTopic();
+}
+
+function updateStageTabs(stage) {
+  document.getElementById('step1-tab').style.color = stage === 1 ? '#2563eb' : '#94a3b8';
+  document.getElementById('step2-tab').style.color = stage === 2 ? '#2563eb' : '#94a3b8';
+  document.getElementById('step3-tab').style.color = stage === 3 ? '#2563eb' : '#94a3b8';
+}
+
+function backToChapters() {
+  document.getElementById('chapterSelectScreen').style.display = 'block';
+  document.getElementById('learningFlowHeader').style.display = 'none';
+  document.getElementById('stage1-vocab').style.display = 'none';
+  document.getElementById('stage2-quiz').style.display = 'none';
+  document.getElementById('stage3-practice').style.display = 'none';
+}
 </script>
 
 </body>
