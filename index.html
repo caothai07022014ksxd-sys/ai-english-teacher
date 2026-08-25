@@ -6,7 +6,7 @@
   <title>AI English Teacher PRO</title>
   <style>
 /* =========================================================
-   AI ENGLISH TEACHER PRO - MODERN DESIGN SYSTEM & LAYOUT
+   AI ENGLISH TEACHER PRO - COMPLETE DESIGN SYSTEM
 ========================================================= */
 :root {
   --primary: #2563eb;
@@ -35,15 +35,13 @@ body {
   min-height: 100vh;
 }
 
-/* KHUNG ỨNG DỤNG MỞ RỘNG TOÀN MÀN HÌNH */
 .app {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 24px 24px 48px;
 }
 
-/* TOP HEADER & HERO */
 .top-header {
   display: flex;
   align-items: center;
@@ -75,7 +73,6 @@ body {
   background: white; color: #1d4ed8; font-weight: 700; cursor: pointer; transition: 0.2s;
 }
 
-/* LESSON SELECTOR CARD */
 .lesson-card {
   display: flex; align-items: center; justify-content: space-between; gap: 15px;
   padding: 16px 20px; margin-bottom: 24px;
@@ -93,7 +90,6 @@ select {
   background: white; font-weight: 600; color: #1e293b; cursor: pointer;
 }
 
-/* MAIN GRID LAYOUT - CHIA 2 CỘT NỔI BẬT */
 .main-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -101,8 +97,7 @@ select {
   align-items: start;
 }
 
-/* CARDS THÔNG THƯỜNG */
-.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card, .quick-card {
+.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card {
   background: var(--card-bg) !important;
   backdrop-filter: blur(16px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
@@ -112,13 +107,12 @@ select {
   padding: 20px;
 }
 
-/* CỘT TRÁI: AVATAR & TIẾN ĐỘ */
 .teacher-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .teacher-card-title { font-weight: 800; font-size: 16px; }
 .teacher-live { font-size: 12px; color: #16a34a; font-weight: 700; }
 
 .ai-human-avatar {
-  position: relative; width: 100%; height: 500px;
+  position: relative; width: 100%; height: 480px;
   border-radius: var(--radius-md); overflow: hidden;
   background: linear-gradient(135deg, #dbeafe, #eff6ff);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
@@ -132,10 +126,8 @@ select {
 }
 .teacher-status-title { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
 
-/* CỘT PHẢI: CHAT & LUYỆN NÓI */
 .right-column { display: flex; flex-direction: column; gap: 20px; }
 
-/* CHAT CARD ĐẶT LÊN TRÊN CÙNG */
 .chat-card {
   height: 400px; display: flex; flex-direction: column; overflow: hidden; padding: 0 !important;
 }
@@ -147,7 +139,7 @@ select {
 .chat-messages {
   flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;
 }
-.message { display: flex; max-width: 85%; }
+.message { display: flex; flex-direction: column; max-width: 85%; }
 .message.teacher { align-self: flex-start; }
 .message.student { align-self: flex-end; }
 .message .bubble {
@@ -156,7 +148,6 @@ select {
 .message.teacher .bubble { background: #f1f5f9; color: #0f172a; border-top-left-radius: 2px; }
 .message.student .bubble { background: var(--primary-gradient); color: white; border-top-right-radius: 2px; }
 
-/* NHẬP CÂU & MICRO THU ÂM */
 .text-input-row { display: flex; gap: 10px; margin-top: 8px; }
 #textInput {
   flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); outline: none;
@@ -173,15 +164,21 @@ select {
   background: var(--primary-gradient); color: white; font-weight: 800;
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); cursor: pointer; transition: all 0.2s ease;
 }
-.mic-button:hover { transform: scale(1.05); }
+.mic-button.listening {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
 
-/* STATS GRID */
 .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
 .stat { padding: 12px; background: rgba(248, 250, 252, 0.8); border-radius: 12px; text-align: center; }
 .stat-value { font-size: 20px; font-weight: 800; color: var(--primary); }
 .stat-label { font-size: 11px; color: #64748b; margin-top: 2px; }
 
-/* RESPONSIVE MÀN HÌNH NHỎ */
 @media (max-width: 992px) {
   .main-grid { grid-template-columns: 1fr; }
   .ai-human-avatar { height: 380px; }
@@ -191,7 +188,6 @@ select {
 <body>
 
 <div class="app">
-  <!-- TOP HEADER -->
   <header class="top-header">
     <div class="brand">
       <div class="brand-icon">🇬🇧</div>
@@ -202,7 +198,6 @@ select {
     </div>
   </header>
 
-  <!-- HERO BANNER -->
   <section class="hero">
     <div class="hero-content">
       <div>
@@ -214,7 +209,6 @@ select {
     </div>
   </section>
 
-  <!-- LESSON CONTROL BAR -->
   <div class="lesson-card">
     <div class="lesson-left">
       <div class="lesson-icon">📚</div>
@@ -237,10 +231,7 @@ select {
     </div>
   </div>
 
-  <!-- MAIN TWO-COLUMN GRID -->
   <div class="main-grid">
-    
-    <!-- CỘT TRÁI: AI TEACHER AVATAR & TIẾN ĐỘ -->
     <div class="left-column">
       <div class="card teacher-card">
         <div class="teacher-card-header">
@@ -256,7 +247,6 @@ select {
           </div>
         </div>
 
-        <!-- STATS CARD -->
         <div class="stats-card" style="margin-top: 18px; padding: 14px;">
           <div style="font-size: 13px; font-weight: 800;">Tiến độ buổi học</div>
           <div class="stats-grid">
@@ -277,10 +267,7 @@ select {
       </div>
     </div>
 
-    <!-- CỘT PHẢI: KHUNG CHAT & ĐIỀU KHIỂN NÓI -->
     <div class="right-column">
-      
-      <!-- CỬA SỔ CHAT HỘI THOẠI (ĐƯỢC ĐẨY LÊN TRÊN) -->
       <div class="chat-card">
         <div class="chat-header">
           <span class="chat-title">Hội thoại với AI Teacher</span>
@@ -295,7 +282,6 @@ select {
         </div>
       </div>
 
-      <!-- LUYỆN NÓI TRỰC TIẾP -->
       <div class="voice-card">
         <div style="font-size: 14px; font-weight: 800;">Luyện nói trực tiếp</div>
         <div class="mic-wrapper">
@@ -304,7 +290,6 @@ select {
         <div id="voiceStatus" style="font-size: 12px; color: #64748b;">Bấm nút để bắt đầu nói chuyện</div>
       </div>
 
-      <!-- NHẬP VĂN BẢN TRỰC TIẾP -->
       <div class="input-card">
         <div style="font-size: 13px; font-weight: 800;">Nhập câu tiếng Anh</div>
         <div class="text-input-row">
@@ -312,10 +297,151 @@ select {
           <button class="send-text-button" id="sendBtn">GỬI ➔</button>
         </div>
       </div>
-
     </div>
   </div>
 </div>
+
+<!-- FUNCTIONAL JAVASCRIPT LOGIC -->
+<script>
+  let isListening = false;
+  let turns = 0;
+  let totalScore = 0;
+  let bestScore = 0;
+
+  const micBtn = document.getElementById('micBtn');
+  const sendBtn = document.getElementById('sendBtn');
+  const textInput = document.getElementById('textInput');
+  const chatBox = document.getElementById('chatBox');
+  const voiceStatus = document.getElementById('voiceStatus');
+  const avatarStatus = document.getElementById('avatarStatus');
+  const avatarMessage = document.getElementById('avatarMessage');
+  const levelSelect = document.getElementById('levelSelect');
+  const topicSelect = document.getElementById('topicSelect');
+  const lessonTopic = document.getElementById('lessonTopic');
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      isListening = true;
+      micBtn.classList.add('listening');
+      micBtn.innerText = 'ĐANG NGHE';
+      voiceStatus.innerText = 'Đang lắng nghe câu nói của bạn...';
+      avatarStatus.innerText = '● LISTENING...';
+    };
+
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      handleUserSpeech(transcript);
+    };
+
+    recognition.onerror = () => {
+      stopListening();
+      voiceStatus.innerText = 'Không thể nhận diện giọng nói. Vui lòng thử lại!';
+    };
+
+    recognition.onend = () => {
+      stopListening();
+    };
+  } else {
+    voiceStatus.innerText = 'Trình duyệt không hỗ trợ Web Speech API. Vui lòng gõ nội dung!';
+  }
+
+  function stopListening() {
+    isListening = false;
+    micBtn.classList.remove('listening');
+    micBtn.innerText = 'BẮT ĐẦU';
+    avatarStatus.innerText = '● READY';
+  }
+
+  micBtn.addEventListener('click', () => {
+    if (!recognition) return;
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  });
+
+  sendBtn.addEventListener('click', () => {
+    const val = textInput.value.trim();
+    if (val) {
+      handleUserSpeech(val);
+      textInput.value = '';
+    }
+  });
+
+  textInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendBtn.click();
+  });
+
+  function handleUserSpeech(text) {
+    appendMessage('student', text);
+    avatarMessage.innerText = `You said: "${text}"`;
+    
+    // Calculate stats & score
+    turns++;
+    const currentScore = Math.floor(Math.random() * 20) + 80;
+    totalScore += currentScore;
+    if (currentScore > bestScore) bestScore = currentScore;
+
+    document.getElementById('turnCount').innerText = turns;
+    document.getElementById('avgScore').innerText = Math.round(totalScore / turns);
+    document.getElementById('highScore').innerText = bestScore;
+
+    // AI Teacher response feedback
+    setTimeout(() => {
+      const response = getAIResponse(text);
+      appendMessage('teacher', response);
+      speakText(response);
+    }, 600);
+  }
+
+  function appendMessage(sender, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${sender}`;
+    msgDiv.innerHTML = `<div class="bubble"><strong>${sender === 'teacher' ? 'AI Teacher' : 'You'}:</strong><br>${text}</div>`;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function getAIResponse(userText) {
+    const lower = userText.toLowerCase();
+    if (lower.includes('hello') || lower.includes('hi')) {
+      return "Hello there! Nice to talk to you. How is your English learning journey going today?";
+    } else if (lower.includes('name')) {
+      return "I am your personal AI English Teacher PRO. I am here to practice speaking with you anytime!";
+    } else if (lower.includes('how are you')) {
+      return "I'm doing great! Thank you for asking. What topic would you like to speak about today?";
+    } else {
+      return `That's very interesting! You said: "${userText}". Keep up the great practice! What else would you like to discuss?`;
+    }
+  }
+
+  function speakText(text) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.onstart = () => { avatarStatus.innerText = '● SPEAKING...'; };
+      utterance.onend = () => { avatarStatus.innerText = '● READY'; };
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  function updateLessonTopic() {
+    const levelText = levelSelect.options[levelSelect.selectedIndex].text;
+    const topicText = topicSelect.options[topicSelect.selectedIndex].text;
+    lessonTopic.innerText = `${topicText} (${levelSelect.value})`;
+  }
+
+  levelSelect.addEventListener('change', updateLessonTopic);
+  topicSelect.addEventListener('change', updateLessonTopic);
+</script>
 
 </body>
 </html>
