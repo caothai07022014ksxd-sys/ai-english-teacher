@@ -276,14 +276,15 @@ select {
   </div>
 </div>
 
-<!-- thanh tiến trình 3 bước -->
+<!-- THANH TIẾN TRÌNH 4 BƯỚC -->
 <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
+  <div style="display: flex; justify-content: space-between; align- items: center;">
     <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
-    <div style="display: flex; gap: 12px; font-weight: 700; font-size: 14px;">
-      <span id="step1-tab" style="color: #2563eb;">1. Học từ vựng</span> ➔ 
-      <span id="step2-tab" style="color: #94a3b8;">2. Kiểm tra</span> ➔ 
-      <span id="step3-tab" style="color: #94a3b8;">3. Luyện nói AI</span>
+    <div style="display: flex; gap: 10px; font-weight: 700; font-size: 13px;">
+      <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
+      <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
+      <span id="step3-tab" style="color: #94a3b8;">3. Kiểm tra</span> ➔ 
+      <span id="step4-tab" style="color: #94a3b8;">4. Luyện nói AI</span>
     </div>
   </div>
 </div>
@@ -302,11 +303,33 @@ select {
     <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
   </div>
   <br>
-  <button id="btnStartQuiz" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">
-    Làm Bài Kiểm Tra ➔
+  <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">
+  Học Cấu Trúc Câu ➔
+</button>
+</div>
+<!-- STEP 2: ÁP DỤNG VÀO CÂU -->
+<div id="stage1-usage" class="card" style="display: none; text-align: center; padding: 30px;">
+  <h2 style="margin-top: 0;">💬 Bước 2: Học cách dùng từ trong câu</h2>
+  <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 500px; margin: 20px auto; border: 2px solid #e2e8f0; text-align: left;">
+    <div style="font-size: 14px; color: #64748b; font-weight: 700;">Từ vựng: <span id="usageWord" style="color: #2563eb; font-size: 18px;">Word</span></div>
+    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Ví dụ tiếng Anh:</p>
+    <p id="usageSentence" style="font-size: 18px; color: #0f172a; font-weight: 600; margin-top: 0;">"This is an example sentence."</p>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Dịch nghĩa:</p>
+    <p id="usageTranslation" style="font-size: 15px; color: #1e4ed8; margin-top: 0;">"Đây là câu ví dụ."</p>
+    <button onclick="playUsageAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer; margin-top: 8px;">🔊 Nghe đọc câu</button>
+  </div>
+  <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+    <button onclick="prevUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
+    <span id="usageProgress" style="font-weight: 700;">1 / 5</span>
+    <button onclick="nextUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
+  </div>
+  <br>
+  <button id="btnStartQuizFromUsage" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">
+    Chuyển Sang Bài Kiểm Tra ➔
   </button>
 </div>
-
+  
 <!-- STEP 2: BÀI TEST -->
 <div id="stage2-quiz" class="card" style="display: none; max-width: 600px; margin: 0 auto; padding: 24px;">
   <h2 style="margin-top: 0;">✍️ Bước 2: Kiểm tra khả năng nhớ từ</h2>
@@ -440,29 +463,32 @@ select {
   let bestScore = 0;
 
   // DỮ LIỆU TỪ VỰNG THEO CHỦ ĐỀ
-  const vocabularyData = {
-    daily: [
-      { word: "Hobby", mean: "Sở thích" },
-      { word: "Routine", mean: "Thói quen hàng ngày" },
-      { word: "Leisure time", mean: "Thời gian rảnh" },
-      { word: "Relaxing", mean: "Thư giãn" },
-      { word: "Family gathering", mean: "Sum họp gia đình" }
-    ],
-    work: [
-      { word: "Deadline", mean: "Hạn chót" },
-      { word: "Project", mean: "Dự án" },
-      { word: "Collaborate", mean: "Hợp tác" },
-      { word: "Meeting", mean: "Cuộc họp" },
-      { word: "Presentation", mean: "Bài thuyết trình" }
-    ],
-    travel: [
-      { word: "Itinerary", mean: "Lịch trình" },
-      { word: "Destination", mean: "Điểm đến" },
-      { word: "Accommodation", mean: "Chỗ ở" },
-      { word: "Sightseeing", mean: "Tham quan" },
-      { word: "Local cuisine", mean: "Ẩm thực địa phương" }
-    ]
-  };
+ // DỮ LIỆU TỪ VỰNG & CÂU VÍ DỤ THEO CHỦ ĐỀ
+const vocabularyData = {
+  daily: [
+    { word: "Hobby", mean: "Sở thích", example: "Playing football is my favorite hobby.", exMean: "Đá bóng là sở thích yêu thích của tôi." },
+    { word: "Routine", mean: "Thói quen hàng ngày", example: "I have a healthy daily routine.", exMean: "Tôi có một thói quen hàng ngày lành mạnh." },
+    { word: "Leisure time", mean: "Thời gian rảnh", example: "I like reading books in my leisure time.", exMean: "Tôi thích đọc sách vào thời gian rảnh." },
+    { word: "Relaxing", mean: "Thư giãn", example: "Listening to music is very relaxing.", exMean: "Nghe nhạc rất thư giãn." },
+    { word: "Family gathering", mean: "Sum họp gia đình", example: "We enjoy our weekend family gathering.", exMean: "Chúng tôi thích buổi sum họp gia đình cuối tuần." }
+  ],
+  work: [
+    { word: "Deadline", mean: "Hạn chót", example: "We must finish this project before the deadline.", exMean: "Chúng ta phải hoàn thành dự án này trước hạn chót." },
+    { word: "Project", mean: "Dự án", example: "I am managing a new marketing project.", exMean: "Tôi đang quản lý một dự án tiếp thị mới." },
+    { word: "Collaborate", mean: "Hợp tác", example: "We need to collaborate with other teams.", exMean: "Chúng ta cần hợp tác với các nhóm khác." },
+    { word: "Meeting", mean: "Cuộc họp", example: "The team meeting starts at 9 AM.", exMean: "Cuộc họp nhóm bắt đầu lúc 9 giờ sáng." },
+    { word: "Presentation", mean: "Bài thuyết trình", example: "Her presentation was very impressive.", exMean: "Bài thuyết trình của cô ấy rất ấn tượng." }
+  ],
+  travel: [
+    { word: "Itinerary", mean: "Lịch trình", example: "Here is our travel itinerary for tomorrow.", exMean: "Đây là lịch trình du lịch của chúng ta cho ngày mai." },
+    { word: "Destination", mean: "Điểm đến", example: "Da Nang is a popular tourist destination.", exMean: "Đà Nẵng là một điểm đến du lịch phổ biến." },
+    { word: "Accommodation", mean: "Chỗ ở", example: "We booked a comfortable accommodation near the beach.", exMean: "Chúng tôi đã đặt một chỗ ở thoải mái gần bãi biển." },
+    { word: "Sightseeing", mean: "Tham quan", example: "We spent the whole day sightseeing.", exMean: "Chúng tôi đã dành cả ngày để đi tham quan." },
+    { word: "Local cuisine", mean: "Ẩm thực địa phương", example: "I love trying local cuisine when travelling.", exMean: "Tôi thích thử ẩm thực địa phương khi đi du lịch." }
+  ]
+};
+
+let currentUsageIdx = 0;
 
   const micBtn = document.getElementById('micBtn');
   const sendBtn = document.getElementById('sendBtn');
@@ -817,6 +843,85 @@ function backToChapters() {
   document.getElementById('chapterSelectScreen').style.display = 'block';
   document.getElementById('learningFlowHeader').style.display = 'none';
   document.getElementById('stage1-vocab').style.display = 'none';
+  document.getElementById('stage2-quiz').style.display = 'none';
+  document.getElementById('stage3-practice').style.display = 'none';
+}
+  // Chuyển sang Bước 2: Học cách dùng từ trong câu
+function goToUsageStage() {
+  currentUsageIdx = 0;
+  document.getElementById('stage1-vocab').style.display = 'none';
+  document.getElementById('stage1-usage').style.display = 'block';
+  updateStageTabs(2);
+  renderUsageCard();
+}
+
+function renderUsageCard() {
+  const list = vocabularyData[currentChapter] || [];
+  if (list.length === 0) return;
+
+  const item = list[currentUsageIdx];
+  document.getElementById('usageWord').innerText = `${item.word} (${item.mean})`;
+  document.getElementById('usageSentence').innerText = `"${item.example}"`;
+  document.getElementById('usageTranslation').innerText = `"${item.exMean}"`;
+  document.getElementById('usageProgress').innerText = `${currentUsageIdx + 1} / ${list.length}`;
+
+  if (currentUsageIdx === list.length - 1) {
+    document.getElementById('btnStartQuizFromUsage').style.display = 'inline-block';
+  } else {
+    document.getElementById('btnStartQuizFromUsage').style.display = 'none';
+  }
+}
+
+function nextUsageCard() {
+  const list = vocabularyData[currentChapter] || [];
+  if (currentUsageIdx < list.length - 1) { currentUsageIdx++; renderUsageCard(); }
+}
+
+function prevUsageCard() {
+  if (currentUsageIdx > 0) { currentUsageIdx--; renderUsageCard(); }
+}
+
+function playUsageAudio() {
+  const sentence = vocabularyData[currentChapter][currentUsageIdx].example;
+  speakText(sentence);
+}
+
+// Cập nhật Bước 3 (Bài Quiz)
+function goToStage2() {
+  document.getElementById('stage1-usage').style.display = 'none';
+  document.getElementById('stage2-quiz').style.display = 'block';
+  updateStageTabs(3);
+  currentQuizIdx = 0;
+  quizScore = 0;
+  renderQuizQuestion();
+}
+
+// Cập nhật Bước 4 (Luyện nói AI)
+function goToStage3() {
+  document.getElementById('stage2-quiz').style.display = 'none';
+  document.getElementById('stage3-practice').style.display = 'grid';
+  updateStageTabs(4);
+  
+  if (typeof topicSelect !== 'undefined') {
+    topicSelect.value = currentChapter;
+    updateLessonTopic();
+  }
+}
+
+// Cập nhật hiển thị màu cho 4 Tab
+function updateStageTabs(stage) {
+  document.getElementById('step1-tab').style.color = stage === 1 ? '#2563eb' : '#94a3b8';
+  document.getElementById('step2-tab').style.color = stage === 2 ? '#2563eb' : '#94a3b8';
+  document.getElementById('step3-tab').style.color = stage === 3 ? '#2563eb' : '#94a3b8';
+  document.getElementById('step4-tab').style.color = stage === 4 ? '#2563eb' : '#94a3b8';
+}
+
+// Cập nhật nút Quay lại màn hình chọn chương
+function backToChapters() {
+  document.getElementById('chapterSelectScreen').style.display = 'block';
+  document.getElementById('learningFlowHeader').style.display = 'none';
+  document.getElementById('stage1-vocab').style.display = 'none';
+  document.getElementById('stage1-usage').style.display = 'none';
   document.getElementById('stage2-quiz').style.display = 'none';
   document.getElementById('stage3-practice').style.display = 'none';
 }
