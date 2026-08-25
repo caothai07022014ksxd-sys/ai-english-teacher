@@ -1,76 +1,166 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI English Teacher PRO</title>
+  <style>
+/* =========================================================
+   AI ENGLISH TEACHER PRO - MODERN DESIGN SYSTEM
+========================================================= */
+:root {
+  --primary: #2563eb;
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+  --bg-gradient: linear-gradient(135deg, #f0f6ff 0%, #e2e8f0 50%, #f8fafc 100%);
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(255, 255, 255, 0.6);
+  --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.01);
+  --shadow-lg: 0 20px 40px -15px rgba(37, 99, 235, 0.15);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+}
 
-<meta charset="UTF-8">
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+/* KHUNG ỨNG DỤNG CHÍNH */
+.app {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
 
-<title>AI English Teacher PRO</title>
+/* THEME GLASSMORPHISM CHO CÁC CARD */
+.card, .lesson-card, .teacher-card, .stats-card {
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-<style>
-/* Hiệu ứng sóng âm nhấp nháy cho nút Thu âm */
+.card:hover {
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* NÚT BẤM HIỆN ĐẠI */
+button, .small-button {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease !important;
+  box-shadow: var(--shadow-sm);
+}
+
+button:hover {
+  transform: translateY(-1.5px);
+  filter: brightness(1.05);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* NÚT MICRO VỚI HIỆU ỨNG THU ÂM */
+.mic-button {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 20px !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
+}
+
 .mic-button.listening {
-  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-  animation: micPulse 1.2s infinite;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6) !important;
+  animation: micPulse 1.5s infinite ease-out !important;
 }
 
 @keyframes micPulse {
-  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
-  70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+  70% { box-shadow: 0 0 0 16px rgba(220, 38, 38, 0); }
   100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
-/* =========================================================
-   AI ENGLISH TEACHER PRO
-   STEP 20
-========================================================= */
 
-:root {
-
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #eff6ff;
-
-  --success: #16a34a;
-  --success-light: #f0fdf4;
-
-  --danger: #dc2626;
-  --danger-light: #fef2f2;
-
-  --warning: #f59e0b;
-  --warning-light: #fffbeb;
-
-  --purple: #7c3aed;
-
-  --text: #0f172a;
-  --text-soft: #475569;
-  --text-muted: #64748b;
-
-  --border: #e2e8f0;
-
-  --bg:
-    linear-gradient(
-      135deg,
-      #f8fafc 0%,
-      #eef4ff 50%,
-      #f8fafc 100%
-    );
-
-  --card: rgba(255,255,255,0.94);
-
-  --shadow:
-    0 12px 35px rgba(15,23,42,0.08);
-
-  --shadow-lg:
-    0 20px 60px rgba(15,23,42,0.12);
-
-  --radius: 20px;
+/* CỦA SỔ CHỌN CHỦ ĐỀ & TRÌNH ĐỘ */
+select {
+  padding: 10px 14px !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  box-shadow: var(--shadow-sm);
 }
 
+/* KHUNG HIỂN THỊ TỪ VỰNG */
+#vocabContainer > div {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px !important;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+#vocabContainer > div:hover {
+  transform: translateX(4px);
+  background: #ffffff !important;
+}
+  </style>
+</head>
+
+.mic-button.listening {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6) !important;
+  animation: micPulse 1.5s infinite ease-out !important;
+}
+
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+  70% { box-shadow: 0 0 0 16px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* CỦA SỔ CHỌN CHỦ ĐỀ & TRÌNH ĐỘ */
+select {
+  padding: 10px 14px !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* KHUNG HIỂN THỊ TỪ VỰNG */
+#vocabContainer > div {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px !important;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+#vocabContainer > div:hover {
+  transform: translateX(4px);
+  background: #ffffff !important;
+}
 
 /* =========================================================
    RESET
