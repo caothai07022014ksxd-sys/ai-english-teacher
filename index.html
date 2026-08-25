@@ -2530,7 +2530,17 @@ select:focus-visible {
      RIGHT
 ===================================================== -->
 
-<div class="right-column">
+<div class="right-column"> 
+  <!-- KHU VỰC HỌC TỪ VỰNG -->
+<div class="card vocab-card" style="padding: 18px; margin-bottom: 18px;">
+  <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+    <span>📖 Sổ Từ Vựng Theo Chủ Đề</span>
+    <button onclick="loadTopicVocab()" class="small-button" style="background: #eff6ff; color: #2563eb;">Đổi từ mới 🔄</button>
+  </div>
+  <div id="vocabContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+    <!-- Từ vựng sẽ hiển thị ở đây -->
+  </div>
+</div>
 
 
 <!-- SESSION STATS -->
@@ -5814,6 +5824,53 @@ function startSpeechRecognition() {
 
   recognition.start();
 }
+  // BỘ DỮ LIỆU TỪ VỰNG THEO CHỦ ĐỀ
+const vocabDatabase = {
+  'Daily Conversation': [
+    { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày' },
+    { word: 'Leisure', type: 'n', mean: 'Thời gian rảnh rỗi' },
+    { word: 'Commute', type: 'v', mean: 'Đi lại làm việc' }
+  ],
+  'Travel & Hotel': [
+    { word: 'Itinerary', type: 'n', mean: 'Lịch trình chuyến đi' },
+    { word: 'Accommodation', type: 'n', mean: 'Chỗ ở' },
+    { word: 'Reservation', type: 'n', mean: 'Đặt chỗ trước' }
+  ],
+  'Job Interview': [
+    { word: 'Strengths', type: 'n', mean: 'Điểm mạnh' },
+    { word: 'Experience', type: 'n', mean: 'Kinh nghiệm' },
+    { word: 'Achievement', type: 'n', mean: 'Thành tựu' }
+  ]
+};
+
+function loadTopicVocab() {
+  const topicSelect = document.getElementById('topicSelect');
+  const currentTopic = topicSelect ? topicSelect.value : 'Daily Conversation';
+  const container = document.getElementById('vocabContainer');
+  
+  if (!container) return;
+  
+  const list = vocabDatabase[currentTopic] || vocabDatabase['Daily Conversation'];
+  
+  container.innerHTML = list.map(item => `
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+      <div>
+        <strong style="color: #2563eb;">${item.word}</strong> 
+        <small style="color: #64748b;">(${item.type})</small>
+      </div>
+      <span style="font-size: 13px; color: #334155;">${item.mean}</span>
+    </div>
+  `).join('');
+}
+
+// Tự động tải từ vựng khi mở trang và khi đổi chủ đề
+document.addEventListener('DOMContentLoaded', () => {
+  loadTopicVocab();
+  const topicSelect = document.getElementById('topicSelect');
+  if (topicSelect) {
+    topicSelect.addEventListener('change', loadTopicVocab);
+  }
+});
 </script>
 
 </body>
