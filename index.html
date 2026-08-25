@@ -5817,8 +5817,7 @@ function startSpeechRecognition() {
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       transcript += event.results[i][0].transcript;
     }
-    
-    // BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ (ĐÃ ĐỒNG BỘ KEY TIẾNG VIỆT)
+ // BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ
 const vocabDatabase = {
   'Hội thoại hàng ngày': [
     { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày', example: 'I want to improve my daily routine.' },
@@ -5882,43 +5881,20 @@ function loadTopicVocab() {
     </div>
   `).join('');
 }
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <strong style="color: #2563eb; font-size: 14px;">${item.word}</strong> 
-          <small style="color: #64748b;">(${item.type})</small>: 
-          <span style="font-size: 13px; color: #334155;">${item.mean}</span>
-        </div>
-        <button onclick="practiceSentence('${item.example.replace(/'/g, "\\'")}')" 
-                class="small-button" 
-                style="background: #dcfce7; color: #166534; padding: 4px 8px; font-size: 11px;">
-          Luyện câu 🗣️
-        </button>
-      </div>
-      <div style="font-size: 12px; color: #64748b; margin-top: 4px; font-style: italic;">
-        💡 Mẫu: "${item.example}"
-      </div>
-    </div>
-  `).join('');
-}
 
-// Hàm dán câu mẫu vào ô nhập liệu
-function practiceSentence(text) {
+// Hàm luyện câu từ gợi ý
+function practiceSentence(sentence) {
   const textInput = document.getElementById('textInput');
   if (textInput) {
-    textInput.value = text;
+    textInput.value = sentence;
     textInput.focus();
   }
 }
 
-// Tự động tải từ vựng khi mở trang và khi đổi chủ đề
+// Tự động tải từ vựng khi trang chạy xong
 document.addEventListener('DOMContentLoaded', () => {
   loadTopicVocab();
-  const topicSelect = document.getElementById('topicSelect');
-  if (topicSelect) {
-    topicSelect.addEventListener('change', loadTopicVocab);
-  }
 });
 </script>
 </body>
 </html>
-
