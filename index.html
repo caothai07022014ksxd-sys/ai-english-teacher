@@ -5772,8 +5772,12 @@ window.addEventListener(
 // ==========================================
 
 function updateLessonConfig() {
-  const level = document.getElementById('levelSelect').value;
+  const levelSelect = document.getElementById('levelSelect');
   const topicSelect = document.getElementById('topicSelect');
+  
+  if (!levelSelect || !topicSelect) return;
+
+  const level = levelSelect.value;
   const topicText = topicSelect.options[topicSelect.selectedIndex].text;
 
   // Cập nhật tiêu đề hiển thị
@@ -5782,10 +5786,16 @@ function updateLessonConfig() {
     topicElement.innerText = `${topicText} (${level})`;
   }
 
+  // Tự động tải lại từ vựng theo chủ đề mới chọn
+  if (typeof loadTopicVocab === 'function') {
+    loadTopicVocab();
+  }
+
   // Thông báo tới người dùng
   if (typeof showSuccess === 'function') {
     showSuccess(`Đã chuyển sang: ${topicText} - Trình độ ${level}`);
   }
+}
 }
   // Cấu hình Web Speech API ngắt tự động sau 1.5s
 function startSpeechRecognition() {
