@@ -5824,25 +5824,29 @@ function startSpeechRecognition() {
 
   recognition.start();
 }
-  // BỘ DỮ LIỆU TỪ VỰNG THEO CHỦ ĐỀ
+// BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ
 const vocabDatabase = {
   'Daily Conversation': [
-    { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày' },
-    { word: 'Leisure', type: 'n', mean: 'Thời gian rảnh rỗi' },
-    { word: 'Commute', type: 'v', mean: 'Đi lại làm việc' }
+    { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày', example: 'I want to improve my daily routine.' },
+    { word: 'Leisure', type: 'n', mean: 'Thời gian rảnh rỗi', example: 'What do you do in your leisure time?' },
+    { word: 'Commute', type: 'v', mean: 'Đi lại làm việc', example: 'I commute to work by bus every day.' },
+    { word: 'Hectic', type: 'adj', mean: 'Bận rộn, hối hả', example: 'I had a very hectic schedule today.' }
   ],
   'Travel & Hotel': [
-    { word: 'Itinerary', type: 'n', mean: 'Lịch trình chuyến đi' },
-    { word: 'Accommodation', type: 'n', mean: 'Chỗ ở' },
-    { word: 'Reservation', type: 'n', mean: 'Đặt chỗ trước' }
+    { word: 'Itinerary', type: 'n', mean: 'Lịch trình chuyến đi', example: 'Can you show me our travel itinerary?' },
+    { word: 'Accommodation', type: 'n', mean: 'Chỗ ở', example: 'We need to book accommodation in advance.' },
+    { word: 'Reservation', type: 'n', mean: 'Đặt chỗ trước', example: 'I have a reservation under my name.' },
+    { word: 'Sightseeing', type: 'n', mean: 'Tham quan ngắm cảnh', example: 'We went sightseeing all around the city.' }
   ],
   'Job Interview': [
-    { word: 'Strengths', type: 'n', mean: 'Điểm mạnh' },
-    { word: 'Experience', type: 'n', mean: 'Kinh nghiệm' },
-    { word: 'Achievement', type: 'n', mean: 'Thành tựu' }
+    { word: 'Strengths', type: 'n', mean: 'Điểm mạnh', example: 'One of my key strengths is problem solving.' },
+    { word: 'Experience', type: 'n', mean: 'Kinh nghiệm', example: 'I have three years of experience in marketing.' },
+    { word: 'Achievement', type: 'n', mean: 'Thành tựu', example: 'Tell me about your biggest achievement.' },
+    { word: 'Qualifications', type: 'n', mean: 'Bằng cấp, năng lực', example: 'My qualifications match this job description.' }
   ]
 };
 
+// Hàm hiển thị từ vựng và câu mẫu luyện nói
 function loadTopicVocab() {
   const topicSelect = document.getElementById('topicSelect');
   const currentTopic = topicSelect ? topicSelect.value : 'Daily Conversation';
@@ -5853,17 +5857,36 @@ function loadTopicVocab() {
   const list = vocabDatabase[currentTopic] || vocabDatabase['Daily Conversation'];
   
   container.innerHTML = list.map(item => `
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
-      <div>
-        <strong style="color: #2563eb;">${item.word}</strong> 
-        <small style="color: #64748b;">(${item.type})</small>
+    <div style="padding: 10px 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 6px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong style="color: #2563eb; font-size: 14px;">${item.word}</strong> 
+          <small style="color: #64748b;">(${item.type})</small>: 
+          <span style="font-size: 13px; color: #334155;">${item.mean}</span>
+        </div>
+        <button onclick="practiceSentence('${item.example.replace(/'/g, "\\'")}')" 
+                class="small-button" 
+                style="background: #dcfce7; color: #166534; padding: 4px 8px; font-size: 11px;">
+          Luyện câu 🗣️
+        </button>
       </div>
-      <span style="font-size: 13px; color: #334155;">${item.mean}</span>
+      <div style="font-size: 12px; color: #64748b; margin-top: 4px; font-style: italic;">
+        💡 Mẫu: "${item.example}"
+      </div>
     </div>
   `).join('');
 }
 
-// Tự động tải từ vựng khi mở trang và khi đổi chủ đề
+// Hàm dán câu mẫu vào ô nhập liệu để luyện nói ngay
+function practiceSentence(text) {
+  const textInput = document.getElementById('textInput');
+  if (textInput) {
+    textInput.value = text;
+    textInput.focus();
+  }
+}
+
+// Lắng nghe sự kiện thay đổi chủ đề để tự động tải từ vựng mới
 document.addEventListener('DOMContentLoaded', () => {
   loadTopicVocab();
   const topicSelect = document.getElementById('topicSelect');
