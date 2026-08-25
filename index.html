@@ -2361,36 +2361,33 @@ select:focus-visible {
 <!-- =====================================================
      LESSON
 ===================================================== -->
-
-<section class="lesson-card">
-
-  <div class="lesson-left">
-
-    <div class="lesson-icon">
-      📚
-    </div>
-
+<section class="lesson-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+  <div class="lesson-left" style="display: flex; align-items: center; gap: 12px;">
+    <div class="lesson-icon">📚</div>
     <div>
-
-      <div class="lesson-label">
-        BÀI HỌC HIỆN TẠI
-      </div>
-
-      <div id="lessonTopic">
-        Đang tải bài học...
-      </div>
-
+      <div class="lesson-label">BÀI HỌC & CẤP ĐỘ</div>
+      <div id="lessonTopic" style="font-weight: bold; color: var(--text-main);">Hội thoại hàng ngày (B1)</div>
     </div>
-
   </div>
 
+  <div class="lesson-controls" style="display: flex; gap: 10px;">
+    <select id="levelSelect" onchange="updateLessonConfig()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; outline: none; background: #fff;">
+      <option value="A1">A1 - Sơ cấp</option>
+      <option value="A2">A2 - Cơ bản</option>
+      <option value="B1" selected>B1 - Trung cấp</option>
+      <option value="B2">B2 - Khá</option>
+      <option value="C1">C1 - Cao cấp</option>
+    </select>
 
-  <div class="lesson-status">
-    ● ACTIVE LESSON
+    <select id="topicSelect" onchange="updateLessonConfig()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; outline: none; background: #fff;">
+      <option value="Daily Conversation" selected>Hội thoại hàng ngày</option>
+      <option value="Travel & Hotel">Du lịch & Khách sạn</option>
+      <option value="Job Interview">Phỏng vấn xin việc</option>
+      <option value="Business English">Tiếng Anh công sở</option>
+      <option value="IELTS Speaking">Luyện thi IELTS</option>
+    </select>
   </div>
-
 </section>
-
 
 <!-- =====================================================
      MAIN GRID
@@ -5756,3 +5753,23 @@ window.addEventListener(
 </body>
 
 </html>
+// ==========================================
+// CẬP NHẬT LOGIC CHỌN LEVEL & TOPIC
+// ==========================================
+
+function updateLessonConfig() {
+  const level = document.getElementById('levelSelect').value;
+  const topicSelect = document.getElementById('topicSelect');
+  const topicText = topicSelect.options[topicSelect.selectedIndex].text;
+
+  // Cập nhật tiêu đề hiển thị
+  const topicElement = document.getElementById('lessonTopic');
+  if (topicElement) {
+    topicElement.innerText = `${topicText} (${level})`;
+  }
+
+  // Thông báo tới người dùng
+  if (typeof showSuccess === 'function') {
+    showSuccess(`Đã chuyển sang: ${topicText} - Trình độ ${level}`);
+  }
+}
