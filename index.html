@@ -13,7 +13,17 @@
 <title>AI English Teacher PRO</title>
 
 <style>
+/* Hiệu ứng sóng âm nhấp nháy cho nút Thu âm */
+.mic-button.listening {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  animation: micPulse 1.2s infinite;
+}
 
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+  70% { box-shadow: 0 0 0 20px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
 /* =========================================================
    AI ENGLISH TEACHER PRO
    STEP 20
@@ -5766,6 +5776,43 @@ function updateLessonConfig() {
   if (typeof showSuccess === 'function') {
     showSuccess(`Đã chuyển sang: ${topicText} - Trình độ ${level}`);
   }
+}
+  // Cấu hình Web Speech API ngắt tự động sau 1.5s
+function startSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  let silenceTimer;
+
+  recognition.onresult = (event) => {
+    clearTimeout(silenceTimer);
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      transcript += event.results[i][0].transcript;
+    }
+    
+    // Cập nhật ô nhập liệu
+    const textInput = document.getElementById('textInput');
+    if (textInput) textInput.value = transcript;
+
+    // Tự động ngắt & gửi sau 1.5s im lặng
+    silenceTimer = setTimeout(() => {
+      recognition.stop();
+      if (transcript.trim() !== '' && typeof sendTextMessage === 'function') {
+        sendTextMessage();
+      }
+    }, 1500);
+  };
+
+  recognition.start();
 }
 </script>
 
