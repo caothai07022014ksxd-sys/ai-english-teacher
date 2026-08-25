@@ -576,13 +576,11 @@ select {
     }
   }
 
-  // CẬP NHẬT TỪ VỰNG KHI ĐỔI CHỦ ĐỀ
   function updateLessonTopic() {
     const topicVal = topicSelect.value;
     const topicText = topicSelect.options[topicSelect.selectedIndex].text;
     lessonTopic.innerText = `${topicText} (${levelSelect.value})`;
 
-    // Hiển thị danh sách từ vựng theo chủ đề
     const list = vocabularyData[topicVal] || [];
     vocabContainer.innerHTML = list.map(item => `
       <div class="vocab-chip" onclick="insertWord('${item.word}')">
@@ -591,7 +589,6 @@ select {
     `).join('');
   }
 
-  // CHÈN TỪ VỰNG VÀO Ô NHẬP KHI BẤM VÀO TỪ
   window.insertWord = function(word) {
     if (textInput.value) {
       textInput.value += " " + word;
@@ -604,7 +601,6 @@ select {
   levelSelect.addEventListener('change', updateLessonTopic);
   topicSelect.addEventListener('change', updateLessonTopic);
 
-  // Khởi tạo từ vựng ban đầu
   updateLessonTopic();
 </script>
 
