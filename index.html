@@ -5818,57 +5818,70 @@ function startSpeechRecognition() {
       transcript += event.results[i][0].transcript;
     }
     
-    // Cập nhật ô nhập liệu
-    const textInput = document.getElementById('textInput');
-    if (textInput) textInput.value = transcript;
-
-    // Tự động ngắt & gửi sau 1.5s im lặng
-    silenceTimer = setTimeout(() => {
-      recognition.stop();
-      if (transcript.trim() !== '' && typeof sendTextMessage === 'function') {
-        sendTextMessage();
-      }
-    }, 1500);
-  };
-
-  recognition.start();
-}
-// BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ
+    // BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ (ĐÃ ĐỒNG BỘ KEY TIẾNG VIỆT)
 const vocabDatabase = {
-  'Daily Conversation': [
+  'Hội thoại hàng ngày': [
     { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày', example: 'I want to improve my daily routine.' },
     { word: 'Leisure', type: 'n', mean: 'Thời gian rảnh rỗi', example: 'What do you do in your leisure time?' },
     { word: 'Commute', type: 'v', mean: 'Đi lại làm việc', example: 'I commute to work by bus every day.' },
     { word: 'Hectic', type: 'adj', mean: 'Bận rộn, hối hả', example: 'I had a very hectic schedule today.' }
   ],
-  'Travel & Hotel': [
+  'Du lịch & Khách sạn': [
     { word: 'Itinerary', type: 'n', mean: 'Lịch trình chuyến đi', example: 'Can you show me our travel itinerary?' },
     { word: 'Accommodation', type: 'n', mean: 'Chỗ ở', example: 'We need to book accommodation in advance.' },
     { word: 'Reservation', type: 'n', mean: 'Đặt chỗ trước', example: 'I have a reservation under my name.' },
     { word: 'Sightseeing', type: 'n', mean: 'Tham quan ngắm cảnh', example: 'We went sightseeing all around the city.' }
   ],
-  'Job Interview': [
+  'Phỏng vấn xin việc': [
     { word: 'Strengths', type: 'n', mean: 'Điểm mạnh', example: 'One of my key strengths is problem solving.' },
     { word: 'Experience', type: 'n', mean: 'Kinh nghiệm', example: 'I have three years of experience in marketing.' },
     { word: 'Achievement', type: 'n', mean: 'Thành tựu', example: 'Tell me about your biggest achievement.' },
     { word: 'Qualifications', type: 'n', mean: 'Bằng cấp, năng lực', example: 'My qualifications match this job description.' }
+  ],
+  'Tiếng Anh công sở': [
+    { word: 'Collaborate', type: 'v', mean: 'Hợp tác', example: 'We need to collaborate on this new project.' },
+    { word: 'Deadline', type: 'n', mean: 'Hạn chót', example: 'The deadline for this report is tomorrow.' },
+    { word: 'Proposal', type: 'n', mean: 'Đề xuất', example: 'I submitted the business proposal yesterday.' }
+  ],
+  'Luyện thi IELTS': [
+    { word: 'Coherent', type: 'adj', mean: 'Mạch lạc', example: 'Your essay should be clear and coherent.' },
+    { word: 'Fluency', type: 'n', mean: 'Sự trôi chảy', example: 'He speaks English with great fluency.' },
+    { word: 'Pronunciation', type: 'n', mean: 'Phát âm', example: 'Good pronunciation is vital for speaking.' }
   ]
 };
 
 // Hàm hiển thị & xáo trộn từ vựng theo chủ đề
 function loadTopicVocab() {
   const topicSelect = document.getElementById('topicSelect');
-  const currentTopic = topicSelect ? topicSelect.value : 'Daily Conversation';
+  const currentTopic = topicSelect ? topicSelect.options[topicSelect.selectedIndex].text : 'Hội thoại hàng ngày';
   const container = document.getElementById('vocabContainer');
   
   if (!container) return;
   
-  let list = vocabDatabase[currentTopic] || vocabDatabase['Daily Conversation'];
+  let list = vocabDatabase[currentTopic] || vocabDatabase['Hội thoại hàng ngày'];
   const shuffled = [...list].sort(() => 0.5 - Math.random());
   const selectedVocab = shuffled.slice(0, 3);
   
   container.innerHTML = selectedVocab.map(item => `
     <div style="padding: 10px 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 6px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong style="color: #2563eb; font-size: 14px;">${item.word}</strong> 
+          <small style="color: #64748b;">(${item.type})</small>: 
+          <span style="font-size: 13px; color: #334155;">${item.mean}</span>
+        </div>
+        <button onclick="practiceSentence('${item.example.replace(/'/g, "\\'")}')" 
+                class="small-button" 
+                style="background: #dcfce7; color: #166534; padding: 4px 8px; font-size: 11px;">
+          Luyện câu 🗣️
+        </button>
+      </div>
+      <div style="font-size: 12px; color: #64748b; margin-top: 4px; font-style: italic;">
+        💡 Mẫu: "${item.example}"
+      </div>
+    </div>
+  `).join('');
+}
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
           <strong style="color: #2563eb; font-size: 14px;">${item.word}</strong> 
