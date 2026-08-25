@@ -5977,7 +5977,27 @@ function practiceSentence(sentence) {
     textInput.focus();
   }
 }
+<style>
+/* GIÃN RỘNG GIAO DIỆN MÀN HÌNH */
+.app {
+  width: 100% !important;
+  max-width: 1440px !important;
+  padding: 20px 32px 48px !important;
+}
 
+.main-grid {
+  grid-template-columns: 1.2fr 1fr !important;
+  gap: 24px !important;
+}
+
+.ai-human-avatar {
+  height: 480px !important;
+}
+
+.right-column {
+  width: 100% !important;
+}
+</style>
 // 6. KHỞI TẠO KHI TẢI TRANG
 document.addEventListener('DOMContentLoaded', () => {
   loadTopicVocab();
