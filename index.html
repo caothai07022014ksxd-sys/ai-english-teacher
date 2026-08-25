@@ -120,6 +120,38 @@ select {
   transform: translateX(4px);
   background: #ffffff !important;
 }
+@keyframes micPulse {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+  70% { box-shadow: 0 0 0 16px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* CỦA SỔ CHỌN CHỦ ĐỀ & TRÌNH ĐỘ */
+select {
+  padding: 10px 14px !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* KHUNG HIỂN THỊ TỪ VỰNG */
+#vocabContainer > div {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px !important;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+#vocabContainer > div:hover {
+  transform: translateX(4px);
+  background: #ffffff !important;
+}
   </style>
 </head>
 
