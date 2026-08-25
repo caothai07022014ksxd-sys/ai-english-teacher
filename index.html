@@ -191,6 +191,7 @@ select {
   transform: translateX(4px);
   background: #ffffff !important;
 }
+ 
 /* =========================================================
    RESET
 ========================================================= */
@@ -5982,5 +5983,60 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTopicVocab();
 });
 </script>
+  </script>
+<style>
+/* CSS TỐI ƯU GIAO DIỆN CHUYÊN NGHIỆP */
+:root {
+  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  --bg-gradient: linear-gradient(135deg, #f0f6ff 0%, #e2e8f0 50%, #f8fafc 100%) !important;
+  --card-bg: rgba(255, 255, 255, 0.88) !important;
+  --card-border: rgba(255, 255, 255, 0.7) !important;
+  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+}
+
+body {
+  background: var(--bg-gradient) !important;
+  background-attachment: fixed !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+.card, .lesson-card, .teacher-card, .stats-card {
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all 0.3s ease !important;
+}
+
+select, button, .small-button {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04) !important;
+}
+
+.mic-button {
+  background: var(--primary-gradient) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
+}
+
+#vocabContainer > div {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  margin-bottom: 10px !important;
+  transition: transform 0.2s ease !important;
+}
+
+#vocabContainer > div:hover {
+  transform: translateX(4px) !important;
+  background: #ffffff !important;
+}
+</style>
+<script>
 </body>
 </html>
