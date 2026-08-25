@@ -89,12 +89,12 @@ select {
 
 .main-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
   align-items: start;
 }
 
-.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card, .eval-card {
+.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card, .eval-card, .vocab-card {
   background: var(--card-bg) !important;
   backdrop-filter: blur(16px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
@@ -109,7 +109,7 @@ select {
 .teacher-live { font-size: 12px; color: #16a34a; font-weight: 700; }
 
 .ai-human-avatar {
-  position: relative; width: 100%; height: 440px;
+  position: relative; width: 100%; height: 360px;
   border-radius: var(--radius-md); overflow: hidden;
   background: linear-gradient(135deg, #dbeafe, #eff6ff);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
@@ -123,10 +123,21 @@ select {
 }
 .teacher-status-title { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
 
-.right-column { display: flex; flex-direction: column; gap: 20px; }
+.right-column, .left-column { display: flex; flex-direction: column; gap: 20px; }
+
+/* KHUNG TỪ VỰNG CHỦ ĐỀ */
+.vocab-card { border-top: 4px solid #38bdf8 !important; }
+.vocab-title { font-size: 15px; font-weight: 800; margin-bottom: 10px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+.vocab-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.vocab-chip {
+  background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px;
+  padding: 6px 12px; font-size: 12.5px; cursor: pointer; transition: 0.2s;
+}
+.vocab-chip:hover { background: #dbeafe; border-color: #93c5fd; }
+.vocab-chip strong { color: #1d4ed8; }
 
 .chat-card {
-  height: 320px; display: flex; flex-direction: column; overflow: hidden; padding: 0 !important;
+  height: 300px; display: flex; flex-direction: column; overflow: hidden; padding: 0 !important;
 }
 .chat-header {
   padding: 14px 20px; border-bottom: 1px solid rgba(226, 232, 240, 0.8);
@@ -145,7 +156,6 @@ select {
 .message.teacher .bubble { background: #f1f5f9; color: #0f172a; border-top-left-radius: 2px; }
 .message.student .bubble { background: var(--primary-gradient); color: white; border-top-right-radius: 2px; }
 
-/* BẢNG ĐÁNH GIÁ CHUYÊN NGHIỆP */
 .eval-card { border-left: 5px solid var(--primary) !important; }
 .eval-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .eval-title { font-size: 15px; font-weight: 800; color: #1e293b; }
@@ -172,7 +182,7 @@ select {
 .voice-card { text-align: center; }
 .mic-wrapper { display: flex; justify-content: center; margin: 10px 0; }
 .mic-button {
-  width: 80px; height: 80px; border-radius: 50%; border: none;
+  width: 70px; height: 70px; border-radius: 50%; border: none;
   background: var(--primary-gradient); color: white; font-weight: 800;
   box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); cursor: pointer; transition: all 0.2s ease;
 }
@@ -193,7 +203,7 @@ select {
 
 @media (max-width: 992px) {
   .main-grid { grid-template-columns: 1fr; }
-  .ai-human-avatar { height: 380px; }
+  .ai-human-avatar { height: 320px; }
 }
   </style>
 </head>
@@ -278,6 +288,14 @@ select {
           </div>
         </div>
       </div>
+
+      <!-- KHUNG GỢI Ý TỪ VỰNG THEO CHỦ ĐỀ -->
+      <div class="vocab-card">
+        <div class="vocab-title">💡 Từ vựng gợi ý cho chủ đề này (Nhấp để chèn):</div>
+        <div class="vocab-list" id="vocabContainer">
+          <!-- Từ vựng sẽ tự động đổi ở đây -->
+        </div>
+      </div>
     </div>
 
     <!-- CỘT PHẢI -->
@@ -298,7 +316,7 @@ select {
         </div>
       </div>
 
-      <!-- BẢNG ĐÁNH GIÁ & CHẤM ĐIỂM RIÊNG BIỆT -->
+      <!-- BẢNG ĐÁNH GIÁ & CHẤM ĐIỂM -->
       <div class="eval-card">
         <div class="eval-header">
           <div class="eval-title">📊 Phân Tích & Bảng Chấm Điểm</div>
@@ -359,6 +377,31 @@ select {
   let totalScore = 0;
   let bestScore = 0;
 
+  // DỮ LIỆU TỪ VỰNG THEO CHỦ ĐỀ
+  const vocabularyData = {
+    daily: [
+      { word: "Hobby", mean: "Sở thích" },
+      { word: "Routine", mean: "Thói quen hàng ngày" },
+      { word: "Leisure time", mean: "Thời gian rảnh" },
+      { word: "Relaxing", mean: "Thư giãn" },
+      { word: "Family gathering", mean: "Sum họp gia đình" }
+    ],
+    work: [
+      { word: "Deadline", mean: "Hạn chót" },
+      { word: "Project", mean: "Dự án" },
+      { word: "Collaborate", mean: "Hợp tác" },
+      { word: "Meeting", mean: "Cuộc họp" },
+      { word: "Presentation", mean: "Bài thuyết trình" }
+    ],
+    travel: [
+      { word: "Itinerary", mean: "Lịch trình" },
+      { word: "Destination", mean: "Điểm đến" },
+      { word: "Accommodation", mean: "Chỗ ở" },
+      { word: "Sightseeing", mean: "Tham quan" },
+      { word: "Local cuisine", mean: "Ẩm thực địa phương" }
+    ]
+  };
+
   const micBtn = document.getElementById('micBtn');
   const sendBtn = document.getElementById('sendBtn');
   const textInput = document.getElementById('textInput');
@@ -369,6 +412,7 @@ select {
   const levelSelect = document.getElementById('levelSelect');
   const topicSelect = document.getElementById('topicSelect');
   const lessonTopic = document.getElementById('lessonTopic');
+  const vocabContainer = document.getElementById('vocabContainer');
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition = null;
@@ -430,13 +474,9 @@ select {
     appendStudentMessage(text);
     avatarMessage.innerText = `You said: "${text}"`;
 
-    // 1. Phân tích & Đánh giá câu
     const result = analyzeSentence(text);
-
-    // 2. Cập nhật Bảng Chấm Điểm Chi Tiết
     updateEvaluationCard(result);
 
-    // 3. Thống kê tiến độ
     turns++;
     totalScore += result.totalScore;
     if (result.totalScore > bestScore) bestScore = result.totalScore;
@@ -445,7 +485,6 @@ select {
     document.getElementById('avgScore').innerText = Math.round(totalScore / turns);
     document.getElementById('highScore').innerText = bestScore;
 
-    // 4. Phản hồi AI
     setTimeout(() => {
       const response = getAIResponse(text);
       appendTeacherMessage(response);
@@ -453,14 +492,12 @@ select {
     }, 600);
   }
 
-  // THUẬT TOÁN PHÂN TÍCH VÀ CHẤM ĐIỂM CÂU
   function analyzeSentence(text) {
     const lower = text.toLowerCase();
     let gScore = 95, vScore = 90, pScore = 92;
     let feedback = [];
     let betterSentence = text;
 
-    // Kiểm tra lỗi ngữ pháp phổ biến
     if (lower.includes("i is") || lower.includes("i are")) {
       betterSentence = betterSentence.replace(/i (is|are)/gi, "I am");
       feedback.push("Lỗi ngữ pháp: Đổi 'I is/are' thành 'I am'.");
@@ -472,7 +509,7 @@ select {
       gScore -= 20;
     }
     if (text.length < 8) {
-      feedback.push("Câu ngắn: Bạn nên dùng thêm tính từ hoặc mở rộng ý để tăng điểm từ vựng.");
+      feedback.push("Câu ngắn: Bạn nên dùng thêm tính từ hoặc từ vựng chủ đề để mở rộng câu.");
       vScore -= 15;
     }
 
@@ -539,13 +576,36 @@ select {
     }
   }
 
+  // CẬP NHẬT TỪ VỰNG KHI ĐỔI CHỦ ĐỀ
   function updateLessonTopic() {
+    const topicVal = topicSelect.value;
     const topicText = topicSelect.options[topicSelect.selectedIndex].text;
     lessonTopic.innerText = `${topicText} (${levelSelect.value})`;
+
+    // Hiển thị danh sách từ vựng theo chủ đề
+    const list = vocabularyData[topicVal] || [];
+    vocabContainer.innerHTML = list.map(item => `
+      <div class="vocab-chip" onclick="insertWord('${item.word}')">
+        <strong>${item.word}</strong>: ${item.mean}
+      </div>
+    `).join('');
   }
+
+  // CHÈN TỪ VỰNG VÀO Ô NHẬP KHI BẤM VÀO TỪ
+  window.insertWord = function(word) {
+    if (textInput.value) {
+      textInput.value += " " + word;
+    } else {
+      textInput.value = word;
+    }
+    textInput.focus();
+  };
 
   levelSelect.addEventListener('change', updateLessonTopic);
   topicSelect.addEventListener('change', updateLessonTopic);
+
+  // Khởi tạo từ vựng ban đầu
+  updateLessonTopic();
 </script>
 
 </body>
