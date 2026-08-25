@@ -5832,21 +5832,7 @@ const vocabDatabase = {
     { word: 'Commute', type: 'v', mean: 'Đi lại làm việc', example: 'I commute to work by bus every day.' },
     { word: 'Hectic', type: 'adj', mean: 'Bận rộn, hối hả', example: 'I had a very hectic schedule today.' }
   ],
-  'Travel & Hotel': [
-    { word: 'Itinerary', type: 'n', mean: 'Lịch trình chuyến đi', example: 'Can you show me our travel itinerary?' },
-    { word: 'Accommodation', type: 'n', mean: 'Chỗ ở', example: 'We need to book accommodation in advance.' },
-    { word: 'Reservation', type: 'n', mean: 'Đặt chỗ trước', example: 'I have a reservation under my name.' },
-    { word: 'Sightseeing', type: 'n', mean: 'Tham quan ngắm cảnh', example: 'We went sightseeing all around the city.' }
-  ],
-  'Job Interview': [
-    { word: 'Strengths', type: 'n', mean: 'Điểm mạnh', example: 'One of my key strengths is problem solving.' },
-    { word: 'Experience', type: 'n', mean: 'Kinh nghiệm', example: 'I have three years of experience in marketing.' },
-    { word: 'Achievement', type: 'n', mean: 'Thành tựu', example: 'Tell me about your biggest achievement.' },
-    { word: 'Qualifications', type: 'n', mean: 'Bằng cấp, năng lực', example: 'My qualifications match this job description.' }
-  ]
-};
-
-// Hàm hiển thị từ vựng và câu mẫu luyện nói
+ // Hàm hiển thị & xáo trộn từ vựng theo chủ đề
 function loadTopicVocab() {
   const topicSelect = document.getElementById('topicSelect');
   const currentTopic = topicSelect ? topicSelect.value : 'Daily Conversation';
@@ -5854,9 +5840,17 @@ function loadTopicVocab() {
   
   if (!container) return;
   
-  const list = vocabDatabase[currentTopic] || vocabDatabase['Daily Conversation'];
+  // Lấy danh sách từ vựng theo chủ đề
+  let list = vocabDatabase[currentTopic] || vocabDatabase['Daily Conversation'];
   
-  container.innerHTML = list.map(item => `
+  // Xáo trộn ngẫu nhiên
+  const shuffled = [...list].sort(() => 0.5 - Math.random());
+  
+  // Lấy 3 từ ngẫu nhiên
+  const selectedVocab = shuffled.slice(0, 3);
+  
+  // Render ra giao diện
+  container.innerHTML = selectedVocab.map(item => `
     <div style="padding: 10px 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 6px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
@@ -5871,6 +5865,11 @@ function loadTopicVocab() {
         </button>
       </div>
       <div style="font-size: 12px; color: #64748b; margin-top: 4px; font-style: italic;">
+        💡 Mẫu: "${item.example}"
+      </div>
+    </div>
+  `).join('');
+}
         💡 Mẫu: "${item.example}"
       </div>
     </div>
