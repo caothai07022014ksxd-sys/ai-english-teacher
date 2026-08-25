@@ -5795,7 +5795,10 @@ function updateLessonConfig() {
   }
 }
 }
-  // Cấu hình Web Speech API ngắt tự động sau 1.5s
+  }
+}
+
+// Cấu hình Web Speech API ngắt tự động
 function startSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -5816,7 +5819,15 @@ function startSpeechRecognition() {
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       transcript += event.results[i][0].transcript;
     }
- // BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ
+
+    const textInput = document.getElementById('textInput');
+    if (textInput) textInput.value = transcript;
+  };
+
+  recognition.start();
+}
+
+// BỘ DỮ LIỆU TỪ VỰNG PHONG PHÚ THEO CHỦ ĐỀ
 const vocabDatabase = {
   'Hội thoại hàng ngày': [
     { word: 'Routine', type: 'n', mean: 'Thói quen hàng ngày', example: 'I want to improve my daily routine.' },
@@ -5881,7 +5892,7 @@ function loadTopicVocab() {
   `).join('');
 }
 
-// Hàm luyện câu từ gợi ý
+// Hàm điền câu mẫu vào ô nhập
 function practiceSentence(sentence) {
   const textInput = document.getElementById('textInput');
   if (textInput) {
@@ -5890,7 +5901,7 @@ function practiceSentence(sentence) {
   }
 }
 
-// Tự động tải từ vựng khi trang chạy xong
+// Tự động tải từ vựng khi trang sẵn sàng
 document.addEventListener('DOMContentLoaded', () => {
   loadTopicVocab();
 });
