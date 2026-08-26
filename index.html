@@ -194,33 +194,43 @@
     <div id="chapterSelectScreen" class="card">
       <h2 style="margin: 0; font-size: 20px;">📚 Chọn Chương Học</h2>
       <div class="chapter-grid">
-        <div class="chapter-card" onclick="startChapterFlow('daily')">
+        <div class="chapter-card" onclick="selectChapter('daily', 'Chương 1: Hội thoại hàng ngày')">
           <h3>Chương 1: Hội thoại hàng ngày</h3>
           <span class="chapter-status">● Đã mở</span>
         </div>
-        <div class="chapter-card" onclick="startChapterFlow('work')">
+        <div class="chapter-card" onclick="selectChapter('work', 'Chương 2: Tiếng Anh công sở')">
           <h3>Chương 2: Tiếng Anh công sở</h3>
           <span class="chapter-status">● Đã mở</span>
         </div>
-        <div class="chapter-card" onclick="startChapterFlow('travel')">
+        <div class="chapter-card" onclick="selectChapter('travel', 'Chương 3: Du lịch & Giao tiếp')">
           <h3>Chương 3: Du lịch & Giao tiếp</h3>
           <span class="chapter-status">● Đã mở</span>
         </div>
-        <div class="chapter-card" onclick="startChapterFlow('tech')">
+        <div class="chapter-card" onclick="selectChapter('tech', 'Chương 4: Công nghệ & AI')">
           <h3>Chương 4: Công nghệ & AI</h3>
           <span class="chapter-status">● Đã mở</span>
         </div>
-        <div class="chapter-card" onclick="startChapterFlow('health')">
+        <div class="chapter-card" onclick="selectChapter('health', 'Chương 5: Sức khỏe & Thể thao')">
           <h3>Chương 5: Sức khỏe & Thể thao</h3>
           <span class="chapter-status">● Đã mở</span>
         </div>
       </div>
     </div>
 
+    <!-- BANNER CHỌN BÀI HỌC NHỎ (15 TỪ / BÀI) -->
+    <div id="subLessonSelectScreen" class="card" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
+        <h2 id="currentChapterTitle" style="margin: 0; font-size: 20px; color: #1e293b;">Danh sách bài học</h2>
+      </div>
+      <p style="color: #64748b; font-size: 14px; margin-top: 0;">Mỗi bài học bao gồm 15 từ vựng được chia nhỏ từ chương này:</p>
+      <div id="subLessonGrid" class="chapter-grid"></div>
+    </div>
+
     <!-- THANH TIẾN TRÌNH 5 BƯỚC -->
     <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
+        <button onclick="backToSubLessons()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Bài Học Khác</button>
         <div style="display: flex; gap: 8px; font-weight: 700; font-size: 13px;">
           <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
           <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
@@ -246,7 +256,7 @@
       </div>
       <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
         <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
-        <span id="cardProgress" style="font-weight: 700;">1 / 20</span>
+        <span id="cardProgress" style="font-weight: 700;">1 / 15</span>
         <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
       </div>
       <br>
@@ -267,7 +277,7 @@
       </div>
       <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
         <button onclick="prevUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
-        <span id="usageProgress" style="font-weight: 700;">1 / 5</span>
+        <span id="usageProgress" style="font-weight: 700;">1 / 15</span>
         <button onclick="nextUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
       </div>
       <br>
@@ -324,10 +334,15 @@
     let isListening = false;
     let recognition = null;
     let currentTopic = 'daily';
+    let currentChapterName = '';
+    let currentSubLessonList = [];
+    let activeLessonWords = [];
+    
     let currentCardIndex = 0;
     let currentUsageIndex = 0;
     let vocabularyDatabase = null;
-    let vocabularyData = { daily: [], work: [], travel: [], health: [], tech: [] };
+
+    const WORDS_PER_LESSON = 15; // Quy định 15 từ / bài học nhỏ
 
     // Tải kho từ vựng từ file words.json
     async function loadVocabularyJSON() {
@@ -349,10 +364,11 @@
       }
     }
 
-    async function startChapterFlow(topic) {
+    // Chọn Chương lớn -> Lọc và Chia bài học nhỏ (mỗi bài 15 từ)
+    async function selectChapter(topic, chapterTitle) {
       currentTopic = topic;
-      currentCardIndex = 0;
-      currentUsageIndex = 0;
+      currentChapterName = chapterTitle;
+
       if (!vocabularyDatabase) {
         await loadVocabularyJSON();
       }
@@ -366,6 +382,7 @@
         word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '').trim()
       }));
 
+      // Lọc trùng từ vựng
       let uniqueList = [];
       let seenWords = new Set();
       let seenMeans = new Set();
@@ -379,18 +396,54 @@
         }
       }
 
-      shuffleArray(uniqueList);
-      vocabularyData[topic] = uniqueList.slice(0, 20);
+      // Chia nhỏ thành các nhóm 15 từ
+      currentSubLessonList = [];
+      for (let i = 0; i < uniqueList.length; i += WORDS_PER_LESSON) {
+        currentSubLessonList.push(uniqueList.slice(i, i + WORDS_PER_LESSON));
+      }
 
+      renderSubLessonsScreen();
+    }
+
+    // Hiển thị danh sách các bài học nhỏ (Bài 1, Bài 2, ...)
+    function renderSubLessonsScreen() {
       document.getElementById('chapterSelectScreen').style.display = 'none';
+      document.getElementById('subLessonSelectScreen').style.display = 'block';
+      document.getElementById('currentChapterTitle').innerText = currentChapterName;
+
+      const grid = document.getElementById('subLessonGrid');
+      grid.innerHTML = '';
+
+      currentSubLessonList.forEach((lessonWords, index) => {
+        const card = document.createElement('div');
+        card.className = 'chapter-card';
+        card.onclick = () => startSubLessonFlow(index);
+        card.innerHTML = `
+          <h3>Bài ${index + 1} (${lessonWords.length} từ)</h3>
+          <span class="chapter-status">● Đã mở</span>
+          <p style="margin: 6px 0 0 0; font-size: 12px; color: #64748b;">Từ: "${lessonWords[0].word}" ... "${lessonWords[lessonWords.length - 1].word}"</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Bắt đầu vào 1 bài học 15 từ cụ thể
+    function startSubLessonFlow(lessonIndex) {
+      activeLessonWords = [...currentSubLessonList[lessonIndex]];
+      currentCardIndex = 0;
+      currentUsageIndex = 0;
+
+      document.getElementById('subLessonSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'block';
       document.getElementById('stage1-vocab').style.display = 'block';
+
       updateFlashcard();
       updateStageTabs(1);
     }
 
     function backToChapters() {
       document.getElementById('chapterSelectScreen').style.display = 'block';
+      document.getElementById('subLessonSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'none';
       document.getElementById('stage1-vocab').style.display = 'none';
       document.getElementById('stage1-usage').style.display = 'none';
@@ -399,16 +452,26 @@
       document.getElementById('stage3-practice').style.display = 'none';
     }
 
+    function backToSubLessons() {
+      document.getElementById('subLessonSelectScreen').style.display = 'block';
+      document.getElementById('learningFlowHeader').style.display = 'none';
+      document.getElementById('stage1-vocab').style.display = 'none';
+      document.getElementById('stage1-usage').style.display = 'none';
+      document.getElementById('stage2-quiz').style.display = 'none';
+      document.getElementById('stage2-sentence-quiz').style.display = 'none';
+      document.getElementById('stage3-practice').style.display = 'none';
+    }
+
+    // STEP 1: FLASHCARD
     function updateFlashcard() {
-      const list = vocabularyData[currentTopic];
-      const item = list[currentCardIndex];
+      const item = activeLessonWords[currentCardIndex];
       const word = item.word.trim();
       const cleanWord = word.toLowerCase();
 
       document.getElementById('fcWord').innerText = word;
       document.getElementById('fcMeaning').innerText = item.mean;
-      document.getElementById('cardProgress').innerText = `${currentCardIndex + 1} / ${list.length}`;
-      document.getElementById('btnStartQuiz').style.display = (currentCardIndex === list.length - 1) ? 'inline-block' : 'none';
+      document.getElementById('cardProgress').innerText = `${currentCardIndex + 1} / ${activeLessonWords.length}`;
+      document.getElementById('btnStartQuiz').style.display = (currentCardIndex === activeLessonWords.length - 1) ? 'inline-block' : 'none';
       document.getElementById('vocabSpeechStatus').innerText = '';
 
       let ipaText = item.phonetic || item.ipa || item.pronunciation;
@@ -429,10 +492,10 @@
     }
 
     function nextCard() {
-      const list = vocabularyData[currentTopic];
-      if (currentCardIndex < list.length - 1) { currentCardIndex++; updateFlashcard(); }
+      if (currentCardIndex < activeLessonWords.length - 1) { currentCardIndex++; updateFlashcard(); }
     }
 
+    // STEP 2: ÁP DỤNG CÂU
     function goToUsageStage() {
       document.getElementById('stage1-vocab').style.display = 'none';
       document.getElementById('stage1-usage').style.display = 'block';
@@ -441,13 +504,12 @@
     }
 
     function updateUsageCard() {
-      const list = vocabularyData[currentTopic];
-      const item = list[currentUsageIndex];
+      const item = activeLessonWords[currentUsageIndex];
       document.getElementById('usageWord').innerText = item.word;
       document.getElementById('usageSentence').innerText = `"${item.example}"`;
       document.getElementById('usageTranslation').innerText = `"${item.exMean}"`;
-      document.getElementById('usageProgress').innerText = `${currentUsageIndex + 1} / ${list.length}`;
-      document.getElementById('btnStartQuizFromUsage').style.display = (currentUsageIndex === list.length - 1) ? 'inline-block' : 'none';
+      document.getElementById('usageProgress').innerText = `${currentUsageIndex + 1} / ${activeLessonWords.length}`;
+      document.getElementById('btnStartQuizFromUsage').style.display = (currentUsageIndex === activeLessonWords.length - 1) ? 'inline-block' : 'none';
     }
 
     function prevUsageCard() {
@@ -455,10 +517,10 @@
     }
 
     function nextUsageCard() {
-      const list = vocabularyData[currentTopic];
-      if (currentUsageIndex < list.length - 1) { currentUsageIndex++; updateUsageCard(); }
+      if (currentUsageIndex < activeLessonWords.length - 1) { currentUsageIndex++; updateUsageCard(); }
     }
 
+    // STEP 3: TEST TỪ VỰNG
     let quizCurrentIndex = 0;
     let quizUserAnswers = [];
     let quizQuestionsList = [];
@@ -468,7 +530,7 @@
       document.getElementById('stage2-quiz').style.display = 'block';
       quizCurrentIndex = 0;
       quizUserAnswers = [];
-      quizQuestionsList = [...vocabularyData[currentTopic]];
+      quizQuestionsList = [...activeLessonWords];
       shuffleArray(quizQuestionsList);
       renderQuiz();
       updateStageTabs(3);
@@ -521,7 +583,7 @@
       const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
       const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
 
-      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
+      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA TỪ VỰNG!\n\n`;
       resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
 
       if (wrongAnswers.length > 0) {
@@ -537,7 +599,7 @@
       goToSentenceQuizStage();
     }
 
-    // === LOGIC BÀI KIỂM TRA CÂU (STEP 4) ===
+    // STEP 4: TEST DỊCH CÂU (VIỆT - ANH)
     let sentenceQuizIndex = 0;
     let sentenceQuizList = [];
 
@@ -546,7 +608,7 @@
       document.getElementById('stage2-sentence-quiz').style.display = 'block';
 
       sentenceQuizIndex = 0;
-      sentenceQuizList = [...vocabularyData[currentTopic]];
+      sentenceQuizList = [...activeLessonWords];
       shuffleArray(sentenceQuizList);
 
       renderSentenceQuiz();
@@ -604,6 +666,7 @@
       });
     }
 
+    // STEP 5: AI TEACHER
     function goToStage3() {
       document.getElementById('stage2-sentence-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
@@ -627,9 +690,9 @@
         window.speechSynthesis.speak(utterance);
       }
     }
-    // --- THỬ PHÁT ÂM TỪ VỰNG (STEP 1) ---
-    let vocabRecognition = null;
 
+    // THỬ PHÁT ÂM TỪ VỰNG (STEP 1)
+    let vocabRecognition = null;
     function toggleVocabSpeech() {
       const statusElem = document.getElementById('vocabSpeechStatus');
       const micBtn = document.getElementById('vocabMicBtn');
@@ -637,7 +700,7 @@
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy thử dùng Google Chrome!");
+        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
         return;
       }
 
