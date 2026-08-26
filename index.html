@@ -173,18 +173,19 @@
       </div>
     </div>
 
-    <!-- THANH TIẾN TRÌNH -->
-    <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
-        <div style="display: flex; gap: 10px; font-weight: 700; font-size: 13px;">
-          <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
-          <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
-          <span id="step3-tab" style="color: #94a3b8;">3. Kiểm tra</span> ➔ 
-          <span id="step4-tab" style="color: #94a3b8;">4. Luyện nói AI</span>
-        </div>
-      </div>
+ <!-- THANH TIẾN TRÌNH 5 BƯỚC -->
+<div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
+    <div style="display: flex; gap: 8px; font-weight: 700; font-size: 13px;">
+      <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
+      <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
+      <span id="step3-tab" style="color: #94a3b8;">3. Test từ</span> ➔ 
+      <span id="step4-tab" style="color: #94a3b8;">4. Test câu</span> ➔ 
+      <span id="step5-tab" style="color: #94a3b8;">5. Luyện nói AI</span>
     </div>
+  </div>
+</div>
 
 <!-- STEP 1: HỌC TỪ VỰNG -->
   <div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
@@ -523,12 +524,74 @@ let quizCurrentIndex = 0;
       alert(resultMessage);
       goToStage3();
     }
+    // === BỔ SUNG: LOGIC BÀI KIỂM TRA CÂU (VIỆT -> ANH) ===
+    let sentenceQuizIndex = 0;
+    let sentenceQuizList = [];
+
+    function goToSentenceQuizStage() {
+      document.getElementById('stage2-quiz').style.display = 'none';
+      document.getElementById('stage2-sentence-quiz').style.display = 'block';
+
+      sentenceQuizIndex = 0;
+      sentenceQuizList = [...vocabularyData[currentTopic]];
+      shuffleArray(sentenceQuizList);
+
+      renderSentenceQuiz();
+      updateStageTabs(4);
+    }
+
+    function renderSentenceQuiz() {
+      const currentItem = sentenceQuizList[sentenceQuizIndex];
+      document.getElementById('sentenceQuizVi').innerText = `Câu ${sentenceQuizIndex + 1}/${sentenceQuizList.length}: "${currentItem.exMean}"`;
+      document.getElementById('sentenceInput').value = '';
+      document.getElementById('sentenceQuizFeedback').innerText = '';
+    }
+
+    function cleanTextForCompare(text) {
+      return text.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"']/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function submitSentenceAnswer() {
+      const userInput = document.getElementById('sentenceInput').value;
+      const currentItem = sentenceQuizList[sentenceQuizIndex];
+      const feedbackElem = document.getElementById('sentenceQuizFeedback');
+
+      if (!userInput.trim()) {
+        alert("Vui lòng nhập câu trả lời!");
+        return;
+      }
+
+      const userClean = cleanTextForCompare(userInput);
+      const targetClean = cleanTextForCompare(currentItem.example);
+
+      if (userClean === targetClean) {
+        feedbackElem.innerHTML = `<span style="color: #16a34a;">🎉 Chính xác! Bạn đã đặt đúng câu ví dụ.</span>`;
+        setTimeout(() => {
+          nextSentenceQuiz();
+        }, 1200);
+      } else {
+        feedbackElem.innerHTML = `<span style="color: #dc2626;">❌ Chưa chính xác.<br>Đáp án chuẩn: <strong>"${currentItem.example}"</strong></span>`;
+        setTimeout(() => {
+          nextSentenceQuiz();
+        }, 3000);
+      }
+    }
+
+    function nextSentenceQuiz() {
+      sentenceQuizIndex++;
+      if (sentenceQuizIndex < sentenceQuizList.length) {
+        renderSentenceQuiz();
+      } else {
+        alert("🎉 Chúc mừng! Bạn đã hoàn thành bài kiểm tra dịch câu. Bây giờ hãy bắt đầu luyện nói với giáo viên AI!");
+        goToStage3();
+      }
+    }
     
 // Chuyển sang Bước 4 (Luyện nói AI)
     function goToStage3() {
       document.getElementById('stage2-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
-      updateStageTabs(4);
+      updateStageTabs(5);
       
       // Gửi câu hỏi đầu tiên dựa trên từ vựng vừa học
       startAITeacherQuestion();
