@@ -255,53 +255,25 @@
     let currentCardIndex = 0;
     let currentUsageIndex = 0;
 
-  // Kho từ vựng đa dạng sẵn có cho từng chủ đề
-    const vocabularyDatabase = {
-      daily: [
-        { word: "Hobby", mean: "Sở thích", example: "Playing football is my favorite hobby.", exMean: "Đá bóng là sở thích yêu thích của tôi." },
-        { word: "Routine", mean: "Thói quen hàng ngày", example: "I have a healthy daily routine.", exMean: "Tôi có một thói quen hàng ngày lành mạnh." },
-        { word: "Leisure time", mean: "Thời gian rảnh rỗi", example: "I like reading books in my leisure time.", exMean: "Tôi thích đọc sách vào thời gian rảnh." },
-        { word: "Relaxing", mean: "Thư giãn", example: "Listening to music is very relaxing.", exMean: "Nghe nhạc rất thư giãn." },
-        { word: "Family gathering", mean: "Sum họp gia đình", example: "We enjoy our weekend family gathering.", exMean: "Chúng tôi thích buổi sum họp gia đình cuối tuần." },
-        { word: "Commute", mean: "Đi lại làm việc", example: "My daily commute takes about thirty minutes.", exMean: "Việc đi lại làm việc hàng ngày của tôi mất khoảng 30 phút." },
-        { word: "Lifestyle", mean: "Lối sống", example: "He leads an active lifestyle.", exMean: "Anh ấy có một lối sống năng động." },
-        { word: "Housework", mean: "Công việc nhà", example: "Sharing housework helps strengthen family bonds.", exMean: "Chia sẻ việc nhà giúp thắt chặt tình cảm." }
-      ],
-      work: [
-        { word: "Deadline", mean: "Hạn chót", example: "We must finish this project before the deadline.", exMean: "Chúng ta phải hoàn thành dự án này trước hạn chót." },
-        { word: "Project", mean: "Dự án", example: "I am managing a new marketing project.", exMean: "Tôi đang quản lý một dự án tiếp thị mới." },
-        { word: "Collaborate", mean: "Hợp tác", example: "We need to collaborate with other teams.", exMean: "Chúng ta cần hợp tác với các nhóm khác." },
-        { word: "Meeting", mean: "Cuộc họp", example: "The team meeting starts at 9 AM.", exMean: "Cuộc họp nhóm bắt đầu lúc 9 giờ sáng." },
-        { word: "Presentation", mean: "Bài thuyết trình", example: "Her presentation was very impressive.", exMean: "Bài thuyết trình của cô ấy rất ấn tượng." },
-        { word: "Negotiate", mean: "Đàm phán", example: "We need to negotiate the contract terms.", exMean: "Chúng ta cần đàm phán các điều khoản hợp đồng." },
-        { word: "Productivity", mean: "Năng suất", example: "A good environment increases productivity.", exMean: "Môi trường tốt làm tăng năng suất làm việc." }
-      ],
-      travel: [
-        { word: "Itinerary", mean: "Lịch trình", example: "Here is our travel itinerary for tomorrow.", exMean: "Đây là lịch trình du lịch cho ngày mai." },
-        { word: "Destination", mean: "Điểm đến", example: "Da Nang is a popular tourist destination.", exMean: "Đà Nẵng là một điểm đến du lịch phổ biến." },
-        { word: "Accommodation", mean: "Chỗ ở", example: "We booked a comfortable accommodation.", exMean: "Chúng tôi đã đặt một chỗ ở thoải mái." },
-        { word: "Sightseeing", mean: "Tham quan", example: "We spent the whole day sightseeing.", exMean: "Chúng tôi đã dành cả ngày để đi tham quan." },
-        { word: "Local cuisine", mean: "Ẩm thực địa phương", example: "I love trying local cuisine when travelling.", exMean: "Tôi thích thử ẩm thực địa phương khi đi du lịch." },
-        { word: "Luggage", mean: "Hành lý", example: "Please check your luggage before boarding.", exMean: "Vui lòng kiểm tra hành lý trước khi lên máy bay." }
-      ],
-      tech: [
-        { word: "Artificial Intelligence", mean: "Trí tuệ nhân tạo", example: "AI is transforming language learning.", exMean: "AI đang thay đổi việc học ngôn ngữ." },
-        { word: "Automation", mean: "Tự động hóa", example: "Automation speeds up tasks.", exMean: "Tự động hóa giúp tăng tốc công việc." },
-        { word: "User-friendly", mean: "Thân thiện người dùng", example: "The app has a user-friendly interface.", exMean: "Ứng dụng có giao diện rất thân thiện." },
-        { word: "Algorithm", mean: "Thuật toán", example: "The algorithm suggests custom content.", exMean: "Thuật toán gợi ý nội dung tùy chỉnh." },
-        { word: "Cybersecurity", mean: "An ninh mạng", example: "Cybersecurity is essential for data.", exMean: "An ninh mạng rất quan trọng cho dữ liệu." }
-      ],
-      health: [
-        { word: "Balanced diet", mean: "Chế độ ăn cân bằng", example: "A balanced diet is essential for health.", exMean: "Chế độ ăn cân bằng rất cần thiết cho sức khỏe." },
-        { word: "Work-out", mean: "Tập thể dục", example: "I work out three times a week.", exMean: "Tôi tập thể dục ba lần một tuần." },
-        { word: "Mental well-being", mean: "Sức khỏe tinh thần", example: "Meditation helps improve mental well-being.", exMean: "Thiền giúp cải thiện sức khỏe tinh thần." },
-        { word: "Hydrated", mean: "Đủ nước", example: "Drink enough water to stay hydrated.", exMean: "Uống đủ nước để duy trì độ ẩm cơ thể." },
-        { word: "Immune system", mean: "Hệ miễn dịch", example: "Vitamin C helps boost your immune system.", exMean: "Vitamin C giúp tăng cường hệ miễn dịch." }
-      ]
-    };
-
+let vocabularyDatabase = null;
     let vocabularyData = { daily: [], work: [], travel: [], health: [], tech: [] };
 
+    // Tải kho từ vựng từ file words.json khi mở trang
+    async function loadVocabularyJSON() {
+      try {
+        const response = await fetch('./words.json');
+        if (!response.ok) throw new Error("Không thể tải file words.json");
+        vocabularyDatabase = await response.json();
+        console.log("Đã nạp file words.json thành công!");
+      } catch (error) {
+        console.error("Lỗi tải kho từ vựng:", error);
+      }
+    }
+
+    // Tự động tải dữ liệu ngay khi mở ứng dụng
+    loadVocabularyJSON();
+
+    // Hàm xáo trộn mảng ngẫu nhiên
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -309,15 +281,28 @@
       }
     }
 
-    function startChapterFlow(topic) {
+    // Hàm bắt đầu bài học khi người dùng bấm chọn chương
+    async function startChapterFlow(topic) {
       currentTopic = topic;
       currentCardIndex = 0;
       currentUsageIndex = 0;
 
+      // Nếu dữ liệu JSON chưa kịp nạp xong thì gọi tải ngay
+      if (!vocabularyDatabase) {
+        await loadVocabularyJSON();
+      }
+
+      if (!vocabularyDatabase || !vocabularyDatabase[topic]) {
+        alert("Chưa có dữ liệu từ vựng cho chủ đề này!");
+        return;
+      }
+
+      // Lấy danh sách từ trong kho, xáo trộn ngẫu nhiên và bốc 5 từ
       let rawList = [...vocabularyDatabase[topic]];
       shuffleArray(rawList);
       vocabularyData[topic] = rawList.slice(0, 5);
 
+      // Chuyển giao diện lập tức
       document.getElementById('chapterSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'block';
       document.getElementById('stage1-vocab').style.display = 'block';
