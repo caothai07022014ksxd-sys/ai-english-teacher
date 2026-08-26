@@ -627,6 +627,57 @@
         window.speechSynthesis.speak(utterance);
       }
     }
+    // --- THỬ PHÁT ÂM TỪ VỰNG (STEP 1) ---
+    let vocabRecognition = null;
+
+    function toggleVocabSpeech() {
+      const statusElem = document.getElementById('vocabSpeechStatus');
+      const micBtn = document.getElementById('vocabMicBtn');
+      const targetWord = document.getElementById('fcWord').innerText.trim().toLowerCase();
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy thử dùng Google Chrome!");
+        return;
+      }
+
+      if (vocabRecognition) {
+        vocabRecognition.stop();
+        vocabRecognition = null;
+        micBtn.innerText = '🎙️ Thử phát âm';
+        statusElem.innerText = '';
+        return;
+      }
+
+      vocabRecognition = new SpeechRecognition();
+      vocabRecognition.lang = 'en-US';
+      vocabRecognition.interimResults = false;
+
+      vocabRecognition.onstart = () => {
+        micBtn.innerText = '⏹️ Đang nghe...';
+        statusElem.innerHTML = '<span style="color: #2563eb;">🎙️ Hãy đọc từ tiếng Anh trên màn hình...</span>';
+      };
+
+      vocabRecognition.onresult = (event) => {
+        const spokenWord = event.results[0][0].transcript.trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"']/g, "");
+        if (spokenWord === targetWord) {
+          statusElem.innerHTML = `<span style="color: #16a34a;">🎉 Chính xác! Bạn đọc là: "${spokenWord}"</span>`;
+        } else {
+          statusElem.innerHTML = `<span style="color: #dc2626;">❌ Chưa đúng. AI nghe thành: "${spokenWord}"</span>`;
+        }
+      };
+
+      vocabRecognition.onerror = (event) => {
+        statusElem.innerHTML = '<span style="color: #dc2626;">Lỗi nhận diện hoặc chưa cấp quyền Micro!</span>';
+      };
+
+      vocabRecognition.onend = () => {
+        micBtn.innerText = '🎙️ Thử phát âm';
+        vocabRecognition = null;
+      };
+
+      vocabRecognition.start();
+    }
   </script>
 </body>
 </html>
