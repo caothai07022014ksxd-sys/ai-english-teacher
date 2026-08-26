@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI English Teacher PRO</title>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI English Teacher PRO</title>
+  
+  <!-- Dán thẻ script này BÊN TRONG thẻ <head> -->
+  <script src="https://cdn.jsdelivr.net/npm/open-ipa@1.0.1/dist/index.min.js"></script>
+
+  <style>
+    :root {
+      ...
   <style>
     :root {
       --primary: #2563eb;
@@ -356,31 +367,12 @@ let vocabularyDatabase = null;
  let vocabRecognition = null;
     let isVocabListening = false;
 
-  // Hàm tra cứu phiên âm IPA tự động từ API Từ điển miễn phí
-    async function fetchIPA(word) {
-      if (!word) return '';
-      try {
-        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
-        if (!res.ok) return '';
-        const data = await res.json();
-        
-        // Tìm phiên âm IPA trong dữ liệu trả về
-        if (data && data[0] && data[0].phonetics) {
-          for (let p of data[0].phonetics) {
-            if (p.text) return p.text;
-          }
-        }
-        return data[0]?.phonetic || '';
-      } catch (err) {
-        return '';
-      }
-    }
-
-    // Cập nhật Flashcard và hiển thị phiên âm IPA tự động
-    async function updateFlashcard() {
+  // Cập nhật Flashcard và hiển thị phiên âm IPA cho TẤT CẢ từ vựng
+    function updateFlashcard() {
       const list = vocabularyData[currentTopic];
       const item = list[currentCardIndex];
       const word = item.word.trim();
+      const cleanWord = word.toLowerCase();
 
       document.getElementById('fcWord').innerText = word;
       document.getElementById('fcMeaning').innerText = item.mean;
@@ -388,17 +380,20 @@ let vocabularyDatabase = null;
       document.getElementById('btnStartQuiz').style.display = (currentCardIndex === list.length - 1) ? 'inline-block' : 'none';
       document.getElementById('vocabSpeechStatus').innerText = '';
 
-      // Tạm thời hiển thị trạng thái đang tải IPA
-      const phoneticElem = document.getElementById('fcPhonetic');
-      phoneticElem.innerText = '...';
-
-      // Ưu tiên lấy IPA từ dữ liệu có sẵn, nếu không có sẽ tự động tra API
+      // 1. Ưu tiên lấy IPA từ file JSON nếu có sẵn
       let ipaText = item.phonetic || item.ipa || item.pronunciation;
-      if (!ipaText) {
-        ipaText = await fetchIPA(word);
+
+      // 2. Tự động quy đổi IPA bằng thư viện
+      if (!ipaText && window.openIpa) {
+        ipaText = window.openIpa(cleanWord);
       }
 
-      phoneticElem.innerText = ipaText ? (ipaText.startsWith('/') ? ipaText : `/${ipaText.replace(/\//g, '')}/`) : '';
+      const phoneticElem = document.getElementById('fcPhonetic');
+      if (ipaText) {
+        phoneticElem.innerText = ipaText.startsWith('/') ? ipaText : `/${ipaText.replace(/\//g, '')}/`;
+      } else {
+        phoneticElem.innerText = '';
+      }
     }
     
     function prevCard() {
