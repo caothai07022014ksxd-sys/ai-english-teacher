@@ -247,7 +247,19 @@
       </div>
     </div>
 
-    <!-- STEP 4: LUYỆN NÓI AI -->
+    <!-- STEP 4: KIỂM TRA ÁP DỤNG CÂU (DỊCH VIỆT - ANH) -->
+  <div id="stage2-sentence-quiz" class="card" style="display: none; max-width: 650px; margin: 0 auto; padding: 24px;">
+    <h2 style="margin-top: 0;">✍️ Bước 4: Kiểm tra dịch câu Việt ➔ Anh</h2>
+    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+      <p style="font-size: 14px; color: #64748b; margin-top: 0;">Hãy gõ lại câu tiếng Anh tương ứng với nghĩa tiếng Việt dưới đây (dựa theo các câu ví dụ đã học):</p>
+      <h3 id="sentenceQuizVi" style="color: #1e293b; font-size: 18px; margin: 10px 0;">Nghĩa tiếng Việt...</h3>
+      <input type="text" id="sentenceInput" placeholder="Nhập câu tiếng Anh tại đây..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; margin-top: 10px; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') submitSentenceAnswer()">
+      <button onclick="submitSentenceAnswer()" style="margin-top: 12px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Gửi đáp án</button>
+    </div>
+    <div id="sentenceQuizFeedback" style="font-weight: 600; font-size: 15px;"></div>
+  </div>
+    
+    <!-- STEP 5: LUYỆN NÓI AI -->
     <div class="main-grid" id="stage3-practice" style="display: none;">
       <div class="card">
         <h3>AI English Teacher</h3>
@@ -528,6 +540,10 @@ function showQuizSummary() {
     let sentenceQuizIndex = 0;
     let sentenceQuizList = [];
 
+   // === LOGIC BÀI KIỂM TRA CÂU (STEP 4) ===
+    let sentenceQuizIndex = 0;
+    let sentenceQuizList = [];
+
     function goToSentenceQuizStage() {
       document.getElementById('stage2-quiz').style.display = 'none';
       document.getElementById('stage2-sentence-quiz').style.display = 'block';
@@ -583,12 +599,12 @@ function showQuizSummary() {
         renderSentenceQuiz();
       } else {
         alert("🎉 Chúc mừng! Bạn đã hoàn thành bài kiểm tra dịch câu. Bây giờ hãy bắt đầu luyện nói với giáo viên AI!");
-        goToStage3();
+        goToStage4();
       }
     }
     
-// Chuyển sang Bước 4 (Luyện nói AI)
-    function goToStage3() {
+// Chuyển sang Bước 5 (Luyện nói AI)
+    function goToStage4() {
       document.getElementById('stage2-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
       updateStageTabs(5);
