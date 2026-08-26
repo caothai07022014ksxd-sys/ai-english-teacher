@@ -456,27 +456,6 @@ let quizCurrentIndex = 0;
       goToStage3();
     }
 
-    // Tổng kết sau khi hoàn thành 20 câu
-    function showQuizSummary() {
-      const total = quizUserAnswers.length;
-      const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
-      const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
-
-      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
-      resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
-
-      if (wrongAnswers.length > 0) {
-        resultMessage += `❌ Chi tiết các câu làm sai:\n`;
-        wrongAnswers.forEach(item => {
-          resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
-        });
-      } else {
-        resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
-      }
-
-      alert(resultMessage);
-      goToStage3();
-    }
 // Chuyển sang Bước 4 (Luyện nói AI)
     function goToStage3() {
       document.getElementById('stage2-quiz').style.display = 'none';
