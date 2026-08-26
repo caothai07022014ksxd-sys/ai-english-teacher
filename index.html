@@ -246,12 +246,12 @@ select {
         <option value="B2">B2 - Nâng cao</option>
       </select>
       <select id="topicSelect">
-        <option value="daily">Hội thoại hàng ngày</option>
-        <option value="work">Tiếng Anh công sở</option>
-        <option value="travel">Du lịch & Giao tiếp</option>
-      </select>
-    </div>
-  </div>
+  <option value="daily">Hội thoại hàng ngày</option>
+  <option value="work">Tiếng Anh công sở</option>
+  <option value="travel">Du lịch & Giao tiếp</option>
+  <option value="tech">Công nghệ & AI</option>
+  <option value="health">Sức khỏe & Thể thao</option>
+</select>
 
   <!-- BANNER CHỌN CHƯƠNG / CHỦ ĐỀ -->
 <div id="chapterSelectScreen" class="card" style="margin-bottom: 24px;">
@@ -462,7 +462,6 @@ select {
   let totalScore = 0;
   let bestScore = 0;
 
-  // DỮ LIỆU TỪ VỰNG THEO CHỦ ĐỀ
  // DỮ LIỆU TỪ VỰNG & CÂU VÍ DỤ THEO CHỦ ĐỀ
 const vocabularyData = {
   daily: [
@@ -485,6 +484,20 @@ const vocabularyData = {
     { word: "Accommodation", mean: "Chỗ ở", example: "We booked a comfortable accommodation near the beach.", exMean: "Chúng tôi đã đặt một chỗ ở thoải mái gần bãi biển." },
     { word: "Sightseeing", mean: "Tham quan", example: "We spent the whole day sightseeing.", exMean: "Chúng tôi đã dành cả ngày để đi tham quan." },
     { word: "Local cuisine", mean: "Ẩm thực địa phương", example: "I love trying local cuisine when travelling.", exMean: "Tôi thích thử ẩm thực địa phương khi đi du lịch." }
+  ],
+  tech: [
+    { word: "Artificial Intelligence", mean: "Trí tuệ nhân tạo", example: "AI is transforming how we learn languages.", exMean: "AI đang thay đổi cách chúng ta học ngôn ngữ." },
+    { word: "Automation", mean: "Tự động hóa", example: "Automation speeds up repetitive tasks.", exMean: "Tự động hóa giúp tăng tốc các tác vụ lặp đi lặp lại." },
+    { word: "User-friendly", mean: "Thân thiện người dùng", example: "The application has a very user-friendly interface.", exMean: "Ứng dụng có giao diện rất thân thiện với người dùng." },
+    { word: "Algorithm", mean: "Thuật toán", example: "The algorithm suggests customized content.", exMean: "Thuật toán gợi ý nội dung được cá nhân hóa." },
+    { word: "Database", mean: "Cơ sở dữ liệu", example: "All user information is stored in a secure database.", exMean: "Tất cả thông tin người dùng được lưu trong cơ sở dữ liệu an toàn." }
+  ],
+  health: [
+    { word: "Balanced diet", mean: "Chế độ ăn cân bằng", example: "A balanced diet is essential for good health.", exMean: "Chế độ ăn cân bằng rất cần thiết cho sức khỏe tốt." },
+    { word: "Work-out", mean: "Tập thể dục", example: "I work out three times a week.", exMean: "Tôi tập thể dục ba lần một tuần." },
+    { word: "Mental well-being", mean: "Sức khỏe tinh thần", example: "Meditation helps improve mental well-being.", exMean: "Thiền giúp cải thiện sức khỏe tinh thần." },
+    { word: "Nutritious", mean: "Bổ dưỡng", example: "Vegetables are rich in vitamins and very nutritious.", exMean: "Rau củ chứa nhiều vitamin và rất bổ dưỡng." },
+    { word: "Hydrated", mean: "Đủ nước", example: "Drink enough water to stay hydrated throughout the day.", exMean: "Uống đủ nước để duy trì độ ẩm cho cơ thể suốt cả ngày." }
   ]
 };
 
