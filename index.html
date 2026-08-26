@@ -349,6 +349,9 @@ let vocabularyDatabase = null;
       document.getElementById('stage3-practice').style.display = 'none';
     }
 
+ let vocabRecognition = null;
+    let isVocabListening = false;
+
     function updateFlashcard() {
       const list = vocabularyData[currentTopic];
       const item = list[currentCardIndex];
@@ -356,6 +359,57 @@ let vocabularyDatabase = null;
       document.getElementById('fcMeaning').innerText = item.mean;
       document.getElementById('cardProgress').innerText = `${currentCardIndex + 1} / ${list.length}`;
       document.getElementById('btnStartQuiz').style.display = (currentCardIndex === list.length - 1) ? 'inline-block' : 'none';
+      
+      // Xóa thông báo phát âm khi chuyển sang từ mới
+      document.getElementById('vocabSpeechStatus').innerText = '';
+    }
+
+    // Luyện phát âm từng từ vựng
+    function toggleVocabSpeech() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói!");
+        return;
+      }
+
+      const currentWord = vocabularyData[currentTopic][currentCardIndex].word.toLowerCase().trim();
+
+      if (!vocabRecognition) {
+        vocabRecognition = new SpeechRecognition();
+        vocabRecognition.lang = 'en-US';
+        vocabRecognition.interimResults = false;
+
+        vocabRecognition.onstart = () => {
+          isVocabListening = true;
+          document.getElementById('vocabMicBtn').innerText = '🔴 Đang nghe...';
+          document.getElementById('vocabSpeechStatus').innerHTML = '<span style="color: #2563eb;">Hãy đọc từ trên...</span>';
+        };
+
+        vocabRecognition.onresult = (event) => {
+          const spokenWord = event.results[0][0].transcript.toLowerCase().trim();
+          
+          if (spokenWord.includes(currentWord) || currentWord.includes(spokenWord)) {
+            document.getElementById('vocabSpeechStatus').innerHTML = `<span style="color: #16a34a;">🎉 Phát âm chuẩn! ("${spokenWord}")</span>`;
+          } else {
+            document.getElementById('vocabSpeechStatus').innerHTML = `<span style="color: #dc2626;">❌ Chưa đúng ("${spokenWord}"), hãy nghe mẫu và đọc lại nhé!</span>`;
+          }
+        };
+
+        vocabRecognition.onerror = () => {
+          document.getElementById('vocabSpeechStatus').innerHTML = '<span style="color: #dc2626;">Không nghe rõ, thử lại nhé!</span>';
+        };
+
+        vocabRecognition.onend = () => {
+          isVocabListening = false;
+          document.getElementById('vocabMicBtn').innerText = '🎙️ Thử phát âm';
+        };
+      }
+
+      if (isVocabListening) {
+        vocabRecognition.stop();
+      } else {
+        vocabRecognition.start();
+      }
     }
 
     function prevCard() {
