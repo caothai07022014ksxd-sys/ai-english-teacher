@@ -176,47 +176,34 @@
     </div>
 
 <!-- STEP 1: HỌC TỪ VỰNG -->
-<div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
-  <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
-  
-  <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
-    <h1 id="fcWord" style="color: #2563eb; margin: 0 0 4px 0; font-size: 32px;">Word</h1>
+  <div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
+    <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
     
-    <!-- Dòng hiển thị phiên âm IPA -->
-    <p id="fcPhonetic" style="font-size: 16px; color: #0284c7; font-weight: 600; margin: 0 0 12px 0;">/phonetic/</p>
-    
-    <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
-    
-    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
-      <button onclick="playFcAudio()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe chuẩn</button>
-      <button id="vocabMicBtn" onclick="toggleVocabSpeech()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #2563eb; color: white; font-weight: 700; cursor: pointer;">🎙️ Thử phát âm</button>
+    <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
+      <h1 id="fcWord" style="color: #2563eb; margin: 0 0 4px 0; font-size: 32px;">Word</h1>
+      
+      <!-- Dòng hiển thị phiên âm IPA -->
+      <p id="fcPhonetic" style="font-size: 16px; color: #0284c7; font-weight: 600; margin: 0 0 12px 0;">/phonetic/</p>
+      
+      <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
+      
+      <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
+        <button onclick="playFcAudio()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe chuẩn</button>
+        <button id="vocabMicBtn" onclick="toggleVocabSpeech()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #2563eb; color: white; font-weight: 700; cursor: pointer;">🎙️ Thử phát âm</button>
+      </div>
+
+      <!-- Khung hiển thị kết quả phát âm -->
+      <div id="vocabSpeechStatus" style="font-size: 14px; font-weight: 600; color: #64748b; min-height: 24px;"></div>
     </div>
 
-    <!-- Khung hiển thị kết quả phát âm -->
-    <div id="vocabSpeechStatus" style="font-size: 14px; font-weight: 600; color: #64748b; min-height: 24px;"></div>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+      <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
+      <span id="cardProgress" style="font-weight: 700;">1 / 20</span>
+      <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
+    </div>
+    <br>
+    <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
   </div>
-
-  <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-    <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
-    <span id="cardProgress" style="font-weight: 700;">1 / 20</span>
-    <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
-  </div>
-  <br>
-  <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
-</div>
-
-    <!-- Khung hiển thị kết quả phát âm -->
-    <div id="vocabSpeechStatus" style="font-size: 14px; font-weight: 600; color: #64748b; min-height: 24px;"></div>
-  </div>
-
-  <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-    <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
-    <span id="cardProgress" style="font-weight: 700;">1 / 20</span>
-    <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
-  </div>
-  <br>
-  <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
-</div>
 
     <!-- STEP 2: ÁP DỤNG CÂU -->
     <div id="stage1-usage" class="card" style="display: none; text-align: center; padding: 30px;">
