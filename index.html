@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI English Teacher PRO</title>
-  
+
   <!-- Thư viện tra phiên âm IPA -->
   <script src="https://cdn.jsdelivr.net/npm/open-ipa@1.0.1/dist/index.min.js"></script>
 
@@ -28,306 +28,446 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      color: #0f172a;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: var(--bg-gradient);
-      background-attachment: fixed;
+      color: #1e293b;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .app {
+    /* GLASSMORPHISM CONTAINER */
+    .app-container {
       width: 100%;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 24px 24px 48px;
-    }
-
-    .top-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .brand-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      background: var(--primary-gradient);
-      color: white;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
-    }
-
-    .brand-title { margin: 0; font-size: 22px; font-weight: 800; }
-    .brand-subtitle { margin-top: 2px; font-size: 13px; color: #64748b; }
-
-    .hero {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 24px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
       border-radius: var(--radius-lg);
-      padding: 24px 30px;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: white;
       box-shadow: var(--shadow-lg);
     }
 
-    .hero-title { margin: 0; font-size: 26px; font-weight: 800; }
-    .hero-description { margin: 8px 0 0; color: rgba(255, 255, 255, 0.85); font-size: 14px; }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-md);
-      padding: 24px;
+    /* HEADER */
+    .header {
+      text-align: center;
       margin-bottom: 24px;
     }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .header p {
+      margin: 6px 0 0 0;
+      color: #64748b;
+      font-size: 14px;
+    }
 
-    .chapter-grid {
+    /* BREADCRUMB / STEPS HEADER */
+    .steps-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 12px 18px;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #f1f5f9;
+      overflow-x: auto;
+    }
+    .step-item {
+      font-size: 13px;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .step-item.active {
+      color: var(--primary);
+    }
+
+    /* BUTTONS */
+    .btn-back {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .btn-back:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .btn-action {
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-action:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    /* GRID LESSONS */
+    .grid-topics {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
       margin-top: 16px;
     }
-
     .chapter-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
       padding: 18px;
-      border: 2px solid #e2e8f0;
-      border-radius: var(--radius-md);
       cursor: pointer;
-      background: white;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
+      box-shadow: var(--shadow-sm);
     }
-
     .chapter-card:hover {
-      border-color: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .chapter-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #1e293b;
+    }
+    .chapter-status {
+      font-size: 12px;
+      color: #64748b;
     }
 
-    .chapter-card h3 { margin: 0 0 8px 0; font-size: 16px; color: #1e293b; }
-    .chapter-status { color: #16a34a; font-weight: 700; font-size: 13px; }
-
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: start;
+    /* CARDS LEARNING (FLASHCARD) */
+    .flashcard-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      border: 1px solid #e2e8f0;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .fc-word {
+      font-size: 36px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .fc-phonetic {
+      font-size: 18px;
+      color: #0284c7;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .fc-meaning {
+      font-size: 20px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 24px;
     }
 
-    .teacher-avatar-box {
-      width: 100%;
-      height: 360px;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
-      position: relative;
-    }
-
-    #teacherImage { width: 100%; height: 100%; object-fit: cover; }
-
-    .teacher-status-overlay {
-      position: absolute;
-      left: 14px;
-      right: 14px;
-      bottom: 14px;
-      padding: 12px 16px;
-      border-radius: 14px;
+    .mic-btn-speech {
+      background: #059669;
       color: white;
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(12px);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      margin-left: 8px;
+      transition: all 0.2s;
+    }
+    .mic-btn-speech:hover {
+      background: #047857;
     }
 
-    .chat-box {
-      height: 300px;
-      overflow-y: auto;
-      padding: 16px;
+    .audio-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .audio-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .card-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    /* QUIZ & SENTENCE QUIZ STYLES */
+    .quiz-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .input-sentence {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      margin-top: 12px;
+      outline: none;
+    }
+    .input-sentence:focus {
+      border-color: var(--primary);
+    }
+
+    /* AI TEACHER LAYOUT */
+    .ai-stage {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 20px;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+    }
+    @media (max-width: 768px) {
+      .ai-stage { grid-template-columns: 1fr; }
+    }
+    .avatar-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       background: #f8fafc;
       border-radius: var(--radius-md);
+      padding: 20px;
       border: 1px solid #e2e8f0;
-      margin-bottom: 16px;
     }
-
-    .mic-button {
-      width: 70px;
-      height: 70px;
+    .avatar-circle {
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
-      border: none;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      color: white;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 12px;
+    }
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      height: 380px;
+    }
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      background: #fafafa;
+      margin-bottom: 12px;
+    }
+    .mic-ai-btn {
       background: var(--primary-gradient);
       color: white;
-      font-weight: 800;
-      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-weight: bold;
+      font-size: 15px;
       cursor: pointer;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header class="top-header">
-      <div class="brand">
-        <div class="brand-icon">🇬🇧</div>
+
+  <div class="app-container">
+
+    <div class="header">
+      <h1>🎓 AI English Teacher PRO</h1>
+      <p>Lộ trình học tiếng Anh phản xạ toàn diện 5 bước</p>
+    </div>
+
+    <!-- MAIN MENU SCREEN -->
+    <div id="chapterSelectScreen">
+      <h2 style="font-size: 18px; text-align: center;">Chọn chủ đề bạn muốn học</h2>
+      <div class="grid-topics">
+        <div class="chapter-card" onclick="selectChapter('daily', 'Giao tiếp hàng ngày')">
+          <h3>💬 Giao tiếp hàng ngày</h3>
+          <span class="chapter-status">Chào hỏi, mua sắm, sở thích...</span>
+        </div>
+        <div class="chapter-card" onclick="selectChapter('work', 'Tiếng Anh Công sở')">
+          <h3>💼 Tiếng Anh Công sở</h3>
+          <span class="chapter-status">Báo cáo, đàm phán, cuộc họp...</span>
+        </div>
+        <div class="chapter-card" onclick="selectChapter('travel', 'Du lịch & Khám phá')">
+          <h3>✈️ Du lịch & Khám phá</h3>
+          <span class="chapter-status">Sân bay, khách sạn, hỏi đường...</span>
+        </div>
+        <div class="chapter-card" onclick="selectChapter('tech', 'Công nghệ & CNTT')">
+          <h3>💻 Công nghệ & CNTT</h3>
+          <span class="chapter-status">Thuật ngữ, phần mềm, AI...</span>
+        </div>
+        <div class="chapter-card" onclick="selectChapter('health', 'Sức khỏe & Đời sống')">
+          <h3>🏥 Sức khỏe & Đời sống</h3>
+          <span class="chapter-status">Cơ thể, khám bệnh, thể thao...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUB LESSONS SELECTION SCREEN -->
+    <div id="subLessonSelectScreen" style="display: none;">
+      <button class="btn-back" onclick="backToChapters()">← Quay lại chọn chủ đề</button>
+      <h2 id="currentChapterTitle" style="font-size: 20px; margin-top: 14px;"></h2>
+      <p id="chapterSummaryInfo" style="color: #64748b; font-size: 14px;"></p>
+      <div id="subLessonGrid" class="grid-topics"></div>
+    </div>
+
+    <!-- LEARNING FLOW HEADER (STEPS BREADCRUMB) -->
+    <div id="learningFlowHeader" style="display: none;">
+      <div class="steps-nav">
+        <button class="btn-back" onclick="backToSubLessons()">← Chọn bài khác</button>
+        <span class="step-item" id="step1-tab">1. Từ vựng</span>
+        <span class="step-item" id="step2-tab">2. Mẫu câu</span>
+        <span class="step-item" id="step3-tab">3. Trắc nghiệm</span>
+        <span class="step-item" id="step4-tab">4. Dịch câu</span>
+        <span class="step-item" id="step5-tab">5. Nói với AI</span>
+      </div>
+    </div>
+
+    <!-- BƯỚC 1: HỌC TỪ VỰNG -->
+    <div id="stage1-vocab" style="display: none;">
+      <div class="flashcard-box">
+        <div id="fcWord" class="fc-word">Loading...</div>
+        <div id="fcPhonetic" class="fc-phonetic">/ ... /</div>
+        <div id="fcMeaning" class="fc-meaning">...</div>
+
+        <div style="margin-top: 12px;">
+          <button class="audio-btn" onclick="playFcAudio()">🔊 Nghe đọc</button>
+          <button id="vocabMicBtn" class="mic-btn-speech" onclick="toggleVocabSpeech()">🎙️ Thử phát âm</button>
+        </div>
+        <div id="vocabSpeechStatus" style="margin-top: 10px; font-weight: 600; font-size: 13px;"></div>
+
+        <div class="card-controls">
+          <button class="btn-back" onclick="prevCard()">← Trước</button>
+          <span id="cardProgress" style="font-weight: 600; font-size: 14px;">1 / 15</span>
+          <button class="btn-back" onclick="nextCard()">Sau →</button>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <button id="btnStartQuiz" class="btn-action" style="display: none; width: 100%;" onclick="goToUsageStage()">Chuyển sang Bước 2: Mẫu câu →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BƯỚC 2: MẪU CÂU & VÍ DỤ -->
+    <div id="stage1-usage" style="display: none;">
+      <div class="flashcard-box">
+        <h4 style="margin: 0 0 10px 0; color: #64748b;">Mẫu câu ứng dụng</h4>
+        <div id="usageWord" style="font-weight: 700; color: var(--primary); margin-bottom: 6px;"></div>
+        <div id="usageSentence" style="font-size: 18px; font-weight: 600; color: #0f172a; margin-bottom: 8px;"></div>
+        <div id="usageTranslation" style="font-size: 15px; color: #475569; margin-bottom: 16px;"></div>
+
         <div>
-          <h1 class="brand-title">AI English Teacher PRO</h1>
-          <div class="brand-subtitle">Personal AI English Speaking Coach Online</div>
+          <button class="audio-btn" onclick="playUsageAudio()">🔊 Nghe đọc</button>
+          <button id="usageMicBtn" class="mic-btn-speech" onclick="toggleUsageSpeech()">🎙️ Thử đọc câu ví dụ</button>
         </div>
-      </div>
-    </header>
+        <div id="usageSpeechStatus" style="margin-top: 10px; font-weight: 600; font-size: 13px;"></div>
 
-    <section class="hero">
-      <div>
-        <h2 class="hero-title">Luyện giao tiếp tiếng Anh cùng giáo viên AI</h2>
-        <p class="hero-description">Nói bằng giọng của bạn hoặc nhập câu tiếng Anh. AI sẽ phản hồi, sửa lỗi và chấm điểm sau từng lượt luyện tập.</p>
-      </div>
-    </section>
+        <div class="card-controls">
+          <button class="btn-back" onclick="prevUsageCard()">← Trước</button>
+          <span id="usageProgress" style="font-weight: 600; font-size: 14px;">1 / 15</span>
+          <button class="btn-back" onclick="nextUsageCard()">Sau →</button>
+        </div>
 
-    <!-- BANNER CHỌN CHƯƠNG HỌC -->
-    <div id="chapterSelectScreen" class="card">
-      <h2 style="margin: 0; font-size: 20px;">📚 Chọn Chương Học</h2>
-      <div class="chapter-grid">
-        <div class="chapter-card" onclick="selectChapter('daily', 'Chương 1: Hội thoại hàng ngày')">
-          <h3>Chương 1: Hội thoại hàng ngày</h3>
-          <span class="chapter-status">● Đã mở</span>
-        </div>
-        <div class="chapter-card" onclick="selectChapter('work', 'Chương 2: Tiếng Anh công sở')">
-          <h3>Chương 2: Tiếng Anh công sở</h3>
-          <span class="chapter-status">● Đã mở</span>
-        </div>
-        <div class="chapter-card" onclick="selectChapter('travel', 'Chương 3: Du lịch & Giao tiếp')">
-          <h3>Chương 3: Du lịch & Giao tiếp</h3>
-          <span class="chapter-status">● Đã mở</span>
-        </div>
-        <div class="chapter-card" onclick="selectChapter('tech', 'Chương 4: Công nghệ & AI')">
-          <h3>Chương 4: Công nghệ & AI</h3>
-          <span class="chapter-status">● Đã mở</span>
-        </div>
-        <div class="chapter-card" onclick="selectChapter('health', 'Chương 5: Sức khỏe & Thể thao')">
-          <h3>Chương 5: Sức khỏe & Thể thao</h3>
-          <span class="chapter-status">● Đã mở</span>
+        <div style="margin-top: 20px;">
+          <button id="btnStartQuizFromUsage" class="btn-action" style="display: none; width: 100%;" onclick="goToStage2()">Chuyển sang Bước 3: Trắc nghiệm →</button>
         </div>
       </div>
     </div>
 
-    <!-- BANNER CHỌN BÀI HỌC NHỎ -->
-    <div id="subLessonSelectScreen" class="card" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
-        <h2 id="currentChapterTitle" style="margin: 0; font-size: 20px; color: #1e293b;">Danh sách bài học</h2>
+    <!-- BƯỚC 3: TRẮC NGHIỆM TỪ -->
+    <div id="stage2-quiz" style="display: none;">
+      <div class="quiz-box">
+        <h3 style="margin-top: 0; text-align: center;">Bước 3: Trắc nghiệm từ vựng</h3>
+        <div id="quizQuestion" style="font-size: 16px; margin-bottom: 16px;"></div>
+        <div id="quizSpeechStatus" style="margin-bottom: 12px; font-weight: 600; font-size: 13px;"></div>
+        <div id="quizOptions"></div>
       </div>
-      <p id="chapterSummaryInfo" style="color: #2563eb; font-size: 15px; font-weight: 700; margin-top: 0; margin-bottom: 16px;">Đang tải thông tin từ vựng...</p>
-      <div id="subLessonGrid" class="chapter-grid"></div>
     </div>
 
-    <!-- THANH TIẾN TRÌNH 5 BƯỚC -->
-    <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="backToSubLessons()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Bài Khác</button>
-        <div style="display: flex; gap: 8px; font-weight: 700; font-size: 13px;">
-          <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
-          <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
-          <span id="step3-tab" style="color: #94a3b8;">3. Test từ</span> ➔ 
-          <span id="step4-tab" style="color: #94a3b8;">4. Test câu</span> ➔ 
-          <span id="step5-tab" style="color: #94a3b8;">5. Luyện nói AI</span>
+    <!-- BƯỚC 4: DỊCH CÂU -->
+    <div id="stage2-sentence-quiz" style="display: none;">
+      <div class="quiz-box">
+        <h3 style="margin-top: 0; text-align: center;">Bước 4: Kiểm tra dịch câu</h3>
+        <div id="sentenceQuizVi" style="font-size: 16px; margin-bottom: 12px;"></div>
+        <div id="sentenceSpeechStatus" style="margin-bottom: 12px; font-weight: 600; font-size: 13px;"></div>
+        
+        <input type="text" id="sentenceInput" class="input-sentence" placeholder="Nhập câu tiếng Anh tương ứng..." onkeypress="if(event.key==='Enter') submitSentenceAnswer()">
+        
+        <div style="display: flex; gap: 10px; margin-top: 14px;">
+          <button class="btn-action" style="flex: 1;" onclick="submitSentenceAnswer()">Gửi đáp án</button>
         </div>
+        <div id="sentenceQuizFeedback" style="margin-top: 12px; font-weight: 600; text-align: center;"></div>
       </div>
     </div>
 
-    <!-- STEP 1: HỌC TỪ VỰNG -->
-    <div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
-      <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
-      <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
-        <h1 id="fcWord" style="color: #2563eb; margin: 0 0 4px 0; font-size: 32px;">Word</h1>
-        <p id="fcPhonetic" style="font-size: 16px; color: #0284c7; font-weight: 600; margin: 0 0 12px 0;">/phonetic/</p>
-        <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
-        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
-          <button onclick="playFcAudio()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe chuẩn</button>
-          <button id="vocabMicBtn" onclick="toggleVocabSpeech()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #2563eb; color: white; font-weight: 700; cursor: pointer;">🎙️ Thử phát âm</button>
-        </div>
-        <div id="vocabSpeechStatus" style="font-size: 14px; font-weight: 600; color: #64748b; min-height: 24px;"></div>
+    <!-- BƯỚC 5: NÓI VỚI GIÁO VIÊN AI -->
+    <div id="stage3-practice" style="display: none;" class="ai-stage">
+      <div class="avatar-panel">
+        <div class="avatar-circle">👩‍🏫</div>
+        <h3 style="margin: 0 0 4px 0;">AI Teacher</h3>
+        <span id="avatarStatus" style="font-size: 12px; color: #16a34a; font-weight: bold;">● READY</span>
+        <p id="avatarMessage" style="font-size: 13px; color: #64748b; text-align: center; margin-top: 10px;">Bấm nút bên cạnh để bắt đầu trò chuyện với giáo viên!</p>
       </div>
-      <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-        <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
-        <span id="cardProgress" style="font-weight: 700;">1 / 15</span>
-        <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
-      </div>
-      <br>
-      <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
-    </div>
 
-    <!-- STEP 2: ÁP DỤNG CÂU -->
-    <div id="stage1-usage" class="card" style="display: none; text-align: center; padding: 30px;">
-      <h2 style="margin-top: 0;">💬 Bước 2: Học cách dùng từ trong câu</h2>
-      <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 500px; margin: 20px auto; border: 2px solid #e2e8f0; text-align: left;">
-        <div style="font-size: 14px; color: #64748b; font-weight: 700;">Từ vựng: <span id="usageWord" style="color: #2563eb; font-size: 18px;">Word</span></div>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Ví dụ tiếng Anh:</p>
-        <p id="usageSentence" style="font-size: 18px; color: #0f172a; font-weight: 600; margin-top: 0;">"This is an example sentence."</p>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Dịch nghĩa:</p>
-        <p id="usageTranslation" style="font-size: 15px; color: #1e4ed8; margin-top: 0;">"Đây là câu ví dụ."</p>
-        <button onclick="playUsageAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer; margin-top: 8px;">🔊 Nghe đọc câu</button>
-      </div>
-      <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-        <button onclick="prevUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
-        <span id="usageProgress" style="font-weight: 700;">1 / 15</span>
-        <button onclick="nextUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
-      </div>
-      <br>
-      <button id="btnStartQuizFromUsage" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Chuyển Sang Bài Kiểm Tra ➔</button>
-    </div>
-
-    <!-- STEP 3: KIỂM TRA TỪ VỰNG -->
-    <div id="stage2-quiz" class="card" style="display: none; max-width: 600px; margin: 0 auto; padding: 24px;">
-      <h2 style="margin-top: 0;">✍️ Bước 3: Kiểm tra khả năng nhớ từ</h2>
-      <div id="quizContainer">
-        <p id="quizQuestion" style="font-size: 16px; font-weight: 700;">Câu hỏi ở đây</p>
-        <div id="quizOptions" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;"></div>
+      <div class="chat-panel">
+        <div id="chatBox" class="chat-box"></div>
+        <div id="voiceStatus" style="font-size: 12px; color: #64748b; margin-bottom: 6px; text-align: center;">Bấm nút để bắt đầu nói</div>
+        <button id="micBtn" class="mic-ai-btn">🎙️ NÓI VỚI AI</button>
       </div>
     </div>
 
-    <!-- STEP 4: KIỂM TRA DỊCH CÂU (VIỆT - ANH) -->
-    <div id="stage2-sentence-quiz" class="card" style="display: none; max-width: 650px; margin: 0 auto; padding: 24px;">
-      <h2 style="margin-top: 0;">✍️ Bước 4: Kiểm tra dịch câu Việt ➔ Anh</h2>
-      <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-        <p style="font-size: 14px; color: #64748b; margin-top: 0;">Hãy gõ lại câu tiếng Anh tương ứng với nghĩa tiếng Việt dưới đây (dựa theo các câu ví dụ đã học):</p>
-        <h3 id="sentenceQuizVi" style="color: #1e293b; font-size: 18px; margin: 10px 0;">Nghĩa tiếng Việt...</h3>
-        <input type="text" id="sentenceInput" placeholder="Nhập câu tiếng Anh tại đây..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; margin-top: 10px; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') submitSentenceAnswer()">
-        <button onclick="submitSentenceAnswer()" style="margin-top: 12px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Gửi đáp án</button>
-      </div>
-      <div id="sentenceQuizFeedback" style="font-weight: 600; font-size: 15px;"></div>
-    </div>
-
-    <!-- STEP 5: LUYỆN NÓI AI -->
-    <div class="main-grid" id="stage3-practice" style="display: none;">
-      <div class="card">
-        <h3>AI English Teacher</h3>
-        <div class="teacher-avatar-box">
-          <img id="teacherImage" src="3d-cute-cartoon-male-teacher-character-on-transparent-background-generative-ai-png.webp" alt="AI Teacher">
-          <div class="teacher-status-overlay">
-            <div id="avatarStatus" style="font-size: 12px; font-weight: 800;">● READY</div>
-            <div id="avatarMessage">What would you like to say?</div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Hội thoại với AI Teacher</h3>
-        <div class="chat-box" id="chatBox">
-          <div><strong>AI Teacher:</strong> Hello! Let's practice English together.</div>
-        </div>
-        <div style="text-align: center; margin-top: 16px;">
-          <button class="mic-button" id="micBtn">NÓI</button>
-          <p id="voiceStatus" style="font-size: 12px; color: #64748b; margin-top: 8px;">Bấm nút để bắt đầu nói</p>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
@@ -387,7 +527,6 @@
       ]
     };
 
-    // Hàm phát âm tiếng Anh chuẩn
     function speakText(text) {
       if (!text) return;
       window.speechSynthesis.cancel();
@@ -397,7 +536,6 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    // Hàm nhận diện và chấm điểm giọng nói dùng chung cho các bước
     let activeRecognition = null;
     function startSpeechCheck(targetText, statusElemId, btnElemId) {
       const statusElem = document.getElementById(statusElemId);
@@ -626,21 +764,7 @@
       document.getElementById('usageTranslation').innerText = `"${item.exMean}"`;
       document.getElementById('usageProgress').innerText = `${currentUsageIndex + 1} / ${activeLessonWords.length}`;
       document.getElementById('btnStartQuizFromUsage').style.display = (currentUsageIndex === activeLessonWords.length - 1) ? 'inline-block' : 'none';
-      
-      // Thêm khu vực thử giọng ở Bước 2 nếu chưa có
-      let usageStatus = document.getElementById('usageSpeechStatus');
-      if (!usageStatus) {
-        const usageContainer = document.getElementById('stage1-usage');
-        const speechDiv = document.createElement('div');
-        speechDiv.style.marginTop = '15px';
-        speechDiv.innerHTML = `
-          <button id="usageMicBtn" onclick="toggleUsageSpeech()" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer;">🎙️ Thử đọc câu ví dụ</button>
-          <div id="usageSpeechStatus" style="margin-top: 8px; font-weight: bold;"></div>
-        `;
-        usageContainer.insertBefore(speechDiv, document.getElementById('btnStartQuizFromUsage').parentNode);
-      } else {
-        usageStatus.innerText = '';
-      }
+      document.getElementById('usageSpeechStatus').innerText = '';
 
       speakText(item.example);
     }
@@ -694,8 +818,8 @@
           <button onclick="speakText('${currentItem.word.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 10px; border-radius:15px; cursor:pointer; font-size:12px;">🔊 Nghe từ chuẩn</button>
           <button id="quizMicBtn" onclick="startSpeechCheck('${currentItem.word.replace(/'/g, "\\'")}', 'quizSpeechStatus', 'quizMicBtn')" style="background:#059669; color:white; border:none; padding:4px 10px; border-radius:15px; cursor:pointer; font-size:12px; margin-left:6px;">🎙️ Thử phát âm từ này</button>
         </div>
-        <div id="quizSpeechStatus" style="margin-top:6px; font-size:13px;"></div>
       `;
+      document.getElementById('quizSpeechStatus').innerText = '';
 
       const container = document.getElementById('quizOptions');
       container.innerHTML = '';
@@ -770,8 +894,8 @@
           <button onclick="speakText('${currentItem.example.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 12px; border-radius:15px; cursor:pointer; font-size:13px;">🔊 Nghe câu gợi ý</button>
           <button id="sentenceMicBtn" onclick="startSpeechCheck('${currentItem.example.replace(/'/g, "\\'")}', 'sentenceSpeechStatus', 'sentenceMicBtn')" style="background:#059669; color:white; border:none; padding:4px 12px; border-radius:15px; cursor:pointer; font-size:13px; margin-left:6px;">🎙️ Thử nói câu tiếng Anh</button>
         </div>
-        <div id="sentenceSpeechStatus" style="margin-top:6px; font-size:13px;"></div>
       `;
+      document.getElementById('sentenceSpeechStatus').innerText = '';
       document.getElementById('sentenceInput').value = '';
       document.getElementById('sentenceQuizFeedback').innerText = '';
     }
@@ -861,7 +985,7 @@
       if (aiRecognition) {
         aiRecognition.stop();
         aiRecognition = null;
-        micBtn.innerText = 'NÓI';
+        micBtn.innerText = '🎙️ NÓI VỚI AI';
         voiceStatus.innerText = 'Bấm nút để bắt đầu nói';
         avatarStatus.innerText = '● READY';
         return;
@@ -889,7 +1013,7 @@
       };
 
       aiRecognition.onend = () => {
-        micBtn.innerText = 'NÓI';
+        micBtn.innerText = '🎙️ NÓI VỚI AI';
         voiceStatus.innerText = 'Bấm nút để bắt đầu nói';
         aiRecognition = null;
       };
