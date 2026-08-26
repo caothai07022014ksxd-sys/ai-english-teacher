@@ -366,12 +366,14 @@ let rawList = vocabularyDatabase[topic].map(item => ({
     }
 
 let quizCurrentIndex = 0;
+    let quizUserAnswers = []; // Lưu trữ kết quả chọn của học viên
 
     // Chuyển sang bước 3 (Kiểm tra)
     function goToStage2() {
       document.getElementById('stage1-usage').style.display = 'none';
       document.getElementById('stage2-quiz').style.display = 'block';
       quizCurrentIndex = 0;
+      quizUserAnswers = [];
       renderQuiz();
       updateStageTabs(3);
     }
@@ -400,26 +402,52 @@ let quizCurrentIndex = 0;
         const btn = document.createElement('button');
         btn.innerText = opt.word;
         btn.style.cssText = "padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: bold; cursor: pointer; text-align: left; width: 100%; margin-bottom: 8px;";
-        btn.onclick = () => checkQuizAnswer(opt.word === currentItem.word);
+        btn.onclick = () => recordQuizAnswer(opt.word, currentItem);
         container.appendChild(btn);
       });
     }
 
-    // Kiểm tra câu trả lời
-    function checkQuizAnswer(isCorrect) {
+    // Lưu kết quả và tự động sang câu tiếp theo
+    function recordQuizAnswer(selectedWord, correctItem) {
       const list = vocabularyData[currentTopic];
-      if (isCorrect) {
-        alert("Chính xác! 🎉");
-        quizCurrentIndex++;
-        if (quizCurrentIndex < list.length) {
-          renderQuiz();
-        } else {
-          alert("Chúc mừng bạn đã hoàn thành bài kiểm tra! Chuyển sang phần Luyện nói AI.");
-          goToStage3();
-        }
+      
+      quizUserAnswers.push({
+        questionNo: quizCurrentIndex + 1,
+        targetMean: correctItem.mean,
+        correctWord: correctItem.word,
+        selectedWord: selectedWord,
+        isCorrect: selectedWord === correctItem.word
+      });
+
+      quizCurrentIndex++;
+
+      if (quizCurrentIndex < list.length) {
+        renderQuiz();
       } else {
-        alert("Chưa đúng rồi, hãy thử lại nhé!");
+        showQuizSummary();
       }
+    }
+
+    // Tổng kết sau khi hoàn thành 20 câu
+    function showQuizSummary() {
+      const total = quizUserAnswers.length;
+      const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
+      const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
+
+      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
+      resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
+
+      if (wrongAnswers.length > 0) {
+        resultMessage += `❌ Chi tiết các câu làm sai:\n`;
+        wrongAnswers.forEach(item => {
+          resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
+        });
+      } else {
+        resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
+      }
+
+      alert(resultMessage);
+      goToStage3();
     }
 // Chuyển sang Bước 4 (Luyện nói AI)
     function goToStage3() {
