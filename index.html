@@ -365,13 +365,6 @@ let rawList = vocabularyDatabase[topic].map(item => ({
       if (currentUsageIndex < list.length - 1) { currentUsageIndex++; updateUsageCard(); }
     }
 
-    function goToStage2() {
-      document.getElementById('stage1-usage').style.display = 'none';
-      document.getElementById('stage2-quiz').style.display = 'block';
-      renderQuiz();
-      updateStageTabs(3);
-    }
-
 let quizCurrentIndex = 0;
 
     // Chuyển sang bước 3 (Kiểm tra)
@@ -388,16 +381,16 @@ let quizCurrentIndex = 0;
       const list = vocabularyData[currentTopic];
       const currentItem = list[quizCurrentIndex];
       
-      // Tạo danh sách đáp án nhiễu từ các từ khác trong bài
-      let options = [currentItem];
-      let otherItems = list.filter((_, idx) => idx !== quizCurrentIndex);
+      // Lấy danh sách đáp án nhiễu từ kho tổng database
+      let pool = vocabularyDatabase[currentTopic] || list;
+      let otherItems = pool.filter(item => item.word !== currentItem.word);
       shuffleArray(otherItems);
       
-      // Lấy thêm 2-3 đáp án sai
-      options = options.concat(otherItems.slice(0, 3));
+      // Chọn 3 đáp án sai và trộn ngẫu nhiên với đáp án đúng
+      let options = [currentItem, ...otherItems.slice(0, 3)];
       shuffleArray(options);
 
-      // Cập nhật câu hỏi và tiến trình
+      // Cập nhật câu hỏi và danh sách nút chọn
       document.getElementById('quizQuestion').innerText = `Câu ${quizCurrentIndex + 1}/${list.length}: Từ nào có nghĩa là "${currentItem.mean}"?`;
       
       const container = document.getElementById('quizOptions');
@@ -406,7 +399,7 @@ let quizCurrentIndex = 0;
       options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt.word;
-        btn.style.cssText = "padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: bold; cursor: pointer; text-align: left;";
+        btn.style.cssText = "padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: bold; cursor: pointer; text-align: left; width: 100%; margin-bottom: 8px;";
         btn.onclick = () => checkQuizAnswer(opt.word === currentItem.word);
         container.appendChild(btn);
       });
@@ -425,7 +418,7 @@ let quizCurrentIndex = 0;
           goToStage3();
         }
       } else {
-        alert("Chưa đúng rồi, thử lại nhé!");
+        alert("Chưa đúng rồi, hãy thử lại nhé!");
       }
     }
 // Chuyển sang Bước 4 (Luyện nói AI)
