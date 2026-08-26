@@ -4,17 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI English Teacher PRO</title>
-  <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI English Teacher PRO</title>
   
-  <!-- Dán thẻ script này BÊN TRONG thẻ <head> -->
+  <!-- Thư viện tra phiên âm IPA -->
   <script src="https://cdn.jsdelivr.net/npm/open-ipa@1.0.1/dist/index.min.js"></script>
 
-  <style>
-    :root {
-      ...
   <style>
     :root {
       --primary: #2563eb;
@@ -30,6 +23,7 @@
       --radius-md: 14px;
       --radius-sm: 10px;
     }
+
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -40,12 +34,14 @@
       background-attachment: fixed;
       min-height: 100vh;
     }
+
     .app {
       width: 100%;
       max-width: 1440px;
       margin: 0 auto;
       padding: 24px 24px 48px;
     }
+
     .top-header {
       display: flex;
       align-items: center;
@@ -53,23 +49,41 @@
       gap: 20px;
       margin-bottom: 20px;
     }
-    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
     .brand-icon {
-      width: 50px; height: 50px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; background: var(--primary-gradient); color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: var(--primary-gradient);
+      color: white;
       box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
     }
+
     .brand-title { margin: 0; font-size: 22px; font-weight: 800; }
     .brand-subtitle { margin-top: 2px; font-size: 13px; color: #64748b; }
+
     .hero {
-      border-radius: var(--radius-lg); padding: 24px 30px; margin-bottom: 20px;
+      border-radius: var(--radius-lg);
+      padding: 24px 30px;
+      margin-bottom: 20px;
       background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: white; box-shadow: var(--shadow-lg);
+      color: white;
+      box-shadow: var(--shadow-lg);
     }
+
     .hero-title { margin: 0; font-size: 26px; font-weight: 800; }
     .hero-description { margin: 8px 0 0; color: rgba(255, 255, 255, 0.85); font-size: 14px; }
-    
+
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -78,12 +92,14 @@
       padding: 24px;
       margin-bottom: 24px;
     }
+
     .chapter-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
       margin-top: 16px;
     }
+
     .chapter-card {
       padding: 16px;
       border: 2px solid #e2e8f0;
@@ -92,11 +108,13 @@
       background: white;
       transition: all 0.2s ease;
     }
+
     .chapter-card:hover {
       border-color: #2563eb;
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
     }
+
     .chapter-card h3 { margin: 0 0 8px 0; font-size: 16px; color: #1e293b; }
     .chapter-status { color: #16a34a; font-weight: 700; font-size: 13px; }
 
@@ -106,24 +124,50 @@
       gap: 24px;
       align-items: start;
     }
+
     .teacher-avatar-box {
-      width: 100%; height: 360px; border-radius: var(--radius-md); overflow: hidden;
-      background: linear-gradient(135deg, #dbeafe, #eff6ff); position: relative;
+      width: 100%;
+      height: 360px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+      position: relative;
     }
+
     #teacherImage { width: 100%; height: 100%; object-fit: cover; }
+
     .teacher-status-overlay {
-      position: absolute; left: 14px; right: 14px; bottom: 14px;
-      padding: 12px 16px; border-radius: 14px; color: white;
-      background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px);
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: white;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
     }
+
     .chat-box {
-      height: 300px; overflow-y: auto; padding: 16px; background: #f8fafc;
-      border-radius: var(--radius-md); border: 1px solid #e2e8f0; margin-bottom: 16px;
+      height: 300px;
+      overflow-y: auto;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
     }
+
     .mic-button {
-      width: 70px; height: 70px; border-radius: 50%; border: none;
-      background: var(--primary-gradient); color: white; font-weight: 800;
-      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); cursor: pointer;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+      cursor: pointer;
     }
   </style>
 </head>
@@ -173,49 +217,41 @@
       </div>
     </div>
 
- <!-- THANH TIẾN TRÌNH 5 BƯỚC -->
-<div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
-    <div style="display: flex; gap: 8px; font-weight: 700; font-size: 13px;">
-      <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
-      <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
-      <span id="step3-tab" style="color: #94a3b8;">3. Test từ</span> ➔ 
-      <span id="step4-tab" style="color: #94a3b8;">4. Test câu</span> ➔ 
-      <span id="step5-tab" style="color: #94a3b8;">5. Luyện nói AI</span>
-    </div>
-  </div>
-</div>
-
-<!-- STEP 1: HỌC TỪ VỰNG -->
-  <div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
-    <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
-    
-    <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
-      <h1 id="fcWord" style="color: #2563eb; margin: 0 0 4px 0; font-size: 32px;">Word</h1>
-      
-      <!-- Dòng hiển thị phiên âm IPA -->
-      <p id="fcPhonetic" style="font-size: 16px; color: #0284c7; font-weight: 600; margin: 0 0 12px 0;">/phonetic/</p>
-      
-      <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
-      
-      <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
-        <button onclick="playFcAudio()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe chuẩn</button>
-        <button id="vocabMicBtn" onclick="toggleVocabSpeech()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #2563eb; color: white; font-weight: 700; cursor: pointer;">🎙️ Thử phát âm</button>
+    <!-- THANH TIẾN TRÌNH 5 BƯỚC -->
+    <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
+        <div style="display: flex; gap: 8px; font-weight: 700; font-size: 13px;">
+          <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
+          <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
+          <span id="step3-tab" style="color: #94a3b8;">3. Test từ</span> ➔ 
+          <span id="step4-tab" style="color: #94a3b8;">4. Test câu</span> ➔ 
+          <span id="step5-tab" style="color: #94a3b8;">5. Luyện nói AI</span>
+        </div>
       </div>
-
-      <!-- Khung hiển thị kết quả phát âm -->
-      <div id="vocabSpeechStatus" style="font-size: 14px; font-weight: 600; color: #64748b; min-height: 24px;"></div>
     </div>
 
-    <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-      <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
-      <span id="cardProgress" style="font-weight: 700;">1 / 20</span>
-      <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
+    <!-- STEP 1: HỌC TỪ VỰNG -->
+    <div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
+      <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
+      <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
+        <h1 id="fcWord" style="color: #2563eb; margin: 0 0 4px 0; font-size: 32px;">Word</h1>
+        <p id="fcPhonetic" style="font-size: 16px; color: #0284c7; font-weight: 600; margin: 0 0 12px 0;">/phonetic/</p>
+        <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
+        <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
+          <button onclick="playFcAudio()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe chuẩn</button>
+          <button id="vocabMicBtn" onclick="toggleVocabSpeech()" style="padding: 10px 18px; border-radius: 20px; border: none; background: #2563eb; color: white; font-weight: 700; cursor: pointer;">🎙️ Thử phát âm</button>
+        </div>
+        <div id="vocabSpeechStatus" style="font-size: 14px; font-weight: 600; color: #64748b; min-height: 24px;"></div>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+        <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Trước</button>
+        <span id="cardProgress" style="font-weight: 700;">1 / 20</span>
+        <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;">Tiếp</button>
+      </div>
+      <br>
+      <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
     </div>
-    <br>
-    <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
-  </div>
 
     <!-- STEP 2: ÁP DỤNG CÂU -->
     <div id="stage1-usage" class="card" style="display: none; text-align: center; padding: 30px;">
@@ -238,7 +274,7 @@
       <button id="btnStartQuizFromUsage" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Chuyển Sang Bài Kiểm Tra ➔</button>
     </div>
 
-    <!-- STEP 3: KIỂM TRA -->
+    <!-- STEP 3: KIỂM TRA TỪ VỰNG -->
     <div id="stage2-quiz" class="card" style="display: none; max-width: 600px; margin: 0 auto; padding: 24px;">
       <h2 style="margin-top: 0;">✍️ Bước 3: Kiểm tra khả năng nhớ từ</h2>
       <div id="quizContainer">
@@ -247,18 +283,18 @@
       </div>
     </div>
 
-    <!-- STEP 4: KIỂM TRA ÁP DỤNG CÂU (DỊCH VIỆT - ANH) -->
-  <div id="stage2-sentence-quiz" class="card" style="display: none; max-width: 650px; margin: 0 auto; padding: 24px;">
-    <h2 style="margin-top: 0;">✍️ Bước 4: Kiểm tra dịch câu Việt ➔ Anh</h2>
-    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
-      <p style="font-size: 14px; color: #64748b; margin-top: 0;">Hãy gõ lại câu tiếng Anh tương ứng với nghĩa tiếng Việt dưới đây (dựa theo các câu ví dụ đã học):</p>
-      <h3 id="sentenceQuizVi" style="color: #1e293b; font-size: 18px; margin: 10px 0;">Nghĩa tiếng Việt...</h3>
-      <input type="text" id="sentenceInput" placeholder="Nhập câu tiếng Anh tại đây..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; margin-top: 10px; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') submitSentenceAnswer()">
-      <button onclick="submitSentenceAnswer()" style="margin-top: 12px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Gửi đáp án</button>
+    <!-- STEP 4: KIỂM TRA DỊCH CÂU (VIỆT - ANH) -->
+    <div id="stage2-sentence-quiz" class="card" style="display: none; max-width: 650px; margin: 0 auto; padding: 24px;">
+      <h2 style="margin-top: 0;">✍️ Bước 4: Kiểm tra dịch câu Việt ➔ Anh</h2>
+      <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+        <p style="font-size: 14px; color: #64748b; margin-top: 0;">Hãy gõ lại câu tiếng Anh tương ứng với nghĩa tiếng Việt dưới đây (dựa theo các câu ví dụ đã học):</p>
+        <h3 id="sentenceQuizVi" style="color: #1e293b; font-size: 18px; margin: 10px 0;">Nghĩa tiếng Việt...</h3>
+        <input type="text" id="sentenceInput" placeholder="Nhập câu tiếng Anh tại đây..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; margin-top: 10px; box-sizing: border-box;" onkeypress="if(event.key === 'Enter') submitSentenceAnswer()">
+        <button onclick="submitSentenceAnswer()" style="margin-top: 12px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Gửi đáp án</button>
+      </div>
+      <div id="sentenceQuizFeedback" style="font-weight: 600; font-size: 15px;"></div>
     </div>
-    <div id="sentenceQuizFeedback" style="font-weight: 600; font-size: 15px;"></div>
-  </div>
-    
+
     <!-- STEP 5: LUYỆN NÓI AI -->
     <div class="main-grid" id="stage3-practice" style="display: none;">
       <div class="card">
@@ -282,7 +318,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <script>
@@ -291,11 +326,10 @@
     let currentTopic = 'daily';
     let currentCardIndex = 0;
     let currentUsageIndex = 0;
-
-let vocabularyDatabase = null;
+    let vocabularyDatabase = null;
     let vocabularyData = { daily: [], work: [], travel: [], health: [], tech: [] };
 
-    // Tải kho từ vựng từ file words.json khi mở trang
+    // Tải kho từ vựng từ file words.json
     async function loadVocabularyJSON() {
       try {
         const response = await fetch('./words.json');
@@ -306,11 +340,8 @@ let vocabularyDatabase = null;
         console.error("Lỗi tải kho từ vựng:", error);
       }
     }
-
-    // Tự động tải dữ liệu ngay khi mở ứng dụng
     loadVocabularyJSON();
 
-    // Hàm xáo trộn mảng ngẫu nhiên
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -318,36 +349,29 @@ let vocabularyDatabase = null;
       }
     }
 
-   // Hàm bắt đầu bài học khi người dùng bấm chọn chương
     async function startChapterFlow(topic) {
       currentTopic = topic;
       currentCardIndex = 0;
       currentUsageIndex = 0;
-
       if (!vocabularyDatabase) {
         await loadVocabularyJSON();
       }
-
       if (!vocabularyDatabase || !vocabularyDatabase[topic]) {
         alert("Chưa có dữ liệu từ vựng cho chủ đề này!");
         return;
       }
 
-      // 1. Làm sạch số ở sau từ
       let rawList = vocabularyDatabase[topic].map(item => ({
         ...item,
         word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '').trim()
       }));
 
-      // 2. Lọc bỏ các từ trùng tên (word) hoặc trùng nghĩa (mean)
       let uniqueList = [];
       let seenWords = new Set();
       let seenMeans = new Set();
-
       for (let item of rawList) {
         let cleanWord = item.word.toLowerCase();
         let cleanMean = item.mean.toLowerCase().trim();
-
         if (!seenWords.has(cleanWord) && !seenMeans.has(cleanMean)) {
           seenWords.add(cleanWord);
           seenMeans.add(cleanMean);
@@ -355,15 +379,12 @@ let vocabularyDatabase = null;
         }
       }
 
-      // 3. Xáo trộn và lấy đúng 20 từ duy nhất
       shuffleArray(uniqueList);
       vocabularyData[topic] = uniqueList.slice(0, 20);
 
-      // Chuyển giao diện
       document.getElementById('chapterSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'block';
       document.getElementById('stage1-vocab').style.display = 'block';
-      
       updateFlashcard();
       updateStageTabs(1);
     }
@@ -374,13 +395,10 @@ let vocabularyDatabase = null;
       document.getElementById('stage1-vocab').style.display = 'none';
       document.getElementById('stage1-usage').style.display = 'none';
       document.getElementById('stage2-quiz').style.display = 'none';
+      document.getElementById('stage2-sentence-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'none';
     }
 
- let vocabRecognition = null;
-    let isVocabListening = false;
-
-  // Cập nhật Flashcard và hiển thị phiên âm IPA cho TẤT CẢ từ vựng
     function updateFlashcard() {
       const list = vocabularyData[currentTopic];
       const item = list[currentCardIndex];
@@ -393,10 +411,7 @@ let vocabularyDatabase = null;
       document.getElementById('btnStartQuiz').style.display = (currentCardIndex === list.length - 1) ? 'inline-block' : 'none';
       document.getElementById('vocabSpeechStatus').innerText = '';
 
-      // 1. Ưu tiên lấy IPA từ file JSON nếu có sẵn
       let ipaText = item.phonetic || item.ipa || item.pronunciation;
-
-      // 2. Tự động quy đổi IPA bằng thư viện
       if (!ipaText && window.openIpa) {
         ipaText = window.openIpa(cleanWord);
       }
@@ -408,10 +423,11 @@ let vocabularyDatabase = null;
         phoneticElem.innerText = '';
       }
     }
-    
+
     function prevCard() {
       if (currentCardIndex > 0) { currentCardIndex--; updateFlashcard(); }
     }
+
     function nextCard() {
       const list = vocabularyData[currentTopic];
       if (currentCardIndex < list.length - 1) { currentCardIndex++; updateFlashcard(); }
@@ -437,56 +453,44 @@ let vocabularyDatabase = null;
     function prevUsageCard() {
       if (currentUsageIndex > 0) { currentUsageIndex--; updateUsageCard(); }
     }
+
     function nextUsageCard() {
       const list = vocabularyData[currentTopic];
       if (currentUsageIndex < list.length - 1) { currentUsageIndex++; updateUsageCard(); }
     }
 
-let quizCurrentIndex = 0;
-    let quizUserAnswers = []; 
-    let quizQuestionsList = []; // Mảng chứa danh sách câu hỏi đã được xáo trộn sẵn
+    let quizCurrentIndex = 0;
+    let quizUserAnswers = [];
+    let quizQuestionsList = [];
 
-    // Chuyển sang bước 3 (Kiểm tra)
     function goToStage2() {
       document.getElementById('stage1-usage').style.display = 'none';
       document.getElementById('stage2-quiz').style.display = 'block';
-      
       quizCurrentIndex = 0;
       quizUserAnswers = [];
-      
-      // Tạo bản sao 20 từ bài học và xáo trộn 1 LẦN DUY NHẤT cho bài test
       quizQuestionsList = [...vocabularyData[currentTopic]];
       shuffleArray(quizQuestionsList);
-      
       renderQuiz();
       updateStageTabs(3);
     }
 
-    // Hiển thị câu hỏi (Duyệt lần lượt theo danh sách đã xáo trộn - KHÔNG TRÙNG)
     function renderQuiz() {
       const currentItem = quizQuestionsList[quizCurrentIndex];
-      
-      // Lấy danh sách đáp án nhiễu từ kho tổng và LÀM SẠCH SỐ CỦA TỪ NHIỄU
       let rawPool = vocabularyDatabase[currentTopic] || quizQuestionsList;
       let cleanPool = rawPool.map(item => ({
         ...item,
         word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '')
       }));
 
-      // Lọc bỏ từ đúng
       let otherItems = cleanPool.filter(item => item.word !== currentItem.word);
       shuffleArray(otherItems);
-      
-      // Lấy 3 đáp án sai và trộn vị trí với đáp án đúng
+
       let options = [currentItem, ...otherItems.slice(0, 3)];
       shuffleArray(options);
 
-      // Cập nhật câu hỏi
       document.getElementById('quizQuestion').innerText = `Câu ${quizCurrentIndex + 1}/${quizQuestionsList.length}: Từ nào có nghĩa là "${currentItem.mean}"?`;
-      
       const container = document.getElementById('quizOptions');
       container.innerHTML = '';
-
       options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt.word;
@@ -496,7 +500,6 @@ let quizCurrentIndex = 0;
       });
     }
 
-    // Lưu kết quả và sang câu tiếp theo
     function recordQuizAnswer(selectedWord, correctItem) {
       quizUserAnswers.push({
         questionNo: quizCurrentIndex + 1,
@@ -505,9 +508,7 @@ let quizCurrentIndex = 0;
         selectedWord: selectedWord,
         isCorrect: selectedWord === correctItem.word
       });
-
       quizCurrentIndex++;
-
       if (quizCurrentIndex < quizQuestionsList.length) {
         renderQuiz();
       } else {
@@ -515,32 +516,28 @@ let quizCurrentIndex = 0;
       }
     }
 
-// Tổng kết sau khi hoàn thành toàn bộ bài test
-function showQuizSummary() {
-  const total = quizUserAnswers.length;
-  const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
-  const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
+    function showQuizSummary() {
+      const total = quizUserAnswers.length;
+      const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
+      const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
 
-  let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
-  resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
+      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
+      resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
 
-  if (wrongAnswers.length > 0) {
-    resultMessage += `❌ Chi tiết các câu làm sai:\n`;
-    wrongAnswers.forEach(item => {
-      resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
-    });
-  } else {
-    resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
-  }
+      if (wrongAnswers.length > 0) {
+        resultMessage += `❌ Chi tiết các câu làm sai:\n`;
+        wrongAnswers.forEach(item => {
+          resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
+        });
+      } else {
+        resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
+      }
 
-  alert(resultMessage);
-  goToSentenceQuizStage(); // ✅ Đã sửa chuẩn để chuyển sang Bước 4
-}
-    // === BỔ SUNG: LOGIC BÀI KIỂM TRA CÂU (VIỆT -> ANH) ===
-    let sentenceQuizIndex = 0;
-    let sentenceQuizList = [];
+      alert(resultMessage);
+      goToSentenceQuizStage();
+    }
 
-   // === LOGIC BÀI KIỂM TRA CÂU (STEP 4) ===
+    // === LOGIC BÀI KIỂM TRA CÂU (STEP 4) ===
     let sentenceQuizIndex = 0;
     let sentenceQuizList = [];
 
@@ -582,14 +579,10 @@ function showQuizSummary() {
 
       if (userClean === targetClean) {
         feedbackElem.innerHTML = `<span style="color: #16a34a;">🎉 Chính xác! Bạn đã đặt đúng câu ví dụ.</span>`;
-        setTimeout(() => {
-          nextSentenceQuiz();
-        }, 1200);
+        setTimeout(() => { nextSentenceQuiz(); }, 1200);
       } else {
         feedbackElem.innerHTML = `<span style="color: #dc2626;">❌ Chưa chính xác.<br>Đáp án chuẩn: <strong>"${currentItem.example}"</strong></span>`;
-        setTimeout(() => {
-          nextSentenceQuiz();
-        }, 3000);
+        setTimeout(() => { nextSentenceQuiz(); }, 3000);
       }
     }
 
@@ -599,117 +592,41 @@ function showQuizSummary() {
         renderSentenceQuiz();
       } else {
         alert("🎉 Chúc mừng! Bạn đã hoàn thành bài kiểm tra dịch câu. Bây giờ hãy bắt đầu luyện nói với giáo viên AI!");
-        goToStage4();
+        goToStage3();
       }
-    }
-    
-// Chuyển sang Bước 5 (Luyện nói AI)
-    function goToStage4() {
-      document.getElementById('stage2-quiz').style.display = 'none';
-      document.getElementById('stage3-practice').style.display = 'grid';
-      updateStageTabs(5);
-      
-      // Gửi câu hỏi đầu tiên dựa trên từ vựng vừa học
-      startAITeacherQuestion();
-    }
-
-    // AI tạo câu hỏi vận dụng từ vựng bài học
-    function startAITeacherQuestion() {
-      const list = vocabularyData[currentTopic];
-      if (!list || list.length === 0) return;
-
-      // Chọn ngẫu nhiên 1 từ trong bài vừa học để đặt câu hỏi
-      const randomItem = list[Math.floor(Math.random() * list.length)];
-      
-      let initialQuestion = "";
-      if (currentTopic === 'daily') {
-        initialQuestion = `Hello! Today we learned about daily life. Can you tell me about your ${randomItem.word.toLowerCase()}?`;
-      } else if (currentTopic === 'work') {
-        initialQuestion = `Welcome to the speaking practice! How do you handle ${randomItem.word.toLowerCase()} in your job?`;
-      } else if (currentTopic === 'travel') {
-        initialQuestion = `Hi there! Speaking of travel, what is your experience with ${randomItem.word.toLowerCase()}?`;
-      } else if (currentTopic === 'tech') {
-        initialQuestion = `Hello! How often do you use or think about ${randomItem.word.toLowerCase()} in technology?`;
-      } else if (currentTopic === 'health') {
-        initialQuestion = `Hi! Regarding your health, what do you usually do about ${randomItem.word.toLowerCase()}?`;
-      } else {
-        initialQuestion = `Hello! Can you use the word "${randomItem.word}" in a sentence for me?`;
-      }
-
-      // Đưa câu hỏi lên khung chat và phát âm
-      const chatBox = document.getElementById('chatBox');
-      chatBox.innerHTML = `<div><strong>AI Teacher:</strong> ${initialQuestion}</div>`;
-      document.getElementById('avatarMessage').innerText = initialQuestion;
-      
-      speakText(initialQuestion);
     }
 
     function updateStageTabs(stage) {
-      const tabs = ['step1-tab', 'step2-tab', 'step3-tab', 'step4-tab'];
+      const tabs = ['step1-tab', 'step2-tab', 'step3-tab', 'step4-tab', 'step5-tab'];
       tabs.forEach((tab, index) => {
-        document.getElementById(tab).style.color = (index + 1 === stage) ? '#2563eb' : '#94a3b8';
+        const elem = document.getElementById(tab);
+        if (elem) elem.style.color = (index + 1 === stage) ? '#2563eb' : '#94a3b8';
       });
     }
 
-    function speakText(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
+    function goToStage3() {
+      document.getElementById('stage2-sentence-quiz').style.display = 'none';
+      document.getElementById('stage3-practice').style.display = 'grid';
+      updateStageTabs(5);
+    }
+
+    function playFcAudio() {
+      const word = document.getElementById('fcWord').innerText;
+      if (word) {
+        const utterance = new SpeechSynthesisUtterance(word);
         utterance.lang = 'en-US';
-        utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
       }
     }
 
-    function playFcAudio() {
-      speakText(document.getElementById('fcWord').innerText);
-    }
-
     function playUsageAudio() {
-      speakText(document.getElementById('usageSentence').innerText);
-    }
-
-    // Ghi âm giọng nói người học
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      recognition = new SpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-
-      recognition.onstart = () => {
-        isListening = true;
-        document.getElementById('micBtn').innerText = 'DỪNG';
-        document.getElementById('voiceStatus').innerText = 'Đang nghe... Bấm lại để hoàn tất.';
-      };
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        const chatBox = document.getElementById('chatBox');
-        chatBox.innerHTML += `<div style="margin-top: 10px; color: #2563eb;"><strong>Bạn:</strong> ${transcript}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-        
-        setTimeout(() => {
-          const feedback = "Great job! Your answer sounds very natural. Let's try another question!";
-          chatBox.innerHTML += `<div style="margin-top: 10px;"><strong>AI Teacher:</strong> ${feedback}</div>`;
-          chatBox.scrollTop = chatBox.scrollHeight;
-          document.getElementById('avatarMessage').innerText = feedback;
-          speakText(feedback);
-        }, 1000);
-      };
-
-      recognition.onend = () => {
-        isListening = false;
-        document.getElementById('micBtn').innerText = 'NÓI';
-        document.getElementById('voiceStatus').innerText = 'Bấm nút để trả lời câu hỏi';
-      };
-    }
-
-    document.getElementById('micBtn').addEventListener('click', () => {
-      if (recognition) {
-        if (isListening) recognition.stop();
-        else recognition.start();
+      const sentence = document.getElementById('usageSentence').innerText;
+      if (sentence) {
+        const utterance = new SpeechSynthesisUtterance(sentence.replace(/"/g, ''));
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
       }
-    });
+    }
   </script>
 </body>
 </html>
