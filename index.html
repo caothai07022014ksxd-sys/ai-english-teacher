@@ -383,9 +383,15 @@ let quizCurrentIndex = 0;
       const list = vocabularyData[currentTopic];
       const currentItem = list[quizCurrentIndex];
       
-      // Lấy danh sách đáp án nhiễu từ kho tổng database
-      let pool = vocabularyDatabase[currentTopic] || list;
-      let otherItems = pool.filter(item => item.word !== currentItem.word);
+      // Lấy danh sách đáp án nhiễu từ kho tổng và LÀM SẠCH SỐ CỦA TỪ NHIỄU
+      let rawPool = vocabularyDatabase[currentTopic] || list;
+      let cleanPool = rawPool.map(item => ({
+        ...item,
+        word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '')
+      }));
+
+      // Lọc bỏ từ trùng với đáp án đúng
+      let otherItems = cleanPool.filter(item => item.word !== currentItem.word);
       shuffleArray(otherItems);
       
       // Chọn 3 đáp án sai và trộn ngẫu nhiên với đáp án đúng
@@ -426,6 +432,28 @@ let quizCurrentIndex = 0;
       } else {
         showQuizSummary();
       }
+    }
+
+    // Tổng kết sau khi hoàn thành 20 câu
+    function showQuizSummary() {
+      const total = quizUserAnswers.length;
+      const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
+      const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
+
+      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
+      resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
+
+      if (wrongAnswers.length > 0) {
+        resultMessage += `❌ Chi tiết các câu làm sai:\n`;
+        wrongAnswers.forEach(item => {
+          resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
+        });
+      } else {
+        resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
+      }
+
+      alert(resultMessage);
+      goToStage3();
     }
 
     // Tổng kết sau khi hoàn thành 20 câu
