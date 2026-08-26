@@ -428,10 +428,45 @@ let quizCurrentIndex = 0;
         alert("Chưa đúng rồi, thử lại nhé!");
       }
     }
+// Chuyển sang Bước 4 (Luyện nói AI)
     function goToStage3() {
       document.getElementById('stage2-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
       updateStageTabs(4);
+      
+      // Gửi câu hỏi đầu tiên dựa trên từ vựng vừa học
+      startAITeacherQuestion();
+    }
+
+    // AI tạo câu hỏi vận dụng từ vựng bài học
+    function startAITeacherQuestion() {
+      const list = vocabularyData[currentTopic];
+      if (!list || list.length === 0) return;
+
+      // Chọn ngẫu nhiên 1 từ trong bài vừa học để đặt câu hỏi
+      const randomItem = list[Math.floor(Math.random() * list.length)];
+      
+      let initialQuestion = "";
+      if (currentTopic === 'daily') {
+        initialQuestion = `Hello! Today we learned about daily life. Can you tell me about your ${randomItem.word.toLowerCase()}?`;
+      } else if (currentTopic === 'work') {
+        initialQuestion = `Welcome to the speaking practice! How do you handle ${randomItem.word.toLowerCase()} in your job?`;
+      } else if (currentTopic === 'travel') {
+        initialQuestion = `Hi there! Speaking of travel, what is your experience with ${randomItem.word.toLowerCase()}?`;
+      } else if (currentTopic === 'tech') {
+        initialQuestion = `Hello! How often do you use or think about ${randomItem.word.toLowerCase()} in technology?`;
+      } else if (currentTopic === 'health') {
+        initialQuestion = `Hi! Regarding your health, what do you usually do about ${randomItem.word.toLowerCase()}?`;
+      } else {
+        initialQuestion = `Hello! Can you use the word "${randomItem.word}" in a sentence for me?`;
+      }
+
+      // Đưa câu hỏi lên khung chat và phát âm
+      const chatBox = document.getElementById('chatBox');
+      chatBox.innerHTML = `<div><strong>AI Teacher:</strong> ${initialQuestion}</div>`;
+      document.getElementById('avatarMessage').innerText = initialQuestion;
+      
+      speakText(initialQuestion);
     }
 
     function updateStageTabs(stage) {
@@ -443,8 +478,10 @@ let quizCurrentIndex = 0;
 
     function speakText(text) {
       if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
+        utterance.rate = 0.9;
         window.speechSynthesis.speak(utterance);
       }
     }
@@ -457,7 +494,7 @@ let quizCurrentIndex = 0;
       speakText(document.getElementById('usageSentence').innerText);
     }
 
-    // Khởi tạo Speech Recognition (giữ nguyên logic của bạn)
+    // Ghi âm giọng nói người học
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
@@ -467,21 +504,28 @@ let quizCurrentIndex = 0;
       recognition.onstart = () => {
         isListening = true;
         document.getElementById('micBtn').innerText = 'DỪNG';
-        document.getElementById('voiceStatus').innerText = 'Đang nghe...';
+        document.getElementById('voiceStatus').innerText = 'Đang nghe... Bấm lại để hoàn tất.';
       };
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         const chatBox = document.getElementById('chatBox');
-        chatBox.innerHTML += `<div><strong>Bạn:</strong> ${transcript}</div>`;
+        chatBox.innerHTML += `<div style="margin-top: 10px; color: #2563eb;"><strong>Bạn:</strong> ${transcript}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
-        document.getElementById('voiceStatus').innerText = 'Bấm nút để nói';
+        
+        setTimeout(() => {
+          const feedback = "Great job! Your answer sounds very natural. Let's try another question!";
+          chatBox.innerHTML += `<div style="margin-top: 10px;"><strong>AI Teacher:</strong> ${feedback}</div>`;
+          chatBox.scrollTop = chatBox.scrollHeight;
+          document.getElementById('avatarMessage').innerText = feedback;
+          speakText(feedback);
+        }, 1000);
       };
 
       recognition.onend = () => {
         isListening = false;
         document.getElementById('micBtn').innerText = 'NÓI';
-        document.getElementById('voiceStatus').innerText = 'Bấm nút để nói';
+        document.getElementById('voiceStatus').innerText = 'Bấm nút để trả lời câu hỏi';
       };
     }
 
