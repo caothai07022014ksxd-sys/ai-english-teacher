@@ -369,16 +369,62 @@ let vocabularyDatabase = null;
       updateStageTabs(3);
     }
 
-    function renderQuiz() {
-      const item = vocabularyData[currentTopic][0];
-      document.getElementById('quizQuestion').innerText = `Từ nào có nghĩa là: "${item.mean}"?`;
-      const container = document.getElementById('quizOptions');
-      container.innerHTML = `
-        <button onclick="goToStage3()" style="padding: 12px; border-radius: 8px; border: 1px solid #2563eb; background: #eff6ff; font-weight: bold; cursor: pointer;">${item.word}</button>
-        <button onclick="alert('Thử lại nhé!')" style="padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer;">Option B</button>
-      `;
+let quizCurrentIndex = 0;
+
+    // Chuyển sang bước 3 (Kiểm tra)
+    function goToStage2() {
+      document.getElementById('stage1-usage').style.display = 'none';
+      document.getElementById('stage2-quiz').style.display = 'block';
+      quizCurrentIndex = 0;
+      renderQuiz();
+      updateStageTabs(3);
     }
 
+    // Hiển thị câu hỏi cho từ hiện tại
+    function renderQuiz() {
+      const list = vocabularyData[currentTopic];
+      const currentItem = list[quizCurrentIndex];
+      
+      // Tạo danh sách đáp án nhiễu từ các từ khác trong bài
+      let options = [currentItem];
+      let otherItems = list.filter((_, idx) => idx !== quizCurrentIndex);
+      shuffleArray(otherItems);
+      
+      // Lấy thêm 2-3 đáp án sai
+      options = options.concat(otherItems.slice(0, 3));
+      shuffleArray(options);
+
+      // Cập nhật câu hỏi và tiến trình
+      document.getElementById('quizQuestion').innerText = `Câu ${quizCurrentIndex + 1}/${list.length}: Từ nào có nghĩa là "${currentItem.mean}"?`;
+      
+      const container = document.getElementById('quizOptions');
+      container.innerHTML = '';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerText = opt.word;
+        btn.style.cssText = "padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: bold; cursor: pointer; text-align: left;";
+        btn.onclick = () => checkQuizAnswer(opt.word === currentItem.word);
+        container.appendChild(btn);
+      });
+    }
+
+    // Kiểm tra câu trả lời
+    function checkQuizAnswer(isCorrect) {
+      const list = vocabularyData[currentTopic];
+      if (isCorrect) {
+        alert("Chính xác! 🎉");
+        quizCurrentIndex++;
+        if (quizCurrentIndex < list.length) {
+          renderQuiz();
+        } else {
+          alert("Chúc mừng bạn đã hoàn thành bài kiểm tra! Chuyển sang phần Luyện nói AI.");
+          goToStage3();
+        }
+      } else {
+        alert("Chưa đúng rồi, thử lại nhé!");
+      }
+    }
     function goToStage3() {
       document.getElementById('stage2-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
