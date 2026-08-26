@@ -741,6 +741,93 @@
 
       vocabRecognition.start();
     }
+    // --- LUYỆN NÓI VỚI AI TEACHER (STEP 5) ---
+    const micBtn = document.getElementById('micBtn');
+    const voiceStatus = document.getElementById('voiceStatus');
+    const chatBox = document.getElementById('chatBox');
+    const avatarStatus = document.getElementById('avatarStatus');
+    const avatarMessage = document.getElementById('avatarMessage');
+
+    let aiRecognition = null;
+
+    if (micBtn) {
+      micBtn.addEventListener('click', toggleAiSpeech);
+    }
+
+    function toggleAiSpeech() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
+        return;
+      }
+
+      if (aiRecognition) {
+        aiRecognition.stop();
+        aiRecognition = null;
+        micBtn.innerText = 'NÓI';
+        voiceStatus.innerText = 'Bấm nút để bắt đầu nói';
+        avatarStatus.innerText = '● READY';
+        return;
+      }
+
+      aiRecognition = new SpeechRecognition();
+      aiRecognition.lang = 'en-US';
+      aiRecognition.interimResults = false;
+
+      aiRecognition.onstart = () => {
+        micBtn.innerText = '⏹️ DỪNG';
+        voiceStatus.innerText = '🎙️ AI đang lắng nghe bạn nói...';
+        avatarStatus.innerText = '● LISTENING...';
+      };
+
+      aiRecognition.onresult = (event) => {
+        const userText = event.results[0][0].transcript;
+        appendChatMessage('You', userText);
+        respondAsAI(userText);
+      };
+
+      aiRecognition.onerror = (event) => {
+        voiceStatus.innerText = 'Lỗi nhận diện giọng nói hoặc chưa cấp quyền Micro!';
+        avatarStatus.innerText = '● ERROR';
+      };
+
+      aiRecognition.onend = () => {
+        micBtn.innerText = 'NÓI';
+        voiceStatus.innerText = 'Bấm nút để bắt đầu nói';
+        aiRecognition = null;
+      };
+
+      aiRecognition.start();
+    }
+
+    function appendChatMessage(sender, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.style.marginBottom = '10px';
+      msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function respondAsAI(userText) {
+      avatarStatus.innerText = '● SPEAKING...';
+      avatarMessage.innerText = 'AI Teacher đang trả lời...';
+
+      // Phản hồi mẫu từ AI Teacher
+      const aiReply = `Great job! You said: "${userText}". Keep practicing!`;
+      
+      setTimeout(() => {
+        appendChatMessage('AI Teacher', aiReply);
+        avatarMessage.innerText = aiReply;
+
+        // Đọc câu trả lời của AI
+        const utterance = new SpeechSynthesisUtterance(aiReply);
+        utterance.lang = 'en-US';
+        utterance.onend = () => {
+          avatarStatus.innerText = '● READY';
+        };
+        window.speechSynthesis.speak(utterance);
+      }, 600);
+    }
   </script>
 </body>
 </html>
