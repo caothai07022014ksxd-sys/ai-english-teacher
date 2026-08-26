@@ -266,7 +266,7 @@
 
     // Khởi tạo biến chứa từ vựng rỗng (sẽ được API nạp sau)
     let vocabularyData = { daily: [], work: [], travel: [], health: [], tech: [] };
-// 2. Hàm gọi Free Dictionary API + Dịch tiếng Việt tự động
+// Hàm gọi Free Dictionary API + Dịch tiếng Việt tự động
     async function fetchWordDetails(word) {
       try {
         const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
@@ -277,14 +277,11 @@
         const meaningObj = entry.meanings[0];
         const definition = meaningObj.definitions[0];
         
-        // Lấy câu ví dụ từ API (hoặc tạo câu mẫu nếu API không trả về ví dụ)
         const exampleText = definition.example || `This is a sample sentence with the word '${word}'.`;
 
-        // Dịch nghĩa từ và câu ví dụ sang tiếng Việt qua MyMemory API
         const translateRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}|${encodeURIComponent(exampleText)}&langpair=en|vi`);
         const transData = await translateRes.json();
         
-        // Tách kết quả dịch
         const transParts = transData.responseData.translatedText.split('|');
 
         return {
@@ -307,46 +304,49 @@
       }
     }
 
-    // 3. Thay thế hàm startChapterFlow cũ để tải dữ liệu từ API
+    // Hàm bắt đầu bài học chính thức
     async function startChapterFlow(topic) {
       currentTopic = topic;
       currentCardIndex = 0;
       currentUsageIndex = 0;
 
-      // Đảo ngẫu nhiên danh sách từ khóa trong chủ đề
-      const shuffledKeywords = [...topicKeywords[topic]];
-      shuffleArray(shuffledKeywords);
-      
-      // Lấy ngẫu nhiên 5 từ từ API cho mỗi lượt học
-      const selectedWords = shuffledKeywords.slice(0, 5);
-
-      // Tải chi tiết từ API đồng thời
-      const wordPromises = selectedWords.map(word => fetchWordDetails(word));
-      const loadedWords = await Promise.all(wordPromises);
-      
-      // Lọc bỏ các từ không tải được
-      vocabularyData[topic] = loadedWords.filter(item => item !== null);
-
-      if (vocabularyData[topic].length === 0) {
-        alert("Không thể tải từ vựng. Vui lòng kiểm tra kết nối mạng và thử lại!");
-        return;
-      }
-
+      // 1. Chuyển màn hình ngay và hiện thông báo đang tải
       document.getElementById('chapterSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'block';
       document.getElementById('stage1-vocab').style.display = 'block';
-      updateFlashcard();
-      updateStageTabs(1);
-    }
-  // 3. Hàm startChapterFlow mới tải dữ liệu từ API
-    async function startChapterFlow(topic) {
-      currentTopic = topic;
-      currentCardIndex = 0;
-      currentUsageIndex = 0;
+      
+      const flashcardElement = document.getElementById('flashcard');
+      if (flashcardElement) {
+        flashcardElement.innerHTML = '<div style="padding: 40px; text-align: center; font-size: 1.2rem;">⏳ Đang tải từ vựng ngẫu nhiên từ API...</div>';
+      }
 
-      // Đảo ngẫu nhiên danh sách từ khóa trong chủ đề
-      const shuffledKeywords = [...topicKeywords[topic]];
-      shuffleArray(shuffledKeywords);
+      try {
+        // 2. Lấy 5 từ ngẫu nhiên trong danh sách chủ đề
+        const shuffledKeywords = [...topicKeywords[topic]];
+        shuffleArray(shuffledKeywords);
+        const selectedWords = shuffledKeywords.slice(0, 5);
+
+        // 3. Gọi API lấy thông tin chi tiết
+        const wordPromises = selectedWords.map(word => fetchWordDetails(word));
+        const loadedWords = await Promise.all(wordPromises);
+        
+        vocabularyData[topic] = loadedWords.filter(item => item !== null);
+
+        if (vocabularyData[topic].length === 0) {
+          alert("Không thể tải từ vựng từ API. Vui lòng kiểm tra kết nối mạng!");
+          backToChapters();
+          return;
+        }
+
+        // 4. Hiển thị Flashcard sau khi tải xong
+        updateFlashcard();
+        updateStageTabs(1);
+      } catch (err) {
+        console.error(err);
+        alert("Có lỗi xảy ra khi kết nối API!");
+        backToChapters();
+      }
+    }
       
       // Lấy ngẫu nhiên 5 từ từ API cho mỗi lượt học
       const selectedWords = shuffledKeywords.slice(0, 5);
