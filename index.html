@@ -356,21 +356,34 @@ let vocabularyDatabase = null;
  let vocabRecognition = null;
     let isVocabListening = false;
 
-   function updateFlashcard() {
+   // Từ điển phiên âm IPA cơ bản và bộ chuyển tự động
+    function getIPA(word) {
+      if (!word) return '';
+      const clean = word.toLowerCase().trim();
+      const ipaDict = {
+        "horse": "hɔːs", "cat": "kæt", "dog": "dɒɡ", "apple": "ˈæp.əl", "book": "bʊk",
+        "car": "kɑːr", "house": "haʊs", "water": "ˈwɔː.tər", "phone": "fəʊn", "computer": "kəmˈpjuː.tər",
+        "work": "wɜːk", "travel": "ˈtræv.əl", "health": "helθ", "family": "ˈfæm.əl.i", "food": "fuːd"
+      };
+      
+      return ipaDict[clean] || '';
+    }
+
+    function updateFlashcard() {
       const list = vocabularyData[currentTopic];
       const item = list[currentCardIndex];
       
       document.getElementById('fcWord').innerText = item.word;
       
-      // Lấy phiên âm IPA từ dữ liệu, nếu không có sẽ hiển thị mặc định
-      const ipaText = item.phonetic || item.ipa || item.pronunciation || '';
+      // Ưu tiên lấy IPA từ file dữ liệu, nếu không có sẽ lấy từ bộ tra IPA tự động
+      const ipaText = item.phonetic || item.ipa || item.pronunciation || getIPA(item.word);
       document.getElementById('fcPhonetic').innerText = ipaText ? `/${ipaText.replace(/\//g, '')}/` : '';
       
       document.getElementById('fcMeaning').innerText = item.mean;
       document.getElementById('cardProgress').innerText = `${currentCardIndex + 1} / ${list.length}`;
       document.getElementById('btnStartQuiz').style.display = (currentCardIndex === list.length - 1) ? 'inline-block' : 'none';
       
-      // Xóa thông báo phát âm khi chuyển sang từ mới
+      // Xóa thông báo phát âm khi đổi từ
       document.getElementById('vocabSpeechStatus').innerText = '';
     }
     
