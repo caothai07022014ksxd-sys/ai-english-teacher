@@ -281,13 +281,12 @@ let vocabularyDatabase = null;
       }
     }
 
-    // Hàm bắt đầu bài học khi người dùng bấm chọn chương
+   // Hàm bắt đầu bài học khi người dùng bấm chọn chương
     async function startChapterFlow(topic) {
       currentTopic = topic;
       currentCardIndex = 0;
       currentUsageIndex = 0;
 
-      // Nếu dữ liệu JSON chưa kịp nạp xong thì gọi tải ngay
       if (!vocabularyDatabase) {
         await loadVocabularyJSON();
       }
@@ -297,15 +296,33 @@ let vocabularyDatabase = null;
         return;
       }
 
-let rawList = vocabularyDatabase[topic].map(item => ({
+      // 1. Làm sạch số ở sau từ
+      let rawList = vocabularyDatabase[topic].map(item => ({
         ...item,
-        word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '')
+        word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '').trim()
       }));
 
-      shuffleArray(rawList);
-      vocabularyData[topic] = rawList.slice(0, 20);
+      // 2. Lọc bỏ các từ trùng tên (word) hoặc trùng nghĩa (mean)
+      let uniqueList = [];
+      let seenWords = new Set();
+      let seenMeans = new Set();
 
-      // Chuyển giao diện lập tức
+      for (let item of rawList) {
+        let cleanWord = item.word.toLowerCase();
+        let cleanMean = item.mean.toLowerCase().trim();
+
+        if (!seenWords.has(cleanWord) && !seenMeans.has(cleanMean)) {
+          seenWords.add(cleanWord);
+          seenMeans.add(cleanMean);
+          uniqueList.push(item);
+        }
+      }
+
+      // 3. Xáo trộn và lấy đúng 20 từ duy nhất
+      shuffleArray(uniqueList);
+      vocabularyData[topic] = uniqueList.slice(0, 20);
+
+      // Chuyển giao diện
       document.getElementById('chapterSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'block';
       document.getElementById('stage1-vocab').style.display = 'block';
