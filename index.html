@@ -255,7 +255,7 @@
     let currentCardIndex = 0;
     let currentUsageIndex = 0;
 
-  // 1. Chỉ lưu danh sách từ khóa theo chủ đề
+  // 1. Danh sách từ khóa theo chủ đề
     const topicKeywords = {
       daily: ["hobby", "routine", "leisure", "relax", "family", "commute", "lifestyle", "housework", "neighbor", "empathy"],
       work: ["deadline", "project", "collaborate", "meeting", "presentation", "negotiate", "productivity", "strategy", "revenue", "leadership"],
@@ -264,9 +264,9 @@
       health: ["diet", "workout", "wellness", "nutritious", "hydrate", "immunity", "cardiovascular", "insomnia", "nutrient", "metabolism"]
     };
 
-    // Khởi tạo biến chứa từ vựng rỗng (sẽ được API nạp sau)
     let vocabularyData = { daily: [], work: [], travel: [], health: [], tech: [] };
-// Hàm gọi Free Dictionary API + Dịch tiếng Việt tự động
+
+    // 2. Hàm gọi Free Dictionary API + Dịch tiếng Việt
     async function fetchWordDetails(word) {
       try {
         const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
@@ -281,7 +281,6 @@
 
         const translateRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}|${encodeURIComponent(exampleText)}&langpair=en|vi`);
         const transData = await translateRes.json();
-        
         const transParts = transData.responseData.translatedText.split('|');
 
         return {
@@ -296,7 +295,7 @@
       }
     }
 
-    // Hàm xáo trộn danh sách từ vựng ngẫu nhiên
+    // 3. Hàm xáo trộn mảng ngẫu nhiên
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -304,13 +303,13 @@
       }
     }
 
-    // Hàm bắt đầu bài học chính thức
+    // 4. Hàm mở chương học
     async function startChapterFlow(topic) {
       currentTopic = topic;
       currentCardIndex = 0;
       currentUsageIndex = 0;
 
-      // 1. Chuyển màn hình ngay và hiện thông báo đang tải
+      // Chuyển màn hình ngay lập tức
       document.getElementById('chapterSelectScreen').style.display = 'none';
       document.getElementById('learningFlowHeader').style.display = 'block';
       document.getElementById('stage1-vocab').style.display = 'block';
@@ -321,24 +320,21 @@
       }
 
       try {
-        // 2. Lấy 5 từ ngẫu nhiên trong danh sách chủ đề
         const shuffledKeywords = [...topicKeywords[topic]];
         shuffleArray(shuffledKeywords);
         const selectedWords = shuffledKeywords.slice(0, 5);
 
-        // 3. Gọi API lấy thông tin chi tiết
         const wordPromises = selectedWords.map(word => fetchWordDetails(word));
         const loadedWords = await Promise.all(wordPromises);
         
         vocabularyData[topic] = loadedWords.filter(item => item !== null);
 
         if (vocabularyData[topic].length === 0) {
-          alert("Không thể tải từ vựng từ API. Vui lòng kiểm tra kết nối mạng!");
+          alert("Không thể tải từ vựng từ API. Vui lòng thử lại!");
           backToChapters();
           return;
         }
 
-        // 4. Hiển thị Flashcard sau khi tải xong
         updateFlashcard();
         updateStageTabs(1);
       } catch (err) {
@@ -347,7 +343,6 @@
         backToChapters();
       }
     }
-      
       // Lấy ngẫu nhiên 5 từ từ API cho mỗi lượt học
       const selectedWords = shuffledKeywords.slice(0, 5);
 
