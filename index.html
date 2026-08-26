@@ -366,40 +366,46 @@ let rawList = vocabularyDatabase[topic].map(item => ({
     }
 
 let quizCurrentIndex = 0;
-    let quizUserAnswers = []; // Lưu trữ kết quả chọn của học viên
+    let quizUserAnswers = []; 
+    let quizQuestionsList = []; // Mảng chứa danh sách câu hỏi đã được xáo trộn sẵn
 
     // Chuyển sang bước 3 (Kiểm tra)
     function goToStage2() {
       document.getElementById('stage1-usage').style.display = 'none';
       document.getElementById('stage2-quiz').style.display = 'block';
+      
       quizCurrentIndex = 0;
       quizUserAnswers = [];
+      
+      // Tạo bản sao 20 từ bài học và xáo trộn 1 LẦN DUY NHẤT cho bài test
+      quizQuestionsList = [...vocabularyData[currentTopic]];
+      shuffleArray(quizQuestionsList);
+      
       renderQuiz();
       updateStageTabs(3);
     }
 
-    // Hiển thị câu hỏi cho từ hiện tại
+    // Hiển thị câu hỏi (Duyệt lần lượt theo danh sách đã xáo trộn - KHÔNG TRÙNG)
     function renderQuiz() {
-      const list = vocabularyData[currentTopic];
-      const currentItem = list[quizCurrentIndex];
+      const currentItem = quizQuestionsList[quizCurrentIndex];
       
       // Lấy danh sách đáp án nhiễu từ kho tổng và LÀM SẠCH SỐ CỦA TỪ NHIỄU
-      let rawPool = vocabularyDatabase[currentTopic] || list;
+      let rawPool = vocabularyDatabase[currentTopic] || quizQuestionsList;
       let cleanPool = rawPool.map(item => ({
         ...item,
         word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '')
       }));
 
-      // Lọc bỏ từ trùng với đáp án đúng
+      // Lọc bỏ từ đúng
       let otherItems = cleanPool.filter(item => item.word !== currentItem.word);
       shuffleArray(otherItems);
       
-      // Chọn 3 đáp án sai và trộn ngẫu nhiên với đáp án đúng
+      // Lấy 3 đáp án sai và trộn vị trí với đáp án đúng
       let options = [currentItem, ...otherItems.slice(0, 3)];
       shuffleArray(options);
 
-      // Cập nhật câu hỏi và danh sách nút chọn
-      document.getElementById('quizQuestion').innerText = `Câu ${quizCurrentIndex + 1}/${list.length}: Từ nào có nghĩa là "${currentItem.mean}"?`;
+      // Cập nhật câu hỏi
+      document.getElementById('quizQuestion').innerText = `Câu ${quizCurrentIndex + 1}/${quizQuestionsList.length}: Từ nào có nghĩa là "${currentItem.mean}"?`;
       
       const container = document.getElementById('quizOptions');
       container.innerHTML = '';
@@ -413,10 +419,8 @@ let quizCurrentIndex = 0;
       });
     }
 
-    // Lưu kết quả và tự động sang câu tiếp theo
+    // Lưu kết quả và sang câu tiếp theo
     function recordQuizAnswer(selectedWord, correctItem) {
-      const list = vocabularyData[currentTopic];
-      
       quizUserAnswers.push({
         questionNo: quizCurrentIndex + 1,
         targetMean: correctItem.mean,
@@ -427,14 +431,14 @@ let quizCurrentIndex = 0;
 
       quizCurrentIndex++;
 
-      if (quizCurrentIndex < list.length) {
+      if (quizCurrentIndex < quizQuestionsList.length) {
         renderQuiz();
       } else {
         showQuizSummary();
       }
     }
 
-    // Tổng kết sau khi hoàn thành 20 câu
+    // Tổng kết sau khi hoàn thành toàn bộ bài test
     function showQuizSummary() {
       const total = quizUserAnswers.length;
       const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
@@ -455,7 +459,7 @@ let quizCurrentIndex = 0;
       alert(resultMessage);
       goToStage3();
     }
-
+    
 // Chuyển sang Bước 4 (Luyện nói AI)
     function goToStage3() {
       document.getElementById('stage2-quiz').style.display = 'none';
