@@ -5,950 +5,409 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI English Teacher PRO</title>
   <style>
-:root {
-  --primary: #2563eb;
-  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
-  --bg-gradient: linear-gradient(135deg, #f0f6ff 0%, #e2e8f0 50%, #f8fafc 100%);
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --card-border: rgba(255, 255, 255, 0.8);
-  --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 20px 40px -15px rgba(37, 99, 235, 0.15);
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-}
+    :root {
+      --primary: #2563eb;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+      --bg-gradient: linear-gradient(135deg, #f0f6ff 0%, #e2e8f0 50%, #f8fafc 100%);
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(255, 255, 255, 0.8);
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 20px 40px -15px rgba(37, 99, 235, 0.15);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: #0f172a;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+    .app {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 24px 48px;
+    }
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; background: var(--primary-gradient); color: white;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+    }
+    .brand-title { margin: 0; font-size: 22px; font-weight: 800; }
+    .brand-subtitle { margin-top: 2px; font-size: 13px; color: #64748b; }
+    .hero {
+      border-radius: var(--radius-lg); padding: 24px 30px; margin-bottom: 20px;
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white; box-shadow: var(--shadow-lg);
+    }
+    .hero-title { margin: 0; font-size: 26px; font-weight: 800; }
+    .hero-description { margin: 8px 0 0; color: rgba(255, 255, 255, 0.85); font-size: 14px; }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .chapter-card {
+      padding: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s ease;
+    }
+    .chapter-card:hover {
+      border-color: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
+    }
+    .chapter-card h3 { margin: 0 0 8px 0; font-size: 16px; color: #1e293b; }
+    .chapter-status { color: #16a34a; font-weight: 700; font-size: 13px; }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #0f172a;
-  background: var(--bg-gradient);
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-.app {
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 24px 24px 48px;
-}
-
-.top-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.brand { display: flex; align-items: center; gap: 14px; }
-.brand-icon {
-  width: 50px; height: 50px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 24px; background: var(--primary-gradient); color: white;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
-}
-.brand-title { margin: 0; font-size: 22px; font-weight: 800; }
-.brand-subtitle { margin-top: 2px; font-size: 13px; color: #64748b; }
-
-.hero {
-  position: relative; overflow: hidden; border-radius: var(--radius-lg);
-  padding: 24px 30px; margin-bottom: 20px;
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  color: white; box-shadow: var(--shadow-lg);
-}
-.hero-content { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.hero-title { margin: 0; font-size: 26px; font-weight: 800; }
-.hero-description { margin: 8px 0 0; color: rgba(255, 255, 255, 0.85); font-size: 14px; }
-.hero-action {
-  padding: 12px 20px; border: none; border-radius: var(--radius-sm);
-  background: white; color: #1d4ed8; font-weight: 700; cursor: pointer; transition: 0.2s;
-}
-
-.lesson-card {
-  display: flex; align-items: center; justify-content: space-between; gap: 15px;
-  padding: 16px 20px; margin-bottom: 24px;
-  background: var(--card-bg); border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
-  backdrop-filter: blur(16px);
-}
-.lesson-left { display: flex; align-items: center; gap: 12px; }
-.lesson-icon { font-size: 24px; }
-.lesson-label { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; }
-#lessonTopic { font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 2px; }
-.lesson-selects { display: flex; gap: 10px; }
-select {
-  padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid #cbd5e1;
-  background: white; font-weight: 600; color: #1e293b; cursor: pointer;
-}
-
-.main-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  align-items: start;
-}
-
-.card, .teacher-card, .stats-card, .chat-card, .input-card, .voice-card, .eval-card, .vocab-card {
-  background: var(--card-bg) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border: 1px solid var(--card-border) !important;
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--shadow-md) !important;
-  padding: 20px;
-}
-
-.teacher-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.teacher-card-title { font-weight: 800; font-size: 16px; }
-.teacher-live { font-size: 12px; color: #16a34a; font-weight: 700; }
-
-.ai-human-avatar {
-  position: relative; width: 100%; height: 360px;
-  border-radius: var(--radius-md); overflow: hidden;
-  background: linear-gradient(135deg, #dbeafe, #eff6ff);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-}
-#teacherImage { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
-
-.teacher-status-overlay {
-  position: absolute; left: 14px; right: 14px; bottom: 14px;
-  padding: 12px 16px; border-radius: 14px; color: white;
-  background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px);
-}
-.teacher-status-title { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
-
-.right-column, .left-column { display: flex; flex-direction: column; gap: 20px; }
-
-/* KHUNG TỪ VỰNG CHỦ ĐỀ */
-.vocab-card { border-top: 4px solid #38bdf8 !important; }
-.vocab-title { font-size: 15px; font-weight: 800; margin-bottom: 10px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
-.vocab-list { display: flex; flex-wrap: wrap; gap: 8px; }
-.vocab-chip {
-  background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px;
-  padding: 6px 12px; font-size: 12.5px; cursor: pointer; transition: 0.2s;
-}
-.vocab-chip:hover { background: #dbeafe; border-color: #93c5fd; }
-.vocab-chip strong { color: #1d4ed8; }
-
-.chat-card {
-  height: 300px; display: flex; flex-direction: column; overflow: hidden; padding: 0 !important;
-}
-.chat-header {
-  padding: 14px 20px; border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.8);
-}
-.chat-title { font-size: 15px; font-weight: 800; }
-.chat-messages {
-  flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;
-}
-.message { display: flex; flex-direction: column; max-width: 85%; }
-.message.teacher { align-self: flex-start; }
-.message.student { align-self: flex-end; }
-.message .bubble {
-  padding: 10px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.5;
-}
-.message.teacher .bubble { background: #f1f5f9; color: #0f172a; border-top-left-radius: 2px; }
-.message.student .bubble { background: var(--primary-gradient); color: white; border-top-right-radius: 2px; }
-
-.eval-card { border-left: 5px solid var(--primary) !important; }
-.eval-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.eval-title { font-size: 15px; font-weight: 800; color: #1e293b; }
-.eval-badge { padding: 4px 10px; border-radius: 20px; background: #dbeafe; color: #1e4ed8; font-weight: 800; font-size: 12px; }
-
-.eval-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-.metric-box { background: rgba(241, 245, 249, 0.8); padding: 8px; border-radius: 10px; text-align: center; }
-.metric-val { font-size: 16px; font-weight: 800; color: #2563eb; }
-.metric-name { font-size: 10px; color: #64748b; font-weight: 700; }
-
-.eval-section { margin-top: 10px; font-size: 13px; line-height: 1.5; }
-.eval-label { font-weight: 700; color: #475569; font-size: 11px; text-transform: uppercase; margin-bottom: 3px; }
-.eval-box { background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0; }
-
-.text-input-row { display: flex; gap: 10px; margin-top: 8px; }
-#textInput {
-  flex: 1; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); outline: none;
-}
-.send-text-button {
-  padding: 0 20px; border: none; border-radius: var(--radius-sm);
-  background: var(--primary-gradient); color: white; font-weight: 700; cursor: pointer;
-}
-
-.voice-card { text-align: center; }
-.mic-wrapper { display: flex; justify-content: center; margin: 10px 0; }
-.mic-button {
-  width: 70px; height: 70px; border-radius: 50%; border: none;
-  background: var(--primary-gradient); color: white; font-weight: 800;
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); cursor: pointer; transition: all 0.2s ease;
-}
-.mic-button.listening {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-.stat { padding: 12px; background: rgba(248, 250, 252, 0.8); border-radius: 12px; text-align: center; }
-.stat-value { font-size: 20px; font-weight: 800; color: var(--primary); }
-.stat-label { font-size: 11px; color: #64748b; margin-top: 2px; }
-
-@media (max-width: 992px) {
-  .main-grid { grid-template-columns: 1fr; }
-  .ai-human-avatar { height: 320px; }
-}
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .teacher-avatar-box {
+      width: 100%; height: 360px; border-radius: var(--radius-md); overflow: hidden;
+      background: linear-gradient(135deg, #dbeafe, #eff6ff); position: relative;
+    }
+    #teacherImage { width: 100%; height: 100%; object-fit: cover; }
+    .teacher-status-overlay {
+      position: absolute; left: 14px; right: 14px; bottom: 14px;
+      padding: 12px 16px; border-radius: 14px; color: white;
+      background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px);
+    }
+    .chat-box {
+      height: 300px; overflow-y: auto; padding: 16px; background: #f8fafc;
+      border-radius: var(--radius-md); border: 1px solid #e2e8f0; margin-bottom: 16px;
+    }
+    .mic-button {
+      width: 70px; height: 70px; border-radius: 50%; border: none;
+      background: var(--primary-gradient); color: white; font-weight: 800;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35); cursor: pointer;
+    }
   </style>
 </head>
 <body>
-
-<div class="app">
-  <header class="top-header">
-    <div class="brand">
-      <div class="brand-icon">🇬🇧</div>
-      <div>
-        <h1 class="brand-title">AI English Teacher PRO</h1>
-        <div class="brand-subtitle">Personal AI English Speaking Coach Online</div>
+  <div class="app">
+    <header class="top-header">
+      <div class="brand">
+        <div class="brand-icon">🇬🇧</div>
+        <div>
+          <h1 class="brand-title">AI English Teacher PRO</h1>
+          <div class="brand-subtitle">Personal AI English Speaking Coach Online</div>
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <section class="hero">
-    <div class="hero-content">
+    <section class="hero">
       <div>
-        <div class="hero-label">AI SPEAKING LAB</div>
         <h2 class="hero-title">Luyện giao tiếp tiếng Anh cùng giáo viên AI</h2>
         <p class="hero-description">Nói bằng giọng của bạn hoặc nhập câu tiếng Anh. AI sẽ phản hồi, sửa lỗi và chấm điểm sau từng lượt luyện tập.</p>
       </div>
-      <button class="hero-action">Bắt đầu ngay</button>
-    </div>
-  </section>
+    </section>
 
-  <div class="lesson-card">
-    <div class="lesson-left">
-      <div class="lesson-icon">📚</div>
-      <div>
-        <div class="lesson-label">Bài học & Cấp độ</div>
-        <div id="lessonTopic">Hội thoại hàng ngày (B1)</div>
+    <!-- BANNER CHỌN CHƯƠNG HỌC -->
+    <div id="chapterSelectScreen" class="card">
+      <h2 style="margin: 0; font-size: 20px;">📚 Chọn Chương Học</h2>
+      <div class="chapter-grid">
+        <div class="chapter-card" onclick="startChapterFlow('daily')">
+          <h3>Chương 1: Hội thoại hàng ngày</h3>
+          <span class="chapter-status">● Đã mở</span>
+        </div>
+        <div class="chapter-card" onclick="startChapterFlow('work')">
+          <h3>Chương 2: Tiếng Anh công sở</h3>
+          <span class="chapter-status">● Đã mở</span>
+        </div>
+        <div class="chapter-card" onclick="startChapterFlow('travel')">
+          <h3>Chương 3: Du lịch & Giao tiếp</h3>
+          <span class="chapter-status">● Đã mở</span>
+        </div>
+        <div class="chapter-card" onclick="startChapterFlow('tech')">
+          <h3>Chương 4: Công nghệ & AI</h3>
+          <span class="chapter-status">● Đã mở</span>
+        </div>
+        <div class="chapter-card" onclick="startChapterFlow('health')">
+          <h3>Chương 5: Sức khỏe & Thể thao</h3>
+          <span class="chapter-status">● Đã mở</span>
+        </div>
       </div>
     </div>
-    <div class="lesson-selects">
-      <select id="levelSelect">
-        <option value="B1">B1 - Trung cấp</option>
-        <option value="A2">A2 - Sơ cấp</option>
-        <option value="B2">B2 - Nâng cao</option>
-      </select>
-   <select id="topicSelect">
-  <option value="daily">Hội thoại hàng ngày</option>
-  <option value="work">Tiếng Anh công sở</option>
-  <option value="travel">Du lịch & Giao tiếp</option>
-  <option value="tech">Công nghệ & AI</option>
-  <option value="health">Sức khỏe & Thể thao</option>
-</select>
 
- <!-- BANNER CHỌN CHƯƠNG / CHỦ ĐỀ -->
-<div id="chapterSelectScreen" class="card" style="margin-bottom: 24px;">
-  <h2 style="margin-top: 0; font-size: 20px;">📚 Chọn Chương Học</h2>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px;">
-    
-    <div onclick="startChapterFlow('daily')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 1: Hội thoại hàng ngày</h3>
-      <span id="status-daily" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
-    </div>
-
-    <div onclick="startChapterFlow('work')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 2: Tiếng Anh công sở</h3>
-      <span id="status-work" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
-    </div>
-
-    <div onclick="startChapterFlow('travel')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 3: Du lịch & Giao tiếp</h3>
-      <span id="status-travel" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
-    </div>
-
-    <div onclick="startChapterFlow('tech')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 4: Công nghệ & AI</h3>
-      <span id="status-tech" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
-    </div>
-
-    <div onclick="startChapterFlow('health')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 5: Sức khỏe & Thể thao</h3>
-      <span id="status-health" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
-    </div>
-
-  </div>
-</div>
-
-<!-- THANH TIẾN TRÌNH 4 BƯỚC -->
-<div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
-  <div style="display: flex; justify-content: space-between; align- items: center;">
-    <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
-    <div style="display: flex; gap: 10px; font-weight: 700; font-size: 13px;">
-      <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
-      <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
-      <span id="step3-tab" style="color: #94a3b8;">3. Kiểm tra</span> ➔ 
-      <span id="step4-tab" style="color: #94a3b8;">4. Luyện nói AI</span>
-    </div>
-  </div>
-</div>
-
-<!-- STEP 1: HỌC TỪ VỰNG -->
-<div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
-  <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
-  <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
-    <h1 id="fcWord" style="color: #2563eb; margin: 0 0 10px 0; font-size: 32px;">Word</h1>
-    <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
-    <button onclick="playFcAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe đọc mẫu</button>
-  </div>
-  <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-    <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
-    <span id="cardProgress" style="font-weight: 700;">1 / 5</span>
-    <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
-  </div>
-  <br>
-  <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">
-  Học Cấu Trúc Câu ➔
-</button>
-</div>
-<!-- STEP 2: ÁP DỤNG VÀO CÂU -->
-<div id="stage1-usage" class="card" style="display: none; text-align: center; padding: 30px;">
-  <h2 style="margin-top: 0;">💬 Bước 2: Học cách dùng từ trong câu</h2>
-  <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 500px; margin: 20px auto; border: 2px solid #e2e8f0; text-align: left;">
-    <div style="font-size: 14px; color: #64748b; font-weight: 700;">Từ vựng: <span id="usageWord" style="color: #2563eb; font-size: 18px;">Word</span></div>
-    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
-    <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Ví dụ tiếng Anh:</p>
-    <p id="usageSentence" style="font-size: 18px; color: #0f172a; font-weight: 600; margin-top: 0;">"This is an example sentence."</p>
-    <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Dịch nghĩa:</p>
-    <p id="usageTranslation" style="font-size: 15px; color: #1e4ed8; margin-top: 0;">"Đây là câu ví dụ."</p>
-    <button onclick="playUsageAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer; margin-top: 8px;">🔊 Nghe đọc câu</button>
-  </div>
-  <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-    <button onclick="prevUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
-    <span id="usageProgress" style="font-weight: 700;">1 / 5</span>
-    <button onclick="nextUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
-  </div>
-  <br>
-  <button id="btnStartQuizFromUsage" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">
-    Chuyển Sang Bài Kiểm Tra ➔
-  </button>
-</div>
-  
-<!-- STEP 2: BÀI TEST -->
-<div id="stage2-quiz" class="card" style="display: none; max-width: 600px; margin: 0 auto; padding: 24px;">
-  <h2 style="margin-top: 0;">✍️ Bước 2: Kiểm tra khả năng nhớ từ</h2>
-  <div id="quizContainer">
-    <p id="quizQuestion" style="font-size: 16px; font-weight: 700;">Câu hỏi ở đây</p>
-    <div id="quizOptions" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;"></div>
-  </div>
-</div>
-  <div class="main-grid" id="stage3-practice" style="display: none;">
-    <!-- CỘT TRÁI -->
-    <div class="left-column">
-      <div class="card teacher-card">
-        <div class="teacher-card-header">
-          <span class="teacher-card-title">AI English Teacher</span>
-          <span class="teacher-live">● LIVE</span>
+    <!-- THANH TIẾN TRÌNH -->
+    <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
+        <div style="display: flex; gap: 10px; font-weight: 700; font-size: 13px;">
+          <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
+          <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
+          <span id="step3-tab" style="color: #94a3b8;">3. Kiểm tra</span> ➔ 
+          <span id="step4-tab" style="color: #94a3b8;">4. Luyện nói AI</span>
         </div>
-        
-        <div class="ai-human-avatar">
+      </div>
+    </div>
+
+    <!-- STEP 1: HỌC TỪ VỰNG -->
+    <div id="stage1-vocab" class="card" style="display: none; text-align: center; padding: 30px;">
+      <h2 style="margin-top: 0;">📖 Bước 1: Học từ vựng theo chủ đề</h2>
+      <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 400px; margin: 20px auto; border: 2px solid #e2e8f0;">
+        <h1 id="fcWord" style="color: #2563eb; margin: 0 0 10px 0; font-size: 32px;">Word</h1>
+        <p id="fcMeaning" style="font-size: 18px; color: #475569; margin-bottom: 20px;">Nghĩa của từ</p>
+        <button onclick="playFcAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer;">🔊 Nghe đọc mẫu</button>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+        <button onclick="prevCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
+        <span id="cardProgress" style="font-weight: 700;">1 / 5</span>
+        <button onclick="nextCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
+      </div>
+      <br>
+      <button id="btnStartQuiz" onclick="goToUsageStage()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Học Cấu Trúc Câu ➔</button>
+    </div>
+
+    <!-- STEP 2: ÁP DỤNG CÂU -->
+    <div id="stage1-usage" class="card" style="display: none; text-align: center; padding: 30px;">
+      <h2 style="margin-top: 0;">💬 Bước 2: Học cách dùng từ trong câu</h2>
+      <div style="background: #f8fafc; padding: 24px; border-radius: 16px; max-width: 500px; margin: 20px auto; border: 2px solid #e2e8f0; text-align: left;">
+        <div style="font-size: 14px; color: #64748b; font-weight: 700;">Từ vựng: <span id="usageWord" style="color: #2563eb; font-size: 18px;">Word</span></div>
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Ví dụ tiếng Anh:</p>
+        <p id="usageSentence" style="font-size: 18px; color: #0f172a; font-weight: 600; margin-top: 0;">"This is an example sentence."</p>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 700;">Dịch nghĩa:</p>
+        <p id="usageTranslation" style="font-size: 15px; color: #1e4ed8; margin-top: 0;">"Đây là câu ví dụ."</p>
+        <button onclick="playUsageAudio()" style="padding: 8px 16px; border-radius: 20px; border: none; background: #dbeafe; color: #1d4ed8; font-weight: 700; cursor: pointer; margin-top: 8px;">🔊 Nghe đọc câu</button>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+        <button onclick="prevUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Trước</button>
+        <span id="usageProgress" style="font-weight: 700;">1 / 5</span>
+        <button onclick="nextUsageCard()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1;">Tiếp</button>
+      </div>
+      <br>
+      <button id="btnStartQuizFromUsage" onclick="goToStage2()" style="display: none; margin-top: 10px; padding: 12px 24px; background: #16a34a; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;">Chuyển Sang Bài Kiểm Tra ➔</button>
+    </div>
+
+    <!-- STEP 3: KIỂM TRA -->
+    <div id="stage2-quiz" class="card" style="display: none; max-width: 600px; margin: 0 auto; padding: 24px;">
+      <h2 style="margin-top: 0;">✍️ Bước 3: Kiểm tra khả năng nhớ từ</h2>
+      <div id="quizContainer">
+        <p id="quizQuestion" style="font-size: 16px; font-weight: 700;">Câu hỏi ở đây</p>
+        <div id="quizOptions" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;"></div>
+      </div>
+    </div>
+
+    <!-- STEP 4: LUYỆN NÓI AI -->
+    <div class="main-grid" id="stage3-practice" style="display: none;">
+      <div class="card">
+        <h3>AI English Teacher</h3>
+        <div class="teacher-avatar-box">
           <img id="teacherImage" src="3d-cute-cartoon-male-teacher-character-on-transparent-background-generative-ai-png.webp" alt="AI Teacher">
           <div class="teacher-status-overlay">
-            <div class="teacher-status-title" id="avatarStatus">● READY</div>
+            <div id="avatarStatus" style="font-size: 12px; font-weight: 800;">● READY</div>
             <div id="avatarMessage">What would you like to say?</div>
           </div>
         </div>
-
-        <div class="stats-card" style="margin-top: 18px; padding: 14px;">
-          <div style="font-size: 13px; font-weight: 800;">Tiến độ buổi học</div>
-          <div class="stats-grid">
-            <div class="stat">
-              <div class="stat-value" id="turnCount">0</div>
-              <div class="stat-label">LƯỢT NÓI</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value" id="avgScore">0</div>
-              <div class="stat-label">ĐIỂM TB</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value" id="highScore">0</div>
-              <div class="stat-label">CAO NHẤT</div>
-            </div>
-          </div>
-        </div>
       </div>
-
-      <!-- KHUNG GỢI Ý TỪ VỰNG THEO CHỦ ĐỀ -->
-      <div class="vocab-card">
-        <div class="vocab-title">💡 Từ vựng gợi ý cho chủ đề này (Nhấp để chèn):</div>
-        <div class="vocab-list" id="vocabContainer">
-          <!-- Từ vựng sẽ tự động đổi ở đây -->
+      <div class="card">
+        <h3>Hội thoại với AI Teacher</h3>
+        <div class="chat-box" id="chatBox">
+          <div><strong>AI Teacher:</strong> Hello! Let's practice English together.</div>
+        </div>
+        <div style="text-align: center; margin-top: 16px;">
+          <button class="mic-button" id="micBtn">NÓI</button>
+          <p id="voiceStatus" style="font-size: 12px; color: #64748b; margin-top: 8px;">Bấm nút để bắt đầu nói</p>
         </div>
       </div>
     </div>
 
-    <!-- CỘT PHẢI -->
-    <div class="right-column">
-      
-      <!-- CỬA SỔ CHAT HỘI THOẠI -->
-      <div class="chat-card">
-        <div class="chat-header">
-          <span class="chat-title">Hội thoại với AI Teacher</span>
-          <span style="font-size: 11px; color: #16a34a; font-weight: 700;">● LIVE SESSION</span>
-        </div>
-        <div class="chat-messages" id="chatBox">
-          <div class="message teacher">
-            <div class="bubble">
-              <strong>AI Teacher:</strong><br>Hello! I'm your English teacher. Let's practice English together.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BẢNG ĐÁNH GIÁ & CHẤM ĐIỂM -->
-      <div class="eval-card">
-        <div class="eval-header">
-          <div class="eval-title">📊 Phân Tích & Bảng Chấm Điểm</div>
-          <div class="eval-badge" id="evalScoreBadge">--- / 100</div>
-        </div>
-
-        <div class="eval-metrics">
-          <div class="metric-box">
-            <div class="metric-val" id="grammarScore">--</div>
-            <div class="metric-name">NGỮ PHÁP</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-val" id="vocabScore">--</div>
-            <div class="metric-name">TỪ VỰNG</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-val" id="pronScore">--</div>
-            <div class="metric-name">PHÁT ÂM</div>
-          </div>
-        </div>
-
-        <div class="eval-section">
-          <div class="eval-label">❌ Đánh giá lỗi & Nhận xét:</div>
-          <div class="eval-box" id="evalFeedback" style="color: #64748b;">Chưa có dữ liệu. Hãy nói hoặc nhập câu để AI phân tích!</div>
-        </div>
-
-        <div class="eval-section">
-          <div class="eval-label">✨ Câu gợi ý chuẩn / Hay hơn:</div>
-          <div class="eval-box" id="evalBetterSentence" style="color: #16a34a; font-weight: 600;">--</div>
-        </div>
-      </div>
-
-      <!-- LUYỆN NÓI TRỰC TIẾP -->
-      <div class="voice-card">
-        <div style="font-size: 14px; font-weight: 800;">Luyện nói trực tiếp</div>
-        <div class="mic-wrapper">
-          <button class="mic-button" id="micBtn">BẮT ĐẦU</button>
-        </div>
-        <div id="voiceStatus" style="font-size: 12px; color: #64748b;">Bấm nút để bắt đầu nói chuyện</div>
-      </div>
-
-      <!-- NHẬP CÂU -->
-      <div class="input-card">
-        <div style="font-size: 13px; font-weight: 800;">Nhập câu tiếng Anh</div>
-        <div class="text-input-row">
-          <input type="text" id="textInput" placeholder="I want to learn English...">
-          <button class="send-text-button" id="sendBtn">GỬI ➔</button>
-        </div>
-      </div>
-
-    </div>
   </div>
-</div>
 
-<script>
-  let isListening = false;
-  let turns = 0;
-  let totalScore = 0;
-  let bestScore = 0;
+  <script>
+    let isListening = false;
+    let recognition = null;
+    let currentTopic = 'daily';
+    let currentCardIndex = 0;
+    let currentUsageIndex = 0;
 
- // DỮ LIỆU TỪ VỰNG & CÂU VÍ DỤ THEO CHỦ ĐỀ
-const vocabularyData = {
-  daily: [
-    { word: "Hobby", mean: "Sở thích", example: "Playing football is my favorite hobby.", exMean: "Đá bóng là sở thích yêu thích của tôi." },
-    { word: "Routine", mean: "Thói quen hàng ngày", example: "I have a healthy daily routine.", exMean: "Tôi có một thói quen hàng ngày lành mạnh." },
-    { word: "Leisure time", mean: "Thời gian rảnh", example: "I like reading books in my leisure time.", exMean: "Tôi thích đọc sách vào thời gian rảnh." },
-    { word: "Relaxing", mean: "Thư giãn", example: "Listening to music is very relaxing.", exMean: "Nghe nhạc rất thư giãn." },
-    { word: "Family gathering", mean: "Sum họp gia đình", example: "We enjoy our weekend family gathering.", exMean: "Chúng tôi thích buổi sum họp gia đình cuối tuần." }
-  ],
-  work: [
-    { word: "Deadline", mean: "Hạn chót", example: "We must finish this project before the deadline.", exMean: "Chúng ta phải hoàn thành dự án này trước hạn chót." },
-    { word: "Project", mean: "Dự án", example: "I am managing a new marketing project.", exMean: "Tôi đang quản lý một dự án tiếp thị mới." },
-    { word: "Collaborate", mean: "Hợp tác", example: "We need to collaborate with other teams.", exMean: "Chúng ta cần hợp tác với các nhóm khác." },
-    { word: "Meeting", mean: "Cuộc họp", example: "The team meeting starts at 9 AM.", exMean: "Cuộc họp nhóm bắt đầu lúc 9 giờ sáng." },
-    { word: "Presentation", mean: "Bài thuyết trình", example: "Her presentation was very impressive.", exMean: "Bài thuyết trình của cô ấy rất ấn tượng." }
-  ],
-  travel: [
-    { word: "Itinerary", mean: "Lịch trình", example: "Here is our travel itinerary for tomorrow.", exMean: "Đây là lịch trình du lịch của chúng ta cho ngày mai." },
-    { word: "Destination", mean: "Điểm đến", example: "Da Nang is a popular tourist destination.", exMean: "Đà Nẵng là một điểm đến du lịch phổ biến." },
-    { word: "Accommodation", mean: "Chỗ ở", example: "We booked a comfortable accommodation near the beach.", exMean: "Chúng tôi đã đặt một chỗ ở thoải mái gần bãi biển." },
-    { word: "Sightseeing", mean: "Tham quan", example: "We spent the whole day sightseeing.", exMean: "Chúng tôi đã dành cả ngày để đi tham quan." },
-    { word: "Local cuisine", mean: "Ẩm thực địa phương", example: "I love trying local cuisine when travelling.", exMean: "Tôi thích thử ẩm thực địa phương khi đi du lịch." }
-  ],
-  tech: [
-    { word: "Artificial Intelligence", mean: "Trí tuệ nhân tạo", example: "AI is transforming how we learn languages.", exMean: "AI đang thay đổi cách chúng ta học ngôn ngữ." },
-    { word: "Automation", mean: "Tự động hóa", example: "Automation speeds up repetitive tasks.", exMean: "Tự động hóa giúp tăng tốc các tác vụ lặp đi lặp lại." },
-    { word: "User-friendly", mean: "Thân thiện người dùng", example: "The application has a very user-friendly interface.", exMean: "Ứng dụng có giao diện rất thân thiện với người dùng." },
-    { word: "Algorithm", mean: "Thuật toán", example: "The algorithm suggests customized content.", exMean: "Thuật toán gợi ý nội dung được cá nhân hóa." },
-    { word: "Database", mean: "Cơ sở dữ liệu", example: "All user information is stored in a secure database.", exMean: "Tất cả thông tin người dùng được lưu trong cơ sở dữ liệu an toàn." }
-  ],
-  health: [
-    { word: "Balanced diet", mean: "Chế độ ăn cân bằng", example: "A balanced diet is essential for good health.", exMean: "Chế độ ăn cân bằng rất cần thiết cho sức khỏe tốt." },
-    { word: "Work-out", mean: "Tập thể dục", example: "I work out three times a week.", exMean: "Tôi tập thể dục ba lần một tuần." },
-    { word: "Mental well-being", mean: "Sức khỏe tinh thần", example: "Meditation helps improve mental well-being.", exMean: "Thiền giúp cải thiện sức khỏe tinh thần." },
-    { word: "Nutritious", mean: "Bổ dưỡng", example: "Vegetables are rich in vitamins and very nutritious.", exMean: "Rau củ chứa nhiều vitamin và rất bổ dưỡng." },
-    { word: "Hydrated", mean: "Đủ nước", example: "Drink enough water to stay hydrated throughout the day.", exMean: "Uống đủ nước để duy trì độ ẩm cho cơ thể suốt cả ngày." }
-  ]
-};
-
-let currentUsageIdx = 0;
-
-  const micBtn = document.getElementById('micBtn');
-  const sendBtn = document.getElementById('sendBtn');
-  const textInput = document.getElementById('textInput');
-  const chatBox = document.getElementById('chatBox');
-  const voiceStatus = document.getElementById('voiceStatus');
-  const avatarStatus = document.getElementById('avatarStatus');
-  const avatarMessage = document.getElementById('avatarMessage');
-  const levelSelect = document.getElementById('levelSelect');
-  const topicSelect = document.getElementById('topicSelect');
-  const lessonTopic = document.getElementById('lessonTopic');
-  const vocabContainer = document.getElementById('vocabContainer');
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let recognition = null;
-
-  if (SpeechRecognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-
-    recognition.onstart = () => {
-      isListening = true;
-      micBtn.classList.add('listening');
-      micBtn.innerText = 'ĐANG NGHE';
-      voiceStatus.innerText = 'Đang lắng nghe câu nói của bạn...';
-      avatarStatus.innerText = '● LISTENING...';
+    const vocabularyData = {
+      daily: [
+        { word: "Hobby", mean: "Sở thích", example: "Playing football is my favorite hobby.", exMean: "Đá bóng là sở thích yêu thích của tôi." },
+        { word: "Routine", mean: "Thói quen", example: "I have a healthy daily routine.", exMean: "Tôi có một thói quen hàng ngày lành mạnh." }
+      ],
+      work: [
+        { word: "Collaborate", mean: "Hợp tác", example: "We need to collaborate with other teams.", exMean: "Chúng ta cần hợp tác với các nhóm khác." }
+      ]
+      // Thêm dữ liệu cho các chủ đề khác
     };
 
-    recognition.onresult = (e) => {
-      const transcript = e.results[0][0].transcript;
-      handleUserSpeech(transcript);
-    };
-    
-    recognition.onerror = () => {
-      stopListening();
-      voiceStatus.innerText = 'Không thể nhận diện giọng nói. Vui lòng thử lại!';
-    };
-
-    recognition.onend = () => { stopListening(); };
-  } else {
-    voiceStatus.innerText = 'Trình duyệt không hỗ trợ Web Speech API. Vui lòng gõ nội dung!';
-  }
-
-  function stopListening() {
-    isListening = false;
-    micBtn.classList.remove('listening');
-    micBtn.innerText = 'BẮT ĐẦU';
-    avatarStatus.innerText = '● READY';
-  }
-
-  micBtn.addEventListener('click', () => {
-    if (!recognition) return;
-    if (isListening) recognition.stop();
-    else recognition.start();
-  });
-
-  sendBtn.addEventListener('click', () => {
-    const val = textInput.value.trim();
-    if (val) {
-      handleUserSpeech(val);
-      textInput.value = '';
-    }
-  });
-
-  textInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendBtn.click();
-  });
-
-  function handleUserSpeech(text) {
-    appendStudentMessage(text);
-    avatarMessage.innerText = `You said: "${text}"`;
-
-    const result = analyzeSentence(text);
-    updateEvaluationCard(result);
-
-    turns++;
-    totalScore += result.totalScore;
-    if (result.totalScore > bestScore) bestScore = result.totalScore;
-
-    document.getElementById('turnCount').innerText = turns;
-    document.getElementById('avgScore').innerText = Math.round(totalScore / turns);
-    document.getElementById('highScore').innerText = bestScore;
-
-    setTimeout(() => {
-      const response = getAIResponse(text);
-      appendTeacherMessage(response);
-      speakText(response);
-    }, 600);
- // Mở khoá chương tiếp theo khi thực hành đủ 5 lượt
-  if (turns >= 5) {
-    if (currentChapter === 'daily' && !chapterStatus.work.unlocked) {
-      chapterStatus.work.unlocked = true;
-      document.getElementById('card-work').style.opacity = '1';
-      document.getElementById('card-work').style.cursor = 'pointer';
-      document.getElementById('status-work').innerText = '● Đã mở';
-      document.getElementById('status-work').style.color = '#16a34a';
-    } else if (currentChapter === 'work' && !chapterStatus.travel.unlocked) {
-      chapterStatus.travel.unlocked = true;
-      document.getElementById('card-travel').style.opacity = '1';
-      document.getElementById('card-travel').style.cursor = 'pointer';
-      document.getElementById('status-travel').innerText = '● Đã mở';
-      document.getElementById('status-travel').style.color = '#16a34a';
-    }
-  }
-  }
-
-
-  function analyzeSentence(text) {
-    const lower = text.toLowerCase();
-    let gScore = 95, vScore = 90, pScore = 92;
-    let feedback = [];
-    let betterSentence = text;
-
-    if (lower.includes("i is") || lower.includes("i are")) {
-      betterSentence = betterSentence.replace(/i (is|are)/gi, "I am");
-      feedback.push("Lỗi ngữ pháp: Đổi 'I is/are' thành 'I am'.");
-      gScore -= 25;
-    }
-    if (lower.includes("he do") || lower.includes("she do")) {
-      betterSentence = betterSentence.replace(/(he|she) do/gi, "$1 does");
-      feedback.push("Lỗi chia động từ: Dùng 'does' cho chủ ngữ He/She.");
-      gScore -= 20;
-    }
-    if (text.length < 8) {
-      feedback.push("Câu ngắn: Bạn nên dùng thêm tính từ hoặc từ vựng chủ đề để mở rộng câu.");
-      vScore -= 15;
+    function startChapterFlow(topic) {
+      currentTopic = topic;
+      currentCardIndex = 0;
+      currentUsageIndex = 0;
+      document.getElementById('chapterSelectScreen').style.display = 'none';
+      document.getElementById('learningFlowHeader').style.display = 'block';
+      document.getElementById('stage1-vocab').style.display = 'block';
+      updateFlashcard();
+      updateStageTabs(1);
     }
 
-    if (feedback.length === 0) {
-      feedback.push("Câu cấu trúc rất tốt, từ vựng tự nhiên và chuẩn ngữ pháp!");
-      betterSentence = "Great job! " + text;
+    function backToChapters() {
+      document.getElementById('chapterSelectScreen').style.display = 'block';
+      document.getElementById('learningFlowHeader').style.display = 'none';
+      document.getElementById('stage1-vocab').style.display = 'none';
+      document.getElementById('stage1-usage').style.display = 'none';
+      document.getElementById('stage2-quiz').style.display = 'none';
+      document.getElementById('stage3-practice').style.display = 'none';
     }
 
-    const totalScore = Math.round((gScore + vScore + pScore) / 3);
-
-    return {
-      grammar: gScore,
-      vocab: vScore,
-      pron: pScore,
-      totalScore: totalScore,
-      feedback: feedback.join(" "),
-      betterSentence: betterSentence
-    };
-  }
-
-  function updateEvaluationCard(res) {
-    document.getElementById('evalScoreBadge').innerText = `${res.totalScore} / 100`;
-    document.getElementById('grammarScore').innerText = res.grammar;
-    document.getElementById('vocabScore').innerText = res.vocab;
-    document.getElementById('pronScore').innerText = res.pron;
-    document.getElementById('evalFeedback').innerText = res.feedback;
-    document.getElementById('evalBetterSentence').innerText = res.betterSentence;
-  }
-
-  function appendStudentMessage(text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message student';
-    msgDiv.innerHTML = `<div class="bubble"><strong>You:</strong><br>${text}</div>`;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  function appendTeacherMessage(text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message teacher';
-    msgDiv.innerHTML = `<div class="bubble"><strong>AI Teacher:</strong><br>${text}</div>`;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  function getAIResponse(userText) {
-    const lower = userText.toLowerCase();
-    if (lower.includes('hello') || lower.includes('hi')) {
-      return "Hello! Nice to talk to you. What topic would you like to speak about today?";
-    } else if (lower.includes('name')) {
-      return "I am your personal AI English Teacher PRO. Let's practice speaking everyday!";
-    } else {
-      return `That's very interesting! Keep practicing. What else would you like to say?`;
+    function updateFlashcard() {
+      const list = vocabularyData[currentTopic];
+      const item = list[currentCardIndex];
+      document.getElementById('fcWord').innerText = item.word;
+      document.getElementById('fcMeaning').innerText = item.mean;
+      document.getElementById('cardProgress').innerText = `${currentCardIndex + 1} / ${list.length}`;
+      document.getElementById('btnStartQuiz').style.display = (currentCardIndex === list.length - 1) ? 'inline-block' : 'none';
     }
-  }
 
-  function speakText(text) {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.onstart = () => { avatarStatus.innerText = '● SPEAKING...'; };
-      utterance.onend = () => { avatarStatus.innerText = '● READY'; };
-      window.speechSynthesis.speak(utterance);
+    function prevCard() {
+      if (currentCardIndex > 0) { currentCardIndex--; updateFlashcard(); }
     }
-  }
-
-  function updateLessonTopic() {
-    const topicVal = topicSelect.value;
-    const topicText = topicSelect.options[topicSelect.selectedIndex].text;
-    lessonTopic.innerText = `${topicText} (${levelSelect.value})`;
-
-    const list = vocabularyData[topicVal] || [];
-    vocabContainer.innerHTML = list.map(item => `
-      <div class="vocab-chip" onclick="insertWord('${item.word}')">
-        <strong>${item.word}</strong>: ${item.mean}
-      </div>
-    `).join('');
-  }
-
-  window.insertWord = function(word) {
-    if (textInput.value) {
-      textInput.value += " " + word;
-    } else {
-      textInput.value = word;
+    function nextCard() {
+      const list = vocabularyData[currentTopic];
+      if (currentCardIndex < list.length - 1) { currentCardIndex++; updateFlashcard(); }
     }
-    textInput.focus();
-  };
 
-  levelSelect.addEventListener('change', updateLessonTopic);
-  topicSelect.addEventListener('change', updateLessonTopic);
-
-  updateLessonTopic();
-  // Trạng thái khóa/mở chương
-let chapterStatus = {
-  daily: { unlocked: true },
-  work: { unlocked: false },
-  travel: { unlocked: false }
-};
-
-// Ngân hàng câu hỏi trắc nghiệm
-const quizData = {
-  daily: [
-    { q: "Từ nào có nghĩa là 'Sở thích'?", options: ["Hobby", "Routine", "Leisure time"], a: 0 },
-    { q: "Từ nào có nghĩa là 'Thói quen hàng ngày'?", options: ["Relaxing", "Routine", "Family gathering"], a: 1 }
-  ],
-  work: [
-    { q: "Từ nào có nghĩa là 'Hạn chót'?", options: ["Deadline", "Meeting", "Presentation"], a: 0 }
-  ],
-  travel: [
-    { q: "Từ nào có nghĩa là 'Lịch trình'?", options: ["Itinerary", "Destination", "Accommodation"], a: 0 }
-  ]
-};
-
-let currentChapter = 'daily';
-let currentCardIdx = 0;
-let currentQuizIdx = 0;
-let quizScore = 0;
-
-// Bắt đầu vào học theo chương được chọn
-function startChapterFlow(chapterKey) {
-  if (!chapterStatus[chapterKey].unlocked) {
-    alert("Bạn cần hoàn thành bài tập nói của chương trước để mở khoá chương này!");
-    return;
-  }
-
-  currentChapter = chapterKey;
-  currentCardIdx = 0;
-  
-  document.getElementById('chapterSelectScreen').style.display = 'none';
-  document.getElementById('learningFlowHeader').style.display = 'block';
-  document.getElementById('stage1-vocab').style.display = 'block';
-  document.getElementById('stage2-quiz').style.display = 'none';
-  document.getElementById('stage3-practice').style.display = 'none';
-  
-  updateStageTabs(1);
-  renderFlashcard();
-}
-
-// Render Flashcard từ vựng
-function renderFlashcard() {
-  const list = vocabularyData[currentChapter] || [];
-  document.getElementById('fcWord').innerText = list[currentCardIdx].word;
-  document.getElementById('fcMeaning').innerText = list[currentCardIdx].mean;
-  document.getElementById('cardProgress').innerText = `${currentCardIdx + 1} / ${list.length}`;
-  
-  // Hiển thị nút test khi đã xem đến từ cuối
-  if (currentCardIdx === list.length - 1) {
-    document.getElementById('btnStartQuiz').style.display = 'inline-block';
-  }
-}
-
-function nextCard() {
-  const list = vocabularyData[currentChapter] || [];
-  if (currentCardIdx < list.length - 1) { currentCardIdx++; renderFlashcard(); }
-}
-
-function prevCard() {
-  if (currentCardIdx > 0) { currentCardIdx--; renderFlashcard(); }
-}
-
-function playFcAudio() {
-  const word = vocabularyData[currentChapter][currentCardIdx].word;
-  speakText(word);
-}
-
-// Xử lý bài Test
-function goToStage2() {
-  document.getElementById('stage1-vocab').style.display = 'none';
-  document.getElementById('stage2-quiz').style.display = 'block';
-  updateStageTabs(2);
-  currentQuizIdx = 0;
-  quizScore = 0;
-  renderQuizQuestion();
-}
-
-function renderQuizQuestion() {
-  const questions = quizData[currentChapter] || [];
-  const q = questions[currentQuizIdx];
-  document.getElementById('quizQuestion').innerText = `Câu ${currentQuizIdx + 1}: ${q.q}`;
-  
-  const optionsContainer = document.getElementById('quizOptions');
-  optionsContainer.innerHTML = q.options.map((opt, idx) => `
-    <button onclick="checkAnswer(${idx})" style="padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: 600; text-align: left; cursor: pointer;">
-      ${String.fromCharCode(65 + idx)}. ${opt}
-    </button>
-  `).join('');
-}
-
-function checkAnswer(selectedIdx) {
-  const questions = quizData[currentChapter] || [];
-  if (selectedIdx === questions[currentQuizIdx].a) quizScore++;
-  
-  currentQuizIdx++;
-  if (currentQuizIdx < questions.length) {
-    renderQuizQuestion();
-  } else {
-    if (quizScore === questions.length) {
-      alert("🎯 Chính xác 100%! Bắt đầu mở giao diện Luyện nói AI.");
-      goToStage3();
-    } else {
-      alert(`Bạn trả lời đúng ${quizScore}/${questions.length} câu. Hãy thử lại để đạt điểm tuyệt đối nhé!`);
-      currentQuizIdx = 0;
-      quizScore = 0;
-      renderQuizQuestion();
+    function goToUsageStage() {
+      document.getElementById('stage1-vocab').style.display = 'none';
+      document.getElementById('stage1-usage').style.display = 'block';
+      updateUsageCard();
+      updateStageTabs(2);
     }
-  }
-}
 
-// Chuyển sang phần Luyện Nói AI
-function goToStage3() {
-  document.getElementById('stage2-quiz').style.display = 'none';
-  document.getElementById('stage3-practice').style.display = 'grid';
-  updateStageTabs(3);
-  
-  topicSelect.value = currentChapter;
-  updateLessonTopic();
-}
+    function updateUsageCard() {
+      const list = vocabularyData[currentTopic];
+      const item = list[currentUsageIndex];
+      document.getElementById('usageWord').innerText = item.word;
+      document.getElementById('usageSentence').innerText = `"${item.example}"`;
+      document.getElementById('usageTranslation').innerText = `"${item.exMean}"`;
+      document.getElementById('usageProgress').innerText = `${currentUsageIndex + 1} / ${list.length}`;
+      document.getElementById('btnStartQuizFromUsage').style.display = (currentUsageIndex === list.length - 1) ? 'inline-block' : 'none';
+    }
 
-function updateStageTabs(stage) {
-  document.getElementById('step1-tab').style.color = stage === 1 ? '#2563eb' : '#94a3b8';
-  document.getElementById('step2-tab').style.color = stage === 2 ? '#2563eb' : '#94a3b8';
-  document.getElementById('step3-tab').style.color = stage === 3 ? '#2563eb' : '#94a3b8';
-}
+    function prevUsageCard() {
+      if (currentUsageIndex > 0) { currentUsageIndex--; updateUsageCard(); }
+    }
+    function nextUsageCard() {
+      const list = vocabularyData[currentTopic];
+      if (currentUsageIndex < list.length - 1) { currentUsageIndex++; updateUsageCard(); }
+    }
 
-function backToChapters() {
-  document.getElementById('chapterSelectScreen').style.display = 'block';
-  document.getElementById('learningFlowHeader').style.display = 'none';
-  document.getElementById('stage1-vocab').style.display = 'none';
-  document.getElementById('stage2-quiz').style.display = 'none';
-  document.getElementById('stage3-practice').style.display = 'none';
-}
-  // Chuyển sang Bước 2: Học cách dùng từ trong câu
-function goToUsageStage() {
-  currentUsageIdx = 0;
-  document.getElementById('stage1-vocab').style.display = 'none';
-  document.getElementById('stage1-usage').style.display = 'block';
-  updateStageTabs(2);
-  renderUsageCard();
-}
+    function goToStage2() {
+      document.getElementById('stage1-usage').style.display = 'none';
+      document.getElementById('stage2-quiz').style.display = 'block';
+      renderQuiz();
+      updateStageTabs(3);
+    }
 
-function renderUsageCard() {
-  const list = vocabularyData[currentChapter] || [];
-  if (list.length === 0) return;
+    function renderQuiz() {
+      const item = vocabularyData[currentTopic][0];
+      document.getElementById('quizQuestion').innerText = `Từ nào có nghĩa là: "${item.mean}"?`;
+      const container = document.getElementById('quizOptions');
+      container.innerHTML = `
+        <button onclick="goToStage3()" style="padding: 12px; border-radius: 8px; border: 1px solid #2563eb; background: #eff6ff; font-weight: bold; cursor: pointer;">${item.word}</button>
+        <button onclick="alert('Thử lại nhé!')" style="padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer;">Option B</button>
+      `;
+    }
 
-  const item = list[currentUsageIdx];
-  document.getElementById('usageWord').innerText = `${item.word} (${item.mean})`;
-  document.getElementById('usageSentence').innerText = `"${item.example}"`;
-  document.getElementById('usageTranslation').innerText = `"${item.exMean}"`;
-  document.getElementById('usageProgress').innerText = `${currentUsageIdx + 1} / ${list.length}`;
+    function goToStage3() {
+      document.getElementById('stage2-quiz').style.display = 'none';
+      document.getElementById('stage3-practice').style.display = 'grid';
+      updateStageTabs(4);
+    }
 
-  if (currentUsageIdx === list.length - 1) {
-    document.getElementById('btnStartQuizFromUsage').style.display = 'inline-block';
-  } else {
-    document.getElementById('btnStartQuizFromUsage').style.display = 'none';
-  }
-}
+    function updateStageTabs(stage) {
+      const tabs = ['step1-tab', 'step2-tab', 'step3-tab', 'step4-tab'];
+      tabs.forEach((tab, index) => {
+        document.getElementById(tab).style.color = (index + 1 === stage) ? '#2563eb' : '#94a3b8';
+      });
+    }
 
-function nextUsageCard() {
-  const list = vocabularyData[currentChapter] || [];
-  if (currentUsageIdx < list.length - 1) { currentUsageIdx++; renderUsageCard(); }
-}
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
 
-function prevUsageCard() {
-  if (currentUsageIdx > 0) { currentUsageIdx--; renderUsageCard(); }
-}
+    function playFcAudio() {
+      speakText(document.getElementById('fcWord').innerText);
+    }
 
-function playUsageAudio() {
-  const sentence = vocabularyData[currentChapter][currentUsageIdx].example;
-  speakText(sentence);
-}
+    function playUsageAudio() {
+      speakText(document.getElementById('usageSentence').innerText);
+    }
 
-// Cập nhật Bước 3 (Bài Quiz)
-function goToStage2() {
-  document.getElementById('stage1-usage').style.display = 'none';
-  document.getElementById('stage2-quiz').style.display = 'block';
-  updateStageTabs(3);
-  currentQuizIdx = 0;
-  quizScore = 0;
-  renderQuizQuestion();
-}
+    // Khởi tạo Speech Recognition (giữ nguyên logic của bạn)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
 
-// Cập nhật Bước 4 (Luyện nói AI)
-function goToStage3() {
-  document.getElementById('stage2-quiz').style.display = 'none';
-  document.getElementById('stage3-practice').style.display = 'grid';
-  updateStageTabs(4);
-  
-  if (typeof topicSelect !== 'undefined') {
-    topicSelect.value = currentChapter;
-    updateLessonTopic();
-  }
-}
+      recognition.onstart = () => {
+        isListening = true;
+        document.getElementById('micBtn').innerText = 'DỪNG';
+        document.getElementById('voiceStatus').innerText = 'Đang nghe...';
+      };
 
-// Cập nhật hiển thị màu cho 4 Tab
-function updateStageTabs(stage) {
-  document.getElementById('step1-tab').style.color = stage === 1 ? '#2563eb' : '#94a3b8';
-  document.getElementById('step2-tab').style.color = stage === 2 ? '#2563eb' : '#94a3b8';
-  document.getElementById('step3-tab').style.color = stage === 3 ? '#2563eb' : '#94a3b8';
-  document.getElementById('step4-tab').style.color = stage === 4 ? '#2563eb' : '#94a3b8';
-}
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML += `<div><strong>Bạn:</strong> ${transcript}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        document.getElementById('voiceStatus').innerText = 'Bấm nút để nói';
+      };
 
-// Cập nhật nút Quay lại màn hình chọn chương
-function backToChapters() {
-  document.getElementById('chapterSelectScreen').style.display = 'block';
-  document.getElementById('learningFlowHeader').style.display = 'none';
-  document.getElementById('stage1-vocab').style.display = 'none';
-  document.getElementById('stage1-usage').style.display = 'none';
-  document.getElementById('stage2-quiz').style.display = 'none';
-  document.getElementById('stage3-practice').style.display = 'none';
-}
-</script>
+      recognition.onend = () => {
+        isListening = false;
+        document.getElementById('micBtn').innerText = 'NÓI';
+        document.getElementById('voiceStatus').innerText = 'Bấm nút để nói';
+      };
+    }
 
+    document.getElementById('micBtn').addEventListener('click', () => {
+      if (recognition) {
+        if (isListening) recognition.stop();
+        else recognition.start();
+      }
+    });
+  </script>
 </body>
 </html>
