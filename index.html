@@ -387,14 +387,66 @@
       ]
     };
 
-    // Hàm đọc văn bản chung
+    // Hàm phát âm tiếng Anh chuẩn
     function speakText(text) {
       if (!text) return;
-      window.speechSynthesis.cancel(); // Dừng câu đang đọc cũ nếu có
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text.replace(/[/#!$%^&*;:{}=\-_`~()?"']/g, "").trim());
       utterance.lang = 'en-US';
-      utterance.rate = 0.9; // Tốc độ đọc tự nhiên
+      utterance.rate = 0.9;
       window.speechSynthesis.speak(utterance);
+    }
+
+    // Hàm nhận diện và chấm điểm giọng nói dùng chung cho các bước
+    let activeRecognition = null;
+    function startSpeechCheck(targetText, statusElemId, btnElemId) {
+      const statusElem = document.getElementById(statusElemId);
+      const btnElem = document.getElementById(btnElemId);
+      
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Trình duyệt không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
+        return;
+      }
+
+      if (activeRecognition) {
+        activeRecognition.stop();
+        activeRecognition = null;
+        if (btnElem) btnElem.innerText = '🎙️ Thử phát âm';
+        if (statusElem) statusElem.innerText = '';
+        return;
+      }
+
+      activeRecognition = new SpeechRecognition();
+      activeRecognition.lang = 'en-US';
+      activeRecognition.interimResults = false;
+
+      activeRecognition.onstart = () => {
+        if (btnElem) btnElem.innerText = '⏹️ Đang nghe...';
+        if (statusElem) statusElem.innerHTML = '<span style="color: #2563eb;">🎙️ Đang nghe, hãy đọc tiếng Anh...</span>';
+      };
+
+      activeRecognition.onresult = (event) => {
+        const spoken = event.results[0][0].transcript.trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"']/g, "");
+        const cleanTarget = targetText.trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"']/g, "");
+
+        if (spoken === cleanTarget || cleanTarget.includes(spoken)) {
+          if (statusElem) statusElem.innerHTML = `<span style="color: #16a34a;">🎉 Chuẩn xác! Bạn đọc: "${spoken}"</span>`;
+        } else {
+          if (statusElem) statusElem.innerHTML = `<span style="color: #dc2626;">❌ Chưa đúng. AI nghe thành: "${spoken}"</span>`;
+        }
+      };
+
+      activeRecognition.onerror = () => {
+        if (statusElem) statusElem.innerHTML = '<span style="color: #dc2626;">Lỗi micro hoặc chưa cấp quyền!</span>';
+      };
+
+      activeRecognition.onend = () => {
+        if (btnElem) btnElem.innerText = '🎙️ Thử phát âm';
+        activeRecognition = null;
+      };
+
+      activeRecognition.start();
     }
 
     async function loadVocabularyJSON() {
@@ -519,6 +571,7 @@
       document.getElementById('stage3-practice').style.display = 'none';
     }
 
+    // BƯỚC 1: HỌC TỪ VỰNG
     function updateFlashcard() {
       const item = activeLessonWords[currentCardIndex];
       const word = item.word.trim();
@@ -542,7 +595,6 @@
         phoneticElem.innerText = '';
       }
       
-      // Tự động phát âm từ vựng mới khi mở thẻ
       speakText(word);
     }
 
@@ -554,6 +606,12 @@
       if (currentCardIndex < activeLessonWords.length - 1) { currentCardIndex++; updateFlashcard(); }
     }
 
+    function toggleVocabSpeech() {
+      const targetWord = document.getElementById('fcWord').innerText;
+      startSpeechCheck(targetWord, 'vocabSpeechStatus', 'vocabMicBtn');
+    }
+
+    // BƯỚC 2: MẪU CÂU & VÍ DỤ
     function goToUsageStage() {
       document.getElementById('stage1-vocab').style.display = 'none';
       document.getElementById('stage1-usage').style.display = 'block';
@@ -569,8 +627,27 @@
       document.getElementById('usageProgress').innerText = `${currentUsageIndex + 1} / ${activeLessonWords.length}`;
       document.getElementById('btnStartQuizFromUsage').style.display = (currentUsageIndex === activeLessonWords.length - 1) ? 'inline-block' : 'none';
       
-      // Tự động phát âm câu ví dụ ở Bước 2
+      // Thêm khu vực thử giọng ở Bước 2 nếu chưa có
+      let usageStatus = document.getElementById('usageSpeechStatus');
+      if (!usageStatus) {
+        const usageContainer = document.getElementById('stage1-usage');
+        const speechDiv = document.createElement('div');
+        speechDiv.style.marginTop = '15px';
+        speechDiv.innerHTML = `
+          <button id="usageMicBtn" onclick="toggleUsageSpeech()" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer;">🎙️ Thử đọc câu ví dụ</button>
+          <div id="usageSpeechStatus" style="margin-top: 8px; font-weight: bold;"></div>
+        `;
+        usageContainer.insertBefore(speechDiv, document.getElementById('btnStartQuizFromUsage').parentNode);
+      } else {
+        usageStatus.innerText = '';
+      }
+
       speakText(item.example);
+    }
+
+    function toggleUsageSpeech() {
+      const item = activeLessonWords[currentUsageIndex];
+      startSpeechCheck(item.example, 'usageSpeechStatus', 'usageMicBtn');
     }
 
     function prevUsageCard() {
@@ -581,6 +658,7 @@
       if (currentUsageIndex < activeLessonWords.length - 1) { currentUsageIndex++; updateUsageCard(); }
     }
 
+    // BƯỚC 3: TRẮC NGHIỆM TỪ
     let quizCurrentIndex = 0;
     let quizUserAnswers = [];
     let quizQuestionsList = [];
@@ -610,10 +688,13 @@
       let options = [currentItem, ...otherItems.slice(0, 3)];
       shuffleArray(options);
 
-      // Thêm nút nghe ở Bước 3 (Trắc nghiệm từ)
       document.getElementById('quizQuestion').innerHTML = `
         Câu ${quizCurrentIndex + 1}/${quizQuestionsList.length}: Từ nào có nghĩa là "<strong>${currentItem.mean}</strong>"? 
-        <button onclick="speakText('${currentItem.word.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 10px; border-radius:15px; cursor:pointer; font-size:12px; margin-left:8px;">🔊 Nghe gợi ý</button>
+        <div style="margin-top: 8px;">
+          <button onclick="speakText('${currentItem.word.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 10px; border-radius:15px; cursor:pointer; font-size:12px;">🔊 Nghe từ chuẩn</button>
+          <button id="quizMicBtn" onclick="startSpeechCheck('${currentItem.word.replace(/'/g, "\\'")}', 'quizSpeechStatus', 'quizMicBtn')" style="background:#059669; color:white; border:none; padding:4px 10px; border-radius:15px; cursor:pointer; font-size:12px; margin-left:6px;">🎙️ Thử phát âm từ này</button>
+        </div>
+        <div id="quizSpeechStatus" style="margin-top:6px; font-size:13px;"></div>
       `;
 
       const container = document.getElementById('quizOptions');
@@ -628,7 +709,7 @@
     }
 
     function recordQuizAnswer(selectedWord, correctItem) {
-      speakText(selectedWord); // Phát âm từ người dùng vừa chọn
+      speakText(selectedWord);
       quizUserAnswers.push({
         questionNo: quizCurrentIndex + 1,
         targetMean: correctItem.mean,
@@ -665,6 +746,7 @@
       goToSentenceQuizStage();
     }
 
+    // BƯỚC 4: DỊCH CÂU
     let sentenceQuizIndex = 0;
     let sentenceQuizList = [];
 
@@ -682,12 +764,13 @@
 
     function renderSentenceQuiz() {
       const currentItem = sentenceQuizList[sentenceQuizIndex];
-      // Thêm nút nghe ở Bước 4 (Dịch câu)
       document.getElementById('sentenceQuizVi').innerHTML = `
         Câu ${sentenceQuizIndex + 1}/${sentenceQuizList.length}: "${currentItem.exMean}"
-        <div style="margin-top:6px;">
-          <button onclick="speakText('${currentItem.example.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 12px; border-radius:15px; cursor:pointer; font-size:13px;">🔊 Nghe câu gốc tiếng Anh</button>
+        <div style="margin-top:8px;">
+          <button onclick="speakText('${currentItem.example.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 12px; border-radius:15px; cursor:pointer; font-size:13px;">🔊 Nghe câu gợi ý</button>
+          <button id="sentenceMicBtn" onclick="startSpeechCheck('${currentItem.example.replace(/'/g, "\\'")}', 'sentenceSpeechStatus', 'sentenceMicBtn')" style="background:#059669; color:white; border:none; padding:4px 12px; border-radius:15px; cursor:pointer; font-size:13px; margin-left:6px;">🎙️ Thử nói câu tiếng Anh</button>
         </div>
+        <div id="sentenceSpeechStatus" style="margin-top:6px; font-size:13px;"></div>
       `;
       document.getElementById('sentenceInput').value = '';
       document.getElementById('sentenceQuizFeedback').innerText = '';
@@ -739,6 +822,7 @@
       });
     }
 
+    // BƯỚC 5: GIÁO VIÊN AI
     function goToStage3() {
       document.getElementById('stage2-sentence-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
@@ -753,56 +837,6 @@
     function playUsageAudio() {
       const sentence = document.getElementById('usageSentence').innerText;
       speakText(sentence);
-    }
-
-    let vocabRecognition = null;
-    function toggleVocabSpeech() {
-      const statusElem = document.getElementById('vocabSpeechStatus');
-      const micBtn = document.getElementById('vocabMicBtn');
-      const targetWord = document.getElementById('fcWord').innerText.trim().toLowerCase();
-
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
-        return;
-      }
-
-      if (vocabRecognition) {
-        vocabRecognition.stop();
-        vocabRecognition = null;
-        micBtn.innerText = '🎙️ Thử phát âm';
-        statusElem.innerText = '';
-        return;
-      }
-
-      vocabRecognition = new SpeechRecognition();
-      vocabRecognition.lang = 'en-US';
-      vocabRecognition.interimResults = false;
-
-      vocabRecognition.onstart = () => {
-        micBtn.innerText = '⏹️ Đang nghe...';
-        statusElem.innerHTML = '<span style="color: #2563eb;">🎙️ Hãy đọc từ tiếng Anh trên màn hình...</span>';
-      };
-
-      vocabRecognition.onresult = (event) => {
-        const spokenWord = event.results[0][0].transcript.trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"']/g, "");
-        if (spokenWord === targetWord) {
-          statusElem.innerHTML = `<span style="color: #16a34a;">🎉 Chính xác! Bạn đọc là: "${spokenWord}"</span>`;
-        } else {
-          statusElem.innerHTML = `<span style="color: #dc2626;">❌ Chưa đúng. AI nghe thành: "${spokenWord}"</span>`;
-        }
-      };
-
-      vocabRecognition.onerror = (event) => {
-        statusElem.innerHTML = '<span style="color: #dc2626;">Lỗi nhận diện hoặc chưa cấp quyền Micro!</span>';
-      };
-
-      vocabRecognition.onend = () => {
-        micBtn.innerText = '🎙️ Thử phát âm';
-        vocabRecognition = null;
-      };
-
-      vocabRecognition.start();
     }
 
     let aiRecognition = null;
@@ -820,7 +854,7 @@
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
+        alert("Trình duyệt không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
         return;
       }
 
