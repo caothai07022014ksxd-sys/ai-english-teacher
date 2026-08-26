@@ -343,6 +343,51 @@
 
     const WORDS_PER_LESSON = 15;
 
+    // Bộ tên Bài học thiết kế riêng sinh động cho từng chủ đề
+    const LESSON_NAMES_BY_TOPIC = {
+      work: [
+        "Nhập môn & Giao tiếp ban đầu",
+        "Phối hợp đồng đội",
+        "Xử lý công việc thường nhật",
+        "Thuyết trình & Báo cáo",
+        "Đàm phán & Thương lượng",
+        "Xử lý sự cố & Tình huống",
+        "Phong thái lãnh đạo",
+        "Bứt phá & Làm chủ sự nghiệp"
+      ],
+      daily: [
+        "Chào hỏi & Làm quen",
+        "Thói quen & Sinh hoạt",
+        "Gia đình & Bạn bè",
+        "Cảm xúc & Ý kiến",
+        "Mua sắm & Ăn uống",
+        "Giải trí & Sở thích",
+        "Bứt phá phản xạ",
+        "Thành thạo tự nhiên"
+      ],
+      travel: [
+        "Sân bay & Thủ tục",
+        "Khách sạn & Đặt phòng",
+        "Hỏi đường & Di chuyển",
+        "Khám phá ẩm thực",
+        "Tham quan & Mua sắm",
+        "Xử lý tình huống khẩn cấp"
+      ],
+      tech: [
+        "Thuật ngữ căn bản",
+        "Phần mềm & Thiết bị",
+        "Dữ liệu & Mạng máy tính",
+        "Trí tuệ nhân tạo (AI)",
+        "Xu hướng công nghệ mới"
+      ],
+      health: [
+        "Cơ thể & Triệu chứng",
+        "Khám bệnh & Thuốc men",
+        "Dinh dưỡng & Lối sống",
+        "Thể thao & Rèn luyện"
+      ]
+    };
+
     async function loadVocabularyJSON() {
       try {
         const response = await fetch('./words.json');
@@ -412,16 +457,19 @@
       const grid = document.getElementById('subLessonGrid');
       grid.innerHTML = '';
 
+      const topicNames = LESSON_NAMES_BY_TOPIC[currentTopic] || [];
+
       currentSubLessonList.forEach((lessonWords, index) => {
         const startNo = index * WORDS_PER_LESSON + 1;
         const endNo = startNo + lessonWords.length - 1;
+        const subTitle = topicNames[index] || `Luyện tập chuyên sâu ${index + 1}`;
 
         const card = document.createElement('div');
         card.className = 'chapter-card';
         card.onclick = () => startSubLessonFlow(index);
         card.innerHTML = `
-          <h3>Bài ${index + 1}: Từ ${startNo} – ${endNo}</h3>
-          <span class="chapter-status">● ${lessonWords.length} từ vựng</span>
+          <h3>Bài ${index + 1}: ${subTitle}</h3>
+          <span class="chapter-status">● Từ ${startNo} – ${endNo} (${lessonWords.length} từ)</span>
           <p style="margin: 8px 0 0 0; font-size: 13px; color: #64748b;">Mẫu từ: "<strong>${lessonWords[0].word}</strong>" ... "<strong>${lessonWords[lessonWords.length - 1].word}</strong>"</p>
         `;
         grid.appendChild(card);
@@ -462,7 +510,6 @@
       document.getElementById('stage3-practice').style.display = 'none';
     }
 
-    // STEP 1: FLASHCARD
     function updateFlashcard() {
       const item = activeLessonWords[currentCardIndex];
       const word = item.word.trim();
@@ -495,7 +542,6 @@
       if (currentCardIndex < activeLessonWords.length - 1) { currentCardIndex++; updateFlashcard(); }
     }
 
-    // STEP 2: ÁP DỤNG CÂU
     function goToUsageStage() {
       document.getElementById('stage1-vocab').style.display = 'none';
       document.getElementById('stage1-usage').style.display = 'block';
@@ -520,7 +566,6 @@
       if (currentUsageIndex < activeLessonWords.length - 1) { currentUsageIndex++; updateUsageCard(); }
     }
 
-    // STEP 3: TEST TỪ VỰNG
     let quizCurrentIndex = 0;
     let quizUserAnswers = [];
     let quizQuestionsList = [];
@@ -599,7 +644,6 @@
       goToSentenceQuizStage();
     }
 
-    // STEP 4: TEST DỊCH CÂU (VIỆT - ANH)
     let sentenceQuizIndex = 0;
     let sentenceQuizList = [];
 
@@ -666,7 +710,6 @@
       });
     }
 
-    // STEP 5: AI TEACHER
     function goToStage3() {
       document.getElementById('stage2-sentence-quiz').style.display = 'none';
       document.getElementById('stage3-practice').style.display = 'grid';
@@ -691,7 +734,6 @@
       }
     }
 
-    // THỬ PHÁT ÂM TỪ VỰNG (STEP 1)
     let vocabRecognition = null;
     function toggleVocabSpeech() {
       const statusElem = document.getElementById('vocabSpeechStatus');
@@ -742,7 +784,6 @@
       vocabRecognition.start();
     }
 
-    // LUYỆN NÓI VỚI AI TEACHER (STEP 5)
     let aiRecognition = null;
     document.addEventListener('DOMContentLoaded', () => {
       const micBtn = document.getElementById('micBtn');
