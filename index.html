@@ -343,7 +343,6 @@
 
     const WORDS_PER_LESSON = 15;
 
-    // Bộ tên Bài học thiết kế riêng sinh động cho từng chủ đề
     const LESSON_NAMES_BY_TOPIC = {
       work: [
         "Nhập môn & Giao tiếp ban đầu",
@@ -387,6 +386,16 @@
         "Thể thao & Rèn luyện"
       ]
     };
+
+    // Hàm đọc văn bản chung
+    function speakText(text) {
+      if (!text) return;
+      window.speechSynthesis.cancel(); // Dừng câu đang đọc cũ nếu có
+      const utterance = new SpeechSynthesisUtterance(text.replace(/[/#!$%^&*;:{}=\-_`~()?"']/g, "").trim());
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9; // Tốc độ đọc tự nhiên
+      window.speechSynthesis.speak(utterance);
+    }
 
     async function loadVocabularyJSON() {
       try {
@@ -532,6 +541,9 @@
       } else {
         phoneticElem.innerText = '';
       }
+      
+      // Tự động phát âm từ vựng mới khi mở thẻ
+      speakText(word);
     }
 
     function prevCard() {
@@ -556,6 +568,9 @@
       document.getElementById('usageTranslation').innerText = `"${item.exMean}"`;
       document.getElementById('usageProgress').innerText = `${currentUsageIndex + 1} / ${activeLessonWords.length}`;
       document.getElementById('btnStartQuizFromUsage').style.display = (currentUsageIndex === activeLessonWords.length - 1) ? 'inline-block' : 'none';
+      
+      // Tự động phát âm câu ví dụ ở Bước 2
+      speakText(item.example);
     }
 
     function prevUsageCard() {
@@ -595,12 +610,17 @@
       let options = [currentItem, ...otherItems.slice(0, 3)];
       shuffleArray(options);
 
-      document.getElementById('quizQuestion').innerText = `Câu ${quizCurrentIndex + 1}/${quizQuestionsList.length}: Từ nào có nghĩa là "${currentItem.mean}"?`;
+      // Thêm nút nghe ở Bước 3 (Trắc nghiệm từ)
+      document.getElementById('quizQuestion').innerHTML = `
+        Câu ${quizCurrentIndex + 1}/${quizQuestionsList.length}: Từ nào có nghĩa là "<strong>${currentItem.mean}</strong>"? 
+        <button onclick="speakText('${currentItem.word.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 10px; border-radius:15px; cursor:pointer; font-size:12px; margin-left:8px;">🔊 Nghe gợi ý</button>
+      `;
+
       const container = document.getElementById('quizOptions');
       container.innerHTML = '';
       options.forEach(opt => {
         const btn = document.createElement('button');
-        btn.innerText = opt.word;
+        btn.innerHTML = `${opt.word} <span style="font-size:12px; float:right;" onclick="event.stopPropagation(); speakText('${opt.word.replace(/'/g, "\\'")}')">🔊</span>`;
         btn.style.cssText = "padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-weight: bold; cursor: pointer; text-align: left; width: 100%; margin-bottom: 8px;";
         btn.onclick = () => recordQuizAnswer(opt.word, currentItem);
         container.appendChild(btn);
@@ -608,6 +628,7 @@
     }
 
     function recordQuizAnswer(selectedWord, correctItem) {
+      speakText(selectedWord); // Phát âm từ người dùng vừa chọn
       quizUserAnswers.push({
         questionNo: quizCurrentIndex + 1,
         targetMean: correctItem.mean,
@@ -617,7 +638,7 @@
       });
       quizCurrentIndex++;
       if (quizCurrentIndex < quizQuestionsList.length) {
-        renderQuiz();
+        setTimeout(renderQuiz, 400);
       } else {
         showQuizSummary();
       }
@@ -661,7 +682,13 @@
 
     function renderSentenceQuiz() {
       const currentItem = sentenceQuizList[sentenceQuizIndex];
-      document.getElementById('sentenceQuizVi').innerText = `Câu ${sentenceQuizIndex + 1}/${sentenceQuizList.length}: "${currentItem.exMean}"`;
+      // Thêm nút nghe ở Bước 4 (Dịch câu)
+      document.getElementById('sentenceQuizVi').innerHTML = `
+        Câu ${sentenceQuizIndex + 1}/${sentenceQuizList.length}: "${currentItem.exMean}"
+        <div style="margin-top:6px;">
+          <button onclick="speakText('${currentItem.example.replace(/'/g, "\\'")}')" style="background:#2563eb; color:white; border:none; padding:4px 12px; border-radius:15px; cursor:pointer; font-size:13px;">🔊 Nghe câu gốc tiếng Anh</button>
+        </div>
+      `;
       document.getElementById('sentenceInput').value = '';
       document.getElementById('sentenceQuizFeedback').innerText = '';
     }
@@ -684,11 +711,13 @@
       const targetClean = cleanTextForCompare(currentItem.example);
 
       if (userClean === targetClean) {
+        speakText(currentItem.example);
         feedbackElem.innerHTML = `<span style="color: #16a34a;">🎉 Chính xác! Bạn đã đặt đúng câu ví dụ.</span>`;
-        setTimeout(() => { nextSentenceQuiz(); }, 1200);
+        setTimeout(() => { nextSentenceQuiz(); }, 1500);
       } else {
+        speakText(currentItem.example);
         feedbackElem.innerHTML = `<span style="color: #dc2626;">❌ Chưa chính xác.<br>Đáp án chuẩn: <strong>"${currentItem.example}"</strong></span>`;
-        setTimeout(() => { nextSentenceQuiz(); }, 3000);
+        setTimeout(() => { nextSentenceQuiz(); }, 3500);
       }
     }
 
@@ -718,20 +747,12 @@
 
     function playFcAudio() {
       const word = document.getElementById('fcWord').innerText;
-      if (word) {
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = 'en-US';
-        window.speechSynthesis.speak(utterance);
-      }
+      speakText(word);
     }
 
     function playUsageAudio() {
       const sentence = document.getElementById('usageSentence').innerText;
-      if (sentence) {
-        const utterance = new SpeechSynthesisUtterance(sentence.replace(/"/g, ''));
-        utterance.lang = 'en-US';
-        window.speechSynthesis.speak(utterance);
-      }
+      speakText(sentence);
     }
 
     let vocabRecognition = null;
@@ -863,13 +884,8 @@
       setTimeout(() => {
         appendChatMessage('AI Teacher', aiReply);
         avatarMessage.innerText = aiReply;
-
-        const utterance = new SpeechSynthesisUtterance(aiReply);
-        utterance.lang = 'en-US';
-        utterance.onend = () => {
-          avatarStatus.innerText = '● READY';
-        };
-        window.speechSynthesis.speak(utterance);
+        speakText(aiReply);
+        avatarStatus.innerText = '● READY';
       }, 600);
     }
   </script>
