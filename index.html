@@ -95,13 +95,13 @@
 
     .chapter-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 16px;
       margin-top: 16px;
     }
 
     .chapter-card {
-      padding: 16px;
+      padding: 18px;
       border: 2px solid #e2e8f0;
       border-radius: var(--radius-md);
       cursor: pointer;
@@ -217,20 +217,20 @@
       </div>
     </div>
 
-    <!-- BANNER CHỌN BÀI HỌC NHỎ (15 TỪ / BÀI) -->
+    <!-- BANNER CHỌN BÀI HỌC NHỎ -->
     <div id="subLessonSelectScreen" class="card" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <button onclick="backToChapters()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Chương Khác</button>
         <h2 id="currentChapterTitle" style="margin: 0; font-size: 20px; color: #1e293b;">Danh sách bài học</h2>
       </div>
-      <p style="color: #64748b; font-size: 14px; margin-top: 0;">Mỗi bài học bao gồm 15 từ vựng được chia nhỏ từ chương này:</p>
+      <p id="chapterSummaryInfo" style="color: #2563eb; font-size: 15px; font-weight: 700; margin-top: 0; margin-bottom: 16px;">Đang tải thông tin từ vựng...</p>
       <div id="subLessonGrid" class="chapter-grid"></div>
     </div>
 
     <!-- THANH TIẾN TRÌNH 5 BƯỚC -->
     <div id="learningFlowHeader" class="card" style="display: none; margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="backToSubLessons()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Bài Học Khác</button>
+        <button onclick="backToSubLessons()" style="padding: 8px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600;">← Chọn Bài Khác</button>
         <div style="display: flex; gap: 8px; font-weight: 700; font-size: 13px;">
           <span id="step1-tab" style="color: #2563eb;">1. Học từ</span> ➔ 
           <span id="step2-tab" style="color: #94a3b8;">2. Áp dụng câu</span> ➔ 
@@ -331,26 +331,23 @@
   </div>
 
   <script>
-    let isListening = false;
-    let recognition = null;
     let currentTopic = 'daily';
     let currentChapterName = '';
     let currentSubLessonList = [];
     let activeLessonWords = [];
+    let totalChapterWordsCount = 0;
     
     let currentCardIndex = 0;
     let currentUsageIndex = 0;
     let vocabularyDatabase = null;
 
-    const WORDS_PER_LESSON = 15; // Quy định 15 từ / bài học nhỏ
+    const WORDS_PER_LESSON = 15;
 
-    // Tải kho từ vựng từ file words.json
     async function loadVocabularyJSON() {
       try {
         const response = await fetch('./words.json');
         if (!response.ok) throw new Error("Không thể tải file words.json");
         vocabularyDatabase = await response.json();
-        console.log("Đã nạp file words.json thành công!");
       } catch (error) {
         console.error("Lỗi tải kho từ vựng:", error);
       }
@@ -364,7 +361,6 @@
       }
     }
 
-    // Chọn Chương lớn -> Lọc và Chia bài học nhỏ (mỗi bài 15 từ)
     async function selectChapter(topic, chapterTitle) {
       currentTopic = topic;
       currentChapterName = chapterTitle;
@@ -382,7 +378,6 @@
         word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '').trim()
       }));
 
-      // Lọc trùng từ vựng
       let uniqueList = [];
       let seenWords = new Set();
       let seenMeans = new Set();
@@ -396,7 +391,8 @@
         }
       }
 
-      // Chia nhỏ thành các nhóm 15 từ
+      totalChapterWordsCount = uniqueList.length;
+
       currentSubLessonList = [];
       for (let i = 0; i < uniqueList.length; i += WORDS_PER_LESSON) {
         currentSubLessonList.push(uniqueList.slice(i, i + WORDS_PER_LESSON));
@@ -405,29 +401,33 @@
       renderSubLessonsScreen();
     }
 
-    // Hiển thị danh sách các bài học nhỏ (Bài 1, Bài 2, ...)
     function renderSubLessonsScreen() {
       document.getElementById('chapterSelectScreen').style.display = 'none';
       document.getElementById('subLessonSelectScreen').style.display = 'block';
       document.getElementById('currentChapterTitle').innerText = currentChapterName;
+      
+      document.getElementById('chapterSummaryInfo').innerText = 
+        `📌 Chủ đề này có tổng cộng ${totalChapterWordsCount} từ vựng ➔ Tự động chia thành ${currentSubLessonList.length} bài học.`;
 
       const grid = document.getElementById('subLessonGrid');
       grid.innerHTML = '';
 
       currentSubLessonList.forEach((lessonWords, index) => {
+        const startNo = index * WORDS_PER_LESSON + 1;
+        const endNo = startNo + lessonWords.length - 1;
+
         const card = document.createElement('div');
         card.className = 'chapter-card';
         card.onclick = () => startSubLessonFlow(index);
         card.innerHTML = `
-          <h3>Bài ${index + 1} (${lessonWords.length} từ)</h3>
-          <span class="chapter-status">● Đã mở</span>
-          <p style="margin: 6px 0 0 0; font-size: 12px; color: #64748b;">Từ: "${lessonWords[0].word}" ... "${lessonWords[lessonWords.length - 1].word}"</p>
+          <h3>Bài ${index + 1}: Từ ${startNo} – ${endNo}</h3>
+          <span class="chapter-status">● ${lessonWords.length} từ vựng</span>
+          <p style="margin: 8px 0 0 0; font-size: 13px; color: #64748b;">Mẫu từ: "<strong>${lessonWords[0].word}</strong>" ... "<strong>${lessonWords[lessonWords.length - 1].word}</strong>"</p>
         `;
         grid.appendChild(card);
       });
     }
 
-    // Bắt đầu vào 1 bài học 15 từ cụ thể
     function startSubLessonFlow(lessonIndex) {
       activeLessonWords = [...currentSubLessonList[lessonIndex]];
       currentCardIndex = 0;
@@ -741,20 +741,21 @@
 
       vocabRecognition.start();
     }
-    // --- LUYỆN NÓI VỚI AI TEACHER (STEP 5) ---
-    const micBtn = document.getElementById('micBtn');
-    const voiceStatus = document.getElementById('voiceStatus');
-    const chatBox = document.getElementById('chatBox');
-    const avatarStatus = document.getElementById('avatarStatus');
-    const avatarMessage = document.getElementById('avatarMessage');
 
+    // LUYỆN NÓI VỚI AI TEACHER (STEP 5)
     let aiRecognition = null;
-
-    if (micBtn) {
-      micBtn.addEventListener('click', toggleAiSpeech);
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const micBtn = document.getElementById('micBtn');
+      if (micBtn) {
+        micBtn.addEventListener('click', toggleAiSpeech);
+      }
+    });
 
     function toggleAiSpeech() {
+      const micBtn = document.getElementById('micBtn');
+      const voiceStatus = document.getElementById('voiceStatus');
+      const avatarStatus = document.getElementById('avatarStatus');
+
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
         alert("Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome!");
@@ -801,6 +802,7 @@
     }
 
     function appendChatMessage(sender, text) {
+      const chatBox = document.getElementById('chatBox');
       const msgDiv = document.createElement('div');
       msgDiv.style.marginBottom = '10px';
       msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
@@ -809,17 +811,18 @@
     }
 
     function respondAsAI(userText) {
+      const avatarStatus = document.getElementById('avatarStatus');
+      const avatarMessage = document.getElementById('avatarMessage');
+
       avatarStatus.innerText = '● SPEAKING...';
       avatarMessage.innerText = 'AI Teacher đang trả lời...';
 
-      // Phản hồi mẫu từ AI Teacher
       const aiReply = `Great job! You said: "${userText}". Keep practicing!`;
       
       setTimeout(() => {
         appendChatMessage('AI Teacher', aiReply);
         avatarMessage.innerText = aiReply;
 
-        // Đọc câu trả lời của AI
         const utterance = new SpeechSynthesisUtterance(aiReply);
         utterance.lang = 'en-US';
         utterance.onend = () => {
