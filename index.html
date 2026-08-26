@@ -245,7 +245,7 @@ select {
         <option value="A2">A2 - Sơ cấp</option>
         <option value="B2">B2 - Nâng cao</option>
       </select>
-      <select id="topicSelect">
+   <select id="topicSelect">
   <option value="daily">Hội thoại hàng ngày</option>
   <option value="work">Tiếng Anh công sở</option>
   <option value="travel">Du lịch & Giao tiếp</option>
@@ -253,7 +253,7 @@ select {
   <option value="health">Sức khỏe & Thể thao</option>
 </select>
 
-  <!-- BANNER CHỌN CHƯƠNG / CHỦ ĐỀ -->
+ <!-- BANNER CHỌN CHƯƠNG / CHỦ ĐỀ -->
 <div id="chapterSelectScreen" class="card" style="margin-bottom: 24px;">
   <h2 style="margin-top: 0; font-size: 20px;">📚 Chọn Chương Học</h2>
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px;">
@@ -263,14 +263,24 @@ select {
       <span id="status-daily" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
     </div>
 
-    <div id="card-work" onclick="startChapterFlow('work')" style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; opacity: 0.6; cursor: not-allowed; background: #f8fafc;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #475569;">Chương 2: Tiếng Anh công sở</h3>
-      <span id="status-work" style="color: #64748b; font-weight: bold; font-size: 13px;">🔒 Đang khoá</span>
+    <div onclick="startChapterFlow('work')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 2: Tiếng Anh công sở</h3>
+      <span id="status-work" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
     </div>
 
-    <div id="card-travel" onclick="startChapterFlow('travel')" style="padding: 16px; border: 1px solid #cbd5e1; border-radius: 12px; opacity: 0.6; cursor: not-allowed; background: #f8fafc;">
-      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #475569;">Chương 3: Du lịch & Giao tiếp</h3>
-      <span id="status-travel" style="color: #64748b; font-weight: bold; font-size: 13px;">🔒 Đang khoá</span>
+    <div onclick="startChapterFlow('travel')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 3: Du lịch & Giao tiếp</h3>
+      <span id="status-travel" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
+    </div>
+
+    <div onclick="startChapterFlow('tech')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 4: Công nghệ & AI</h3>
+      <span id="status-tech" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
+    </div>
+
+    <div onclick="startChapterFlow('health')" style="padding: 16px; border: 2px solid #2563eb; border-radius: 12px; cursor: pointer; background: #eff6ff;">
+      <h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1e3a8a;">Chương 5: Sức khỏe & Thể thao</h3>
+      <span id="status-health" style="color: #16a34a; font-weight: bold; font-size: 13px;">● Đã mở</span>
     </div>
 
   </div>
