@@ -300,7 +300,7 @@ let vocabularyDatabase = null;
       // Lấy danh sách từ trong kho, xáo trộn ngẫu nhiên và bốc 5 từ
       let rawList = [...vocabularyDatabase[topic]];
       shuffleArray(rawList);
-      vocabularyData[topic] = rawList.slice(0, 5);
+      vocabularyData[topic] = rawList.slice(0, 20);
 
       // Chuyển giao diện lập tức
       document.getElementById('chapterSelectScreen').style.display = 'none';
