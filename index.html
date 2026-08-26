@@ -503,27 +503,27 @@ let quizCurrentIndex = 0;
       }
     }
 
-    // Tổng kết sau khi hoàn thành toàn bộ bài test
-    function showQuizSummary() {
-      const total = quizUserAnswers.length;
-      const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
-      const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
+// Tổng kết sau khi hoàn thành toàn bộ bài test
+function showQuizSummary() {
+  const total = quizUserAnswers.length;
+  const correctCount = quizUserAnswers.filter(a => a.isCorrect).length;
+  const wrongAnswers = quizUserAnswers.filter(a => !a.isCorrect);
 
-      let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
-      resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
+  let resultMessage = `🎉 BẠN ĐÃ HOÀN THÀNH BÀI KIỂM TRA!\n\n`;
+  resultMessage += `📊 Kết quả: ${correctCount}/${total} câu đúng.\n\n`;
 
-      if (wrongAnswers.length > 0) {
-        resultMessage += `❌ Chi tiết các câu làm sai:\n`;
-        wrongAnswers.forEach(item => {
-          resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
-        });
-      } else {
-        resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
-      }
+  if (wrongAnswers.length > 0) {
+    resultMessage += `❌ Chi tiết các câu làm sai:\n`;
+    wrongAnswers.forEach(item => {
+      resultMessage += `- Câu ${item.questionNo} ("${item.targetMean}"): Bạn chọn "${item.selectedWord}" ➔ Đáp án đúng: "${item.correctWord}"\n`;
+    });
+  } else {
+    resultMessage += `🌟 Hoàn hảo! Bạn đã trả lời đúng tất cả các câu hỏi!`;
+  }
 
-      alert(resultMessage);
-      goToStage3();
-    }
+  alert(resultMessage);
+  goToSentenceQuizStage(); // ✅ Đã sửa chuẩn để chuyển sang Bước 4
+}
     // === BỔ SUNG: LOGIC BÀI KIỂM TRA CÂU (VIỆT -> ANH) ===
     let sentenceQuizIndex = 0;
     let sentenceQuizList = [];
