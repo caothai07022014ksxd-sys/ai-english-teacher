@@ -297,8 +297,11 @@ let vocabularyDatabase = null;
         return;
       }
 
-      // Lấy danh sách từ trong kho, xáo trộn ngẫu nhiên và bốc 5 từ
-      let rawList = [...vocabularyDatabase[topic]];
+let rawList = vocabularyDatabase[topic].map(item => ({
+        ...item,
+        word: item.word.replace(/\s*\d+$/, '').replace(/\s*\(\d+\)$/, '')
+      }));
+
       shuffleArray(rawList);
       vocabularyData[topic] = rawList.slice(0, 20);
 
